@@ -1,0 +1,24 @@
+{
+  "name": "airpal",
+  "version": "0.0.1",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+  },
+  "author": "",
+  "dependencies": {
+    "numeral": "1.5.2",
+    "lodash": "2.3.0",
+    "moment": "2.4.0",
+    "highlight.js": "8.0.0",
+    "react": "0.10.0",
+    "cortexjs": "0.4.5"
+  },
+  "devDependencies": {
+    "browserify": "3.41.0",
+    "brace": "0.2.1",
+    "debowerify": "0.3.0",
+    "reactify": "0.11.0",
+    "bower": "1.2.7"
+  }
+}

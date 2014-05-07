@@ -1,0 +1,42 @@
+# Logging settings
+logging:
+
+  loggers:
+    org.apache.shiro: TRACE
+
+  # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
+  level: INFO
+
+# HTTP-specific options.
+server:
+  applicationConnectors:
+    - type: http
+      port: 8080
+      idleTimeout: 10 seconds
+
+  adminConnectors:
+    - type: http
+      port: 8081
+
+elasticSearchProperties:
+  hosts:
+    - 127.0.0.1:9300
+  clusterName: elasticsearch_andykram
+  multicastEnabled: false
+
+metaStoreConfiguration:
+  driverName: com.mysql.jdbc.Driver
+
+shiroConfiguration:
+  securedUrls:
+    - /api/*
+    - /app
+  dispatchTypes:
+    - ERROR
+    - FORWARD
+    - INCLUDE
+    - REQUEST
+
+airpalHosts:
+  - http://127.0.0.1:8082
+

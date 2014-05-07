@@ -1,0 +1,86 @@
+section > h2 {
+  margin-bottom: 25px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 0;
+  margin-bottom: 13px;
+}
+
+#buttons .contrast-container {
+  padding: 13px 0;
+  background-color: #4a4a4a;
+}
+
+#panels .panel-body-scroll {
+  height: 162px;
+}
+
+#tabs .standalone .tabs {
+  margin-top: 24px;
+}
+#tabs .standalone .tab-panel {
+  margin-top: 20px;
+}
+
+#tooltips .btn {
+  width: 75px;
+}
+#tooltips .tooltip-fixed {
+  position: relative;
+  z-index: auto;
+  opacity: 1;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+}
+
+#modals #modal-container {
+  position: relative;
+  overflow: hidden;
+  border: 1px dotted #4a4a4a;
+  padding: 13px 0;
+  height: 460px;
+}
+
+#media .slideshow {
+  display: inline-block;
+  list-style: none;
+  margin-bottom: 0;
+  padding-left: 0;
+}
+#media .slideshow > li {
+  float: left;
+}
+#media .slideshow > li + li {
+  margin-left: 9px;
+}
+
+#icons p {
+  margin-bottom: 9px;
+  font-size: 18px;
+}
+#icons p i {
+  display: inline-block;
+  margin-right: 4.5px;
+  text-align: right;
+  width: 38px;
+}
+
+#responsive .v,
+#responsive .h {
+  text-align: center;
+  vertical-align: middle;
+}
+#responsive .v:before {
+  content: "Visible";
+}
+#responsive .v {
+  background-color: #dff0d8;
+  color: #468847;
+}
+#responsive .h:before {
+  content: "Hidden";
+}
+#responsive .h {
+  background-color: #f9f9f9;
+  color: #ccc;
+}

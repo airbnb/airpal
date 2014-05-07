@@ -1,0 +1,2 @@
+com.airbnb.airpal.api.output.HiveTablePersistentJobOutput
+com.airbnb.airpal.api.output.S3CsvPersistentJobOutput

@@ -1,0 +1,8 @@
+*.jar
+*.hprof
+.DS_Store
+*.iml
+target/
+node_modules/
+bower_components/
+dependency-reduced-pom.xml

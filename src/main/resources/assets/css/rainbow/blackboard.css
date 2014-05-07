@@ -1,0 +1,62 @@
+/**
+ * Blackboard theme
+ *
+ * Adapted from Domenico Carbotta's TextMate theme of the same name
+ *
+ * @author Domenico Carbotta
+ * @author Craig Campbell
+ * @version 1.0.2
+ */
+pre.o2-code{
+    background: #0B1022;
+    word-wrap: break-word;
+    margin: 0px;
+    padding: 10px;
+    color: #fff;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+pre, code {
+    font-family: 'Monaco', courier, monospace;
+}
+
+pre.o2-code.comment {
+    color: #727272;
+}
+
+pre.o2-code.constant {
+    color: #D8FA3C;
+}
+
+pre.o2-code.storage {
+    color: #FBDE2D;
+}
+
+pre.o2-code.string, pre.o2-code.comment.docstring {
+    color: #61CE3C;
+}
+
+pre.o2-code.string.regexp, pre.o2-code.support.tag.script, pre.o2-code.support.tag.style {
+    color: #fff;
+}
+
+pre.o2-code.keyword, pre.o2-code.selector {
+    color: #FBDE2D;
+}
+
+pre.o2-code.inherited-class {
+    font-style: italic;
+}
+
+pre.o2-code.entity {
+    color: #FF6400;
+}
+
+pre.o2-code.support, *[data-language="c"] .function.call {
+    color: #8DA6CE;
+}
+
+pre.o2-code.variable.global, pre.o2-code.variable.class, pre.o2-code.variable.instance {
+    color: #FF6400;
+}
