@@ -1,11 +1,14 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var InitReact = require('./app2');
-
 require('./lib/jquery.cookie');
+require('./lib/jquery.event.drag-2.2');
+require('./lib/slick.core');
+require('./lib/slick.grid');
+
+var InitReact = require('./app2');
 
 $(InitReact);
 
-},{"./app2":2,"./lib/jquery.cookie":19}],2:[function(require,module,exports){
+},{"./app2":2,"./lib/jquery.cookie":19,"./lib/jquery.event.drag-2.2":20,"./lib/slick.core":29,"./lib/slick.grid":30}],2:[function(require,module,exports){
 /** @jsx React.DOM */
 
 var React = require('react'),
@@ -161,16 +164,9 @@ ColumnsSelector = React.createClass({displayName: 'ColumnsSelector',
     };
   },
   render: function() {
-    //console.log('columns selector', this.state, this);
     if (!this.state.columns) {
-      //console.log('NO COLUMNS', this);
-      return (React.DOM.div( {className:"panel"}, 
-        React.DOM.div( {id:"panel-select-tip", role:"tabpanel", className:"tab-panel panel-body", 'aria-hidden':"false"}, 
-            React.DOM.div( {className:"panel-header"}, "Columns"),
-            React.DOM.div( {className:"panel-body row", 'aria-disabled':"true"}, 
-              "No table selected."
-            )
-          )
+      return (React.DOM.div(null, 
+        "No table selected."
       ));
     }
 
@@ -201,14 +197,9 @@ ColumnsSelector = React.createClass({displayName: 'ColumnsSelector',
       return (React.DOM.div( {className:"row row-space-2", key:'col-row-' + i}, col));
     }).value();
 
-    return (React.DOM.div( {className:"panel"}, 
-        React.DOM.div( {id:"panel-cols", role:"tabpanel", className:"tab-panel panel-body"}, 
-            React.DOM.div( {className:"panel-header"}, "Columns"),
-            React.DOM.div( {className:"panel-body row", ref:"grid", id:"table-columns"}, 
-              cols
-            )
-        )
-      ));
+    return (React.DOM.div( {className:"panel-body row", ref:"grid", id:"table-columns"}, 
+      cols
+    ));
   },
   componentWillUpdate: function(nextProps, nextState) {
     var activeTable = nextState.activeTable,
@@ -282,7 +273,7 @@ function hasMultipleStatements(queryData) {
       queryStatements = _.reject(
         queryData.replace(newLineRE, '').split(statementTerminateRE),
         function(val) {
-          return _.isEmpty(val)
+          return _.isEmpty(val);
         }),
       newQuery;
 
@@ -389,7 +380,7 @@ Editor = React.createClass({displayName: 'Editor',
     this.setState({showAlert: false});
   },
   checkStatement: function() {
-    var hasMultiple = hasMultipleStatements(this.refs.editor.getValue());
+    var hasMultiple = hasMultipleStatements(this.refs.editor.getValue()) && false;
     console.log('check statement', 'has multiple', hasMultiple, this, arguments);
     this.setState({
       showAlert: hasMultiple
@@ -613,16 +604,25 @@ var React = require('react'),
     TableSelector = require('./table_selector'),
     PartitionSelector = require('./partition_selector'),
     ColumnsSelector = require('./columns_selector'),
+    Tabs = require('../elements/tabs'),
+    PreviewTable = require('../elements/preview_table'),
     PartitionedTableSelector;
 
 PartitionedTableSelector = React.createClass({displayName: 'PartitionedTableSelector',
+  getInitialState: function() {
+    return {
+      selectedTab: 'columns',
+    };
+  },
   getDefaultProps: function() {
     return {
       onActiveTable: function(schema, table, partition) {},
+      activeSchema: 'default',
+      activeTable: null,
     };
   },
   render: function() {
-    return (React.DOM.section( {id:"tables-selector", className:"row-space-1"}, 
+    return (React.DOM.section( {id:"tables-selector", className:"row-space-1 dynamic-tabs"}, 
       React.DOM.div( {className:"row row-space-1"}, 
         TableSelector(
           {ref:"table",
@@ -632,7 +632,17 @@ PartitionedTableSelector = React.createClass({displayName: 'PartitionedTableSele
           onOptionActive:this.onPartitionOptionActive} )
       ),
       React.DOM.div( {className:"row-12"}, 
-        ColumnsSelector( {ref:"columns"} )
+        Tabs(
+          {selected:this.state.selectedTab,
+          onTabChange:this.handleTabChange}, 
+          ColumnsSelector(
+            {tabTitle:"Columns",
+            ref:"columns"} ),
+          PreviewTable(
+            {tabTitle:"Preview",
+            schema:this.props.activeSchema,
+            table:this.props.activeTable} )
+        )
       )
     ));
   },
@@ -649,8 +659,6 @@ PartitionedTableSelector = React.createClass({displayName: 'PartitionedTableSele
 
     this.refs.partition.refs.selectize.forceSearch(activeTable);
 
-    console.log('onTableOptionActive', $item, activeTable, this.refs.columns);
-
     this.props.onActiveTable(Fqn.schema(activeTable), Fqn.table(activeTable), null);
 
     this.refs.columns.setState({
@@ -661,11 +669,16 @@ PartitionedTableSelector = React.createClass({displayName: 'PartitionedTableSele
   onPartitionOptionActive: function($item) {
     console.log('saw partition option active', $item, $item.data('value'));
   },
+  handleTabChange: function(panel) {
+    this.setState({
+      selectedTab: panel.props.tabTitle,
+    });
+  },
 });
 
 module.exports = PartitionedTableSelector;
 
-},{"../fqn":18,"./columns_selector":4,"./partition_selector":6,"./table_selector":16,"react":261}],8:[function(require,module,exports){
+},{"../elements/preview_table":9,"../elements/tabs":17,"../fqn":18,"./columns_selector":4,"./partition_selector":6,"./table_selector":16,"react":261}],8:[function(require,module,exports){
 /** @jsx React.DOM */
 
 var React = require('react'),
@@ -752,9 +765,6 @@ var React = require('react'),
     GridOpts = require('../util').GridOpts,
     PreviewTable;
 
-require('../lib/slick.core');
-require('../lib/slick.grid');
-
 function rowUuid(row, rowIdx) {
   return 'preview-row-' + rowIdx;
 }
@@ -782,6 +792,9 @@ PreviewTable = React.createClass({displayName: 'PreviewTable',
         columns: [],
         row: [],
       });
+      this.grid.setColumns([]);
+      this.grid.setData([]);
+      this.grid.invalidate();
       return;
     } else if ((nextProps.schema === this.props.schema) &&
          (nextProps.table === this.props.table)) {
@@ -826,13 +839,11 @@ PreviewTable = React.createClass({displayName: 'PreviewTable',
           maxWidth: 140
         };
       });
-      console.log('generated cols', cols, 'and dataObjs', dataObjs);
 
       this.grid.setColumns(cols);
       this.grid.setData(dataObjs);
       this.grid.invalidate();
 
-      //console.log('Created cols', cols, 'data', data, 'dataObjs', dataObjs);
     }.bind(this));
   },
   componentDidMount: function() {
@@ -842,14 +853,16 @@ PreviewTable = React.createClass({displayName: 'PreviewTable',
     var isEmpty = _.isEmpty(this.state.columns);
     return (React.DOM.div(null, 
       React.DOM.h2( {className:isEmpty ? '' : 'hide'}, "No table selected"),
-      React.DOM.div( {className:isEmpty ? '' : '', ref:"historyGrid", id:"history-grid"} )
+      React.DOM.div( {className:isEmpty ? 'empty' : ''}, 
+        React.DOM.div( {ref:"historyGrid", id:"history-grid"} )
+      )
     ));
   },
 });
 
 module.exports = PreviewTable;
 
-},{"../lib/slick.core":29,"../lib/slick.grid":30,"../util":265,"lodash":109,"react":261}],10:[function(require,module,exports){
+},{"../util":265,"lodash":109,"react":261}],10:[function(require,module,exports){
 /** @jsx React.DOM */
 
 var React = require('react'),
@@ -859,7 +872,6 @@ var React = require('react'),
     Range = ace.acequire('ace/range').Range,
     QueryEditor;
 
-require('../lib/jquery.event.drag-2.2');
 require('brace/theme/monokai');
 require('brace/mode/sql');
 
@@ -947,7 +959,7 @@ QueryEditor = React.createClass({displayName: 'QueryEditor',
 
 module.exports = QueryEditor;
 
-},{"../lib/jquery.event.drag-2.2":20,"brace":32,"brace/mode/sql":33,"brace/theme/monokai":35,"lodash":109,"react":261}],11:[function(require,module,exports){
+},{"brace":32,"brace/mode/sql":33,"brace/theme/monokai":35,"lodash":109,"react":261}],11:[function(require,module,exports){
 /** @jsx React.DOM */
 
 var React = require('react'),
@@ -961,9 +973,6 @@ var React = require('react'),
     GridOpts = require('../util').GridOpts,
     QueryHistory,
     gridColumns;
-
-require('../lib/slick.core');
-require('../lib/slick.grid');
 
 function jobIsFailed(job) {
   return job.state && (job.state.toLowerCase() === 'failed');
@@ -1173,7 +1182,7 @@ QueryHistory = React.createClass({displayName: 'QueryHistory',
 module.exports = QueryHistory;
 
 
-},{"../core/sse_connection":3,"../lib/o2/o2":25,"../lib/slick.core":29,"../lib/slick.grid":30,"../models":31,"../slick_formatters":264,"../util":265,"events":266,"lodash":109,"react":261}],12:[function(require,module,exports){
+},{"../core/sse_connection":3,"../lib/o2/o2":25,"../models":31,"../slick_formatters":264,"../util":265,"events":266,"lodash":109,"react":261}],12:[function(require,module,exports){
 /** @jsx React.DOM */
 
 var React = require('react/addons'),
@@ -1815,8 +1824,9 @@ Tabs = React.createClass({displayName: 'Tabs',
   render: function() {
     var tabItems, tabPanels;
 
-    tabItems = this.props.panels.map(function(panel) {
-      var panelTitle = panel.title.toLowerCase(),
+    tabItems = React.Children.map(this.props.children, function(child) {
+      var title = child.props.tabTitle
+          panelTitle = title.toLowerCase(),
           panelName = 'panel-' + panelTitle,
           panelSelected = (panelTitle === this.props.selected.toLowerCase());
 
@@ -1824,12 +1834,13 @@ Tabs = React.createClass({displayName: 'Tabs',
         React.DOM.a( {className:"tab-item",
            'aria-controls':panelName,
            'aria-selected':panelSelected,
-           onClick:this.handleTabClick.bind(this, panel)}, panel.title)
+           onClick:this.handleTabClick.bind(this, child)}, title)
        );
     }.bind(this));
 
-    tabPanels = this.props.panels.map(function(panel) {
-      var panelTitle = panel.title.toLowerCase(),
+    tabPanels = React.Children.map(this.props.children, function(child) {
+      var title = child.props.tabTitle,
+          panelTitle = title.toLowerCase(),
           panelName = 'panel-' + panelTitle,
           panelKey = 'tab-' + panelName,
           panelSelected = (panelTitle === this.props.selected.toLowerCase());
@@ -1838,7 +1849,7 @@ Tabs = React.createClass({displayName: 'Tabs',
                   className:"tab-panel panel-body",
                   key:panelKey,
                   'aria-hidden':!panelSelected}, 
-        panel.content
+        child
       );
     }.bind(this));
 
@@ -62078,7 +62089,6 @@ var React = require('react/addons'),
     Editor = require('../elements/editor'),
     Tabs = require('../elements/tabs'),
     QueryHistory = require('../elements/query_history'),
-    PreviewTable = require('../elements/preview_table'),
     PreviewQuery = require('../elements/preview_query'),
     SavedQueries = require('../elements/saved_queries'),
     EventEmitter = require('events').EventEmitter,
@@ -62177,51 +62187,31 @@ IndexPage = React.createClass({displayName: 'IndexPage',
         ),
         React.DOM.h1( {className:"text-special"}, "Airpal")
       ),
-      PartitionedTableSelector( {onActiveTable:this.handleActiveTable} ),
+      PartitionedTableSelector(
+          {onActiveTable:this.handleActiveTable,
+          activeTable:this.state.activeTable,
+          activeSchema:this.state.activeSchema} ),
       Editor(
         {ref:"editor",
         onQueryRun:this.handleQueryRun,
         onQuerySave:this.handleQuerySave} ),
       React.DOM.div( {className:"row-12 row-space-top-2 row-space-5"}, 
-        Tabs( {panels:[
-          {
-            title: 'History',
-            content: (
-              QueryHistory(
-                {onQuerySelected:this.handleQuerySelected,
-                onTableSelected:this.handleTableSelected,
-                onErrorSelected:this.handleErrorSelected,
-                emitter:mediator} )
-            ),
-          },
-          {
-            title: 'Preview',
-            content: (
-              PreviewTable(
-                {schema:this.state.activeSchema,
-                table:this.state.activeTable} )
-            ),
-          },
-          {
-            title: 'Saved',
-            content: (
-              SavedQueries(
-                {queries:this.state.savedQueries,
-                onQuerySelected:this.handleQuerySelected,
-                onQueryDeleted:this.handleSavedQueryDeleted,
-                onQueryRun:this.handleSavedQueryRun} )
-            ),
-          }
-          //{
-            //title: 'Output',
-            //content: (
-              //<PreviewQuery
-                //activeQuery={this.state.activeQuery}
-                //emitter={mediator} />),
-          //}
-        ],
-        selected:this.state.selectedTab,
-        onTabChange:this.handleTabChange} )
+        Tabs(
+          {selected:this.state.selectedTab,
+          onTabChange:this.handleTabChange}, 
+          QueryHistory(
+                  {tabTitle:"History",
+                  onQuerySelected:this.handleQuerySelected,
+                  onTableSelected:this.handleTableSelected,
+                  onErrorSelected:this.handleErrorSelected,
+                  emitter:mediator} ),
+          SavedQueries(
+                  {tabTitle:"Saved",
+                  queries:this.state.savedQueries,
+                  onQuerySelected:this.handleQuerySelected,
+                  onQueryDeleted:this.handleSavedQueryDeleted,
+                  onQueryRun:this.handleSavedQueryRun} )
+        )
       ),
 
       React.DOM.div( {className:"modal",
@@ -62294,17 +62284,14 @@ IndexPage = React.createClass({displayName: 'IndexPage',
     });
   },
   handleActiveTable: function(schema, table, partition) {
-    var selectedTab = (!schema || !table) ? 'history' : 'preview';
-
     this.setState({
       activeSchema: schema,
       activeTable: table,
-      selectedTab: selectedTab,
     });
   },
   handleTabChange: function(panel) {
     this.setState({
-      selectedTab: panel.title,
+      selectedTab: panel.props.tabTitle,
     });
   },
   handleCloseModal: function(e) {
@@ -62339,7 +62326,7 @@ IndexPage = React.createClass({displayName: 'IndexPage',
 
 module.exports = IndexPage;
 
-},{"../elements/editor":5,"../elements/partitioned_table_selector":7,"../elements/preview_query":8,"../elements/preview_table":9,"../elements/query_history":11,"../elements/saved_queries":12,"../elements/tabs":17,"events":266,"lodash":109,"react/addons":112}],263:[function(require,module,exports){
+},{"../elements/editor":5,"../elements/partitioned_table_selector":7,"../elements/preview_query":8,"../elements/query_history":11,"../elements/saved_queries":12,"../elements/tabs":17,"events":266,"lodash":109,"react/addons":112}],263:[function(require,module,exports){
 var _ = require('lodash'),
     Selectize = require('./lib/selectize').Selectize;
 

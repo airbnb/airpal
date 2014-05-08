@@ -15,7 +15,6 @@ import lombok.Setter;
 import javax.validation.constraints.NotNull;
 
 import java.net.URI;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -88,18 +87,6 @@ public class AirpalConfiguration extends Configuration
     @JsonProperty
     @NotNull
     private String s3Bucket;
-
-    @Getter
-    @Setter
-    @JsonProperty
-    @NotNull
-    private List<String> hdfsConfigurationFiles;
-
-    @Getter
-    @Setter
-    @JsonProperty
-    @NotNull
-    private List<String> hiveConfigurationFiles = Collections.emptyList();
 
     @Getter
     @Setter
