@@ -248,6 +248,24 @@
                 <version>${maven-antrun-plugin.version}</version>
                 <executions>
                     <execution>
+                        <id>npm-install</id>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <target>
+                                <exec executable="/usr/local/bin/npm"
+                                      dir="${project.basedir}/src/main/resources/assets/js/"
+                                      failonerror="true">
+                                    <env key="node" path="/usr/local/bin/node" />
+                                    <arg value="install" />
+                                </exec>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>browserify</id>
                         <phase>generate-resources</phase>
                         <configuration>
                             <target>
