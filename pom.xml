@@ -53,6 +53,9 @@
         <maven-shade-plugin.version>2.1</maven-shade-plugin.version>
         <maven-surefire-plugin.version>2.16</maven-surefire-plugin.version>
         <maven-resources-plugin.version>2.6</maven-resources-plugin.version>
+
+        <npm>npm</npm>
+        <node>node</node>
     </properties>
 
     <repositories>
@@ -252,10 +255,10 @@
                         <phase>generate-resources</phase>
                         <configuration>
                             <target>
-                                <exec executable="/usr/local/bin/npm"
+                                <exec executable="${npm}"
                                       dir="${project.basedir}/src/main/resources/assets/js/"
                                       failonerror="true">
-                                    <env key="node" path="/usr/local/bin/node" />
+                                    <env key="node" path="${node}" />
                                     <arg value="install" />
                                 </exec>
                             </target>
@@ -269,10 +272,10 @@
                         <phase>generate-resources</phase>
                         <configuration>
                             <target>
-                                <exec executable="/usr/local/share/npm/bin/browserify"
+                                <exec executable="${project.basedir}/src/main/resources/assets/js/node_modules/browserify/bin/cmd.js"
                                       dir="${project.basedir}/src/main/resources/assets/js/"
                                       failonerror="true">
-                                    <env key="node" path="/usr/local/bin/node" />
+                                    <env key="node" path="${node}" />
                                     <arg value="-t" />
                                     <arg value="reactify" />
                                     <arg value="app.js" />

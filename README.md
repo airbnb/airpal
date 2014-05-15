@@ -10,9 +10,24 @@
 
 Next:
 
+Ensure you have `node` and `npm` installed. Node `0.10.0` or greater is
+required.
+
+If `node` and `npm` are available in your path:
+
 ```
 mvn clean package
+```
 
+Otherwise, you can specify where they are like so:
+
+```
+mvn -Dnode=/some/path/to/node -Dnpm=/some/path/to/npm clean package
+```
+
+To run:
+
+```
 java -server \
      -Ddw.prestoCoordinator=http://presto-coordinator-url.com \
      -Ddw.discoveryServer=http://127.0.0.1:3341 \
