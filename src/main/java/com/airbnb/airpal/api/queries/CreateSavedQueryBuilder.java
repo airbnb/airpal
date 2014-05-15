@@ -8,9 +8,6 @@ import java.util.UUID;
 
 import static com.google.common.base.Preconditions.*;
 
-/**
- * Author: @andykram
- */
 public class CreateSavedQueryBuilder
 {
     @JsonProperty

@@ -8,9 +8,6 @@ import java.util.concurrent.Callable;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-/**
- * Author: @andykram
- */
 abstract public class BackgroundCacheLoader<K, V> extends CacheLoader<K, V>
 {
     private final ListeningExecutorService executor;

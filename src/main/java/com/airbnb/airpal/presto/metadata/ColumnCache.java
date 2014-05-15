@@ -26,9 +26,6 @@ import static com.airbnb.airpal.presto.QueryRunner.QueryRunnerFactory;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.String.format;
 
-/**
- * Author: @andykram
- */
 public class ColumnCache
 {
     private final LoadingCache<String, List<HiveColumn>> schemaTableCache;

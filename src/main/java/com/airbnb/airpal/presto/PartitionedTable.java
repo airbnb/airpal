@@ -10,9 +10,6 @@ import lombok.experimental.Wither;
 
 import java.util.List;
 
-/**
- * Author: @andykram
- */
 @ToString
 public class PartitionedTable extends Table
 {

@@ -26,9 +26,6 @@ import java.util.concurrent.TimeUnit;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.String.format;
 
-/**
- * Author: @andykram
- */
 public class SchemaCache
         implements Closeable
 {

@@ -2,9 +2,6 @@ package com.airbnb.airpal.api;
 
 import com.google.common.base.Predicate;
 
-/**
- * Author: @andykram
- */
 public enum JobState {
     /**
      * Query has been accepted and is awaiting execution.

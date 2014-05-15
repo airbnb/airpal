@@ -21,9 +21,6 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.UUID;
 
-/**
- * Author: @andykram
- */
 @Path("/api/execute")
 public class ExecuteResource {
 

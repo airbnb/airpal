@@ -2,9 +2,6 @@ package com.airbnb.airpal.service;
 
 import io.dropwizard.views.View;
 
-/**
- * Author: @andykram
- */
 public class LoginView extends View
 {
     private static String TEMPLATE_NAME = "login.ftl";

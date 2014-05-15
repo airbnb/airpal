@@ -26,9 +26,6 @@ import static io.airlift.http.client.FullJsonResponseHandler.createFullJsonRespo
 import static io.airlift.http.client.Request.Builder.prepareGet;
 import static io.airlift.json.JsonCodec.jsonCodec;
 
-/**
- * Author: @andykram
- */
 public class QueryInfoClient
 {
     private static final String USER_AGENT_VALUE = QueryInfoClient.class.getSimpleName() +

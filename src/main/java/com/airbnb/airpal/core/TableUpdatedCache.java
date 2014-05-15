@@ -7,9 +7,6 @@ import org.joda.time.DateTime;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Author: @andykram
- */
 public interface TableUpdatedCache
 {
     public DateTime get(Table table);

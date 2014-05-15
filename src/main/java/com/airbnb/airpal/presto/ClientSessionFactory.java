@@ -8,9 +8,6 @@ import java.net.URI;
 import java.util.Locale;
 import java.util.TimeZone;
 
-/**
- * Author: @andykram
- */
 public class ClientSessionFactory
 {
     private final boolean debug;

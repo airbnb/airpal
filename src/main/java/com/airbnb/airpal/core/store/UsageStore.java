@@ -5,9 +5,6 @@ import io.dropwizard.util.Duration;
 
 import java.util.Map;
 
-/**
- * Author: @andykram
- */
 public interface UsageStore
 {
     public long getUsages(Table table);

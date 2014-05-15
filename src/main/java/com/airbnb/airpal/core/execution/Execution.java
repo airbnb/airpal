@@ -44,9 +44,6 @@ import static com.airbnb.airpal.core.execution.ExecutionClient.ExecutionFailureE
 import static com.airbnb.airpal.presto.QueryInfoClient.BasicQueryInfo;
 import static java.lang.String.format;
 
-/**
- * Author: @andykram
- */
 @Slf4j
 @RequiredArgsConstructor
 public class Execution implements Callable<Job>

@@ -19,9 +19,6 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-/**
- * Author: @andykram
- */
 @ToString
 @Data
 @Immutable

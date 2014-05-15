@@ -1,7 +1,7 @@
 package com.airbnb.airpal.core.store.es;
 
 import com.airbnb.airpal.api.Job;
-import com.airbnb.airpal.core.ManagedNode;
+import com.airbnb.airpal.core.ManagedESClient;
 import com.airbnb.airpal.core.store.JobHistoryStore;
 import com.airbnb.airpal.presto.Table;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,15 +21,12 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Author: @andykram
- */
 public class ESJobHistoryStore extends BaseESStore implements JobHistoryStore
 {
     private final ObjectMapper objectMapper;
 
     @Inject
-    public ESJobHistoryStore(ManagedNode managedNode,
+    public ESJobHistoryStore(ManagedESClient managedNode,
                              ObjectMapper objectMapper)
     {
         super(managedNode);

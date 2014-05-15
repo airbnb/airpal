@@ -7,9 +7,6 @@ import org.joda.time.DateTime;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
-/**
- * Author: @andykram
- */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

@@ -6,9 +6,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.net.URI;
 
-/**
- * Author: @andykram
- */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 public interface PersistentJobOutput
 {

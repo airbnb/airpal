@@ -12,9 +12,6 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import io.dropwizard.setup.Environment;
 
-/**
- * Author: @andykram
- */
 public class DropwizardModule extends AbstractModule {
 
     private final Environment environment;

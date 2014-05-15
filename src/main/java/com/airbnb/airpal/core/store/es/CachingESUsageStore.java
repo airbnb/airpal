@@ -1,6 +1,6 @@
 package com.airbnb.airpal.core.store.es;
 
-import com.airbnb.airpal.core.ManagedNode;
+import com.airbnb.airpal.core.ManagedESClient;
 import com.airbnb.airpal.core.store.UsageStore;
 import com.airbnb.airpal.presto.Table;
 import com.google.common.cache.CacheBuilder;
@@ -14,9 +14,6 @@ import org.elasticsearch.indices.IndexMissingException;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-/**
- * Author: @andykram
- */
 public class CachingESUsageStore implements UsageStore
 {
     private final ESUsageStore delegateStore;
@@ -54,7 +51,7 @@ public class CachingESUsageStore implements UsageStore
         }
     }
 
-    public CachingESUsageStore(ManagedNode managedNode,
+    public CachingESUsageStore(ManagedESClient managedNode,
                                Duration duration,
                                Duration cacheDuration)
     {

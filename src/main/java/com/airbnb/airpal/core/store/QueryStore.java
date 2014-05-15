@@ -9,9 +9,6 @@ import com.airbnb.airpal.core.AirpalUser;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * Author: @andykram
- */
 public interface QueryStore
 {
     public List<SavedQuery> getSavedQueries(AirpalUser airpalUser);

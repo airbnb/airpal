@@ -13,9 +13,6 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * Author: @andykram
- */
 public class PersistentJobOutputFactory
 {
     private final AmazonS3 s3Client;

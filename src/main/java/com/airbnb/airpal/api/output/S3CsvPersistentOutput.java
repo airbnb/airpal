@@ -34,9 +34,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.airbnb.airpal.core.execution.ExecutionClient.ExecutionFailureException;
 
-/**
- * Author: @andykram
- */
 @RequiredArgsConstructor
 @JsonTypeName("csv")
 public class S3CsvPersistentOutput implements PersistentJobOutput

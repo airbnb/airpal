@@ -4,7 +4,7 @@ import com.airbnb.airpal.api.queries.FeaturedQuery;
 import com.airbnb.airpal.api.queries.SavedQuery;
 import com.airbnb.airpal.api.queries.UserSavedQuery;
 import com.airbnb.airpal.core.AirpalUser;
-import com.airbnb.airpal.core.ManagedNode;
+import com.airbnb.airpal.core.ManagedESClient;
 import com.airbnb.airpal.core.store.QueryStore;
 import com.airbnb.airpal.presto.PartitionedTable;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,9 +23,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * Author: @andykram
- */
 public class ESQueryStore extends BaseESStore implements QueryStore
 {
     public static final String FEATURED = "featured";
@@ -33,7 +30,7 @@ public class ESQueryStore extends BaseESStore implements QueryStore
     private final ObjectMapper objectMapper;
 
     @Inject
-    public ESQueryStore(ManagedNode managedNode,
+    public ESQueryStore(ManagedESClient managedNode,
                         ObjectMapper objectMapper)
     {
         super(managedNode);

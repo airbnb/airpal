@@ -1,6 +1,6 @@
 package com.airbnb.airpal;
 
-import com.airbnb.airpal.core.ManagedNode;
+import com.airbnb.airpal.core.ManagedESClient;
 import com.airbnb.airpal.core.health.PrestoHealthCheck;
 import com.airbnb.airpal.modules.AirpalModule;
 import com.airbnb.airpal.modules.DropwizardModule;
@@ -53,7 +53,7 @@ public class AirpalApplication extends Application<AirpalConfiguration>
                                                  new DropwizardModule(config, environment),
                                                  new AirpalModule(config));
 
-        environment.lifecycle().manage(injector.getInstance(ManagedNode.class));
+        environment.lifecycle().manage(injector.getInstance(ManagedESClient.class));
 
         environment.healthChecks().register("presto", injector.getInstance(PrestoHealthCheck.class));
 

@@ -9,9 +9,6 @@ import javax.ws.rs.core.Response;
 
 import java.net.URI;
 
-/**
- * Author: @andykram
- */
 @Path("/login")
 public class LoginResource
 {

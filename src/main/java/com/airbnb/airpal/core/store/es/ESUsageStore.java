@@ -1,6 +1,6 @@
 package com.airbnb.airpal.core.store.es;
 
-import com.airbnb.airpal.core.ManagedNode;
+import com.airbnb.airpal.core.ManagedESClient;
 import com.airbnb.airpal.core.store.UsageStore;
 import com.airbnb.airpal.presto.Table;
 import com.google.common.collect.ImmutableMap;
@@ -21,15 +21,14 @@ import java.util.Map;
 
 import static java.lang.String.format;
 
-/**
- * Author: @andykram
- */
-public class ESUsageStore extends BaseESStore implements UsageStore
+public class ESUsageStore
+        extends BaseESStore
+        implements UsageStore
 {
     private final Duration duration;
 
-    public ESUsageStore(ManagedNode managedNode,
-                        Duration duration)
+    public ESUsageStore(ManagedESClient managedNode,
+            Duration duration)
     {
         super(managedNode);
         this.duration = duration;
@@ -39,10 +38,10 @@ public class ESUsageStore extends BaseESStore implements UsageStore
     {
         DateTime now = new DateTime();
         return QueryBuilders.rangeQuery("queryFinished")
-                            .from(now.minusSeconds((int) duration.toSeconds())
-                                     .toDateTimeISO()
-                                     .toString())
-                            .to(now.toDateTimeISO().toString());
+                .from(now.minusSeconds((int) duration.toSeconds())
+                        .toDateTimeISO()
+                        .toString())
+                .to(now.toDateTimeISO().toString());
     }
 
     @Override
@@ -54,7 +53,8 @@ public class ESUsageStore extends BaseESStore implements UsageStore
                     FilterBuilders.andFilter(
                             FilterBuilders.termFilter("tablesUsed.connectorId", table.getConnectorId()),
                             FilterBuilders.termFilter("tablesUsed.schema", table.getSchema()),
-                            FilterBuilders.termFilter("tablesUsed.table", table.getTable())));
+                            FilterBuilders.termFilter("tablesUsed.table", table.getTable()))
+            );
 
             CountResponse response = client()
                     .prepareCount("jobs")
@@ -63,7 +63,8 @@ public class ESUsageStore extends BaseESStore implements UsageStore
                     .actionGet();
 
             return response.getCount();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             return 0;
         }
@@ -83,8 +84,9 @@ public class ESUsageStore extends BaseESStore implements UsageStore
         for (Table table : tables) {
             search.addFacet(
                     FacetBuilders.termsFacet(tableToFacet(table))
-                                 .field("tablesUsed.fqn")
-                                 .facetFilter(FilterBuilders.termFilter("tablesUsed.fqn", table.getFqn())));
+                            .field("tablesUsed.fqn")
+                            .facetFilter(FilterBuilders.termFilter("tablesUsed.fqn", table.getFqn()))
+            );
         }
 
         final SearchResponse response = search.execute().actionGet();
@@ -106,7 +108,8 @@ public class ESUsageStore extends BaseESStore implements UsageStore
     }
 
     @Override
-    public void markUsage(Table table) {
+    public void markUsage(Table table)
+    {
         // NO-OP, should be provided by writes in ESJobHistoryStore
     }
 

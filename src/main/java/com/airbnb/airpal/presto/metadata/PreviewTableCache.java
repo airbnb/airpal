@@ -11,7 +11,6 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
-import com.google.inject.Provider;
 import io.airlift.units.Duration;
 
 import java.util.List;
@@ -19,11 +18,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static java.lang.String.format;
 
-/**
- * Author: @andykram
- */
 public class PreviewTableCache
 {
     private final LoadingCache<Table, List<List<Object>>> previewTableCache;

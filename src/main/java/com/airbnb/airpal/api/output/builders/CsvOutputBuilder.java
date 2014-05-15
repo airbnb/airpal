@@ -12,9 +12,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * Author: @andykram
- */
 public class CsvOutputBuilder implements JobOutputBuilder
 {
     private static final String FILE_SUFFIX = ".csv";

@@ -17,9 +17,6 @@ import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.List;
 
-/**
- * Author: @andykram
- */
 public class AirpalConfiguration extends Configuration
         implements WithShiroConfiguration
 {

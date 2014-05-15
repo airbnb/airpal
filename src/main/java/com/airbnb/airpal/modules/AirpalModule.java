@@ -2,7 +2,7 @@ package com.airbnb.airpal.modules;
 
 import com.airbnb.airlift.http.client.OldJettyHttpClient;
 import com.airbnb.airpal.AirpalConfiguration;
-import com.airbnb.airpal.core.ManagedNode;
+import com.airbnb.airpal.core.ManagedESClient;
 import com.airbnb.airpal.core.PersistentJobOutputFactory;
 import com.airbnb.airpal.core.execution.ExecutionClient;
 import com.airbnb.airpal.core.health.PrestoHealthCheck;
@@ -74,9 +74,6 @@ import static com.airbnb.airpal.presto.QueryRunner.QueryRunnerFactory;
 import static io.airlift.discovery.client.DiscoveryBinder.discoveryBinder;
 import static io.airlift.json.JsonCodec.jsonCodec;
 
-/**
- * Author: @andykram
- */
 @Slf4j
 public class AirpalModule extends AbstractModule
 {
@@ -298,7 +295,7 @@ public class AirpalModule extends AbstractModule
 
     @Singleton
     @Provides
-    public UsageStore provideUsageCache(ManagedNode managedNode)
+    public UsageStore provideUsageCache(ManagedESClient managedNode)
     {
         return new CachingESUsageStore(managedNode,
                                        config.getUsageWindow(),
@@ -307,9 +304,9 @@ public class AirpalModule extends AbstractModule
 
     @Singleton
     @Provides
-    public ManagedNode provideManagedNode(ObjectMapper mapper)
+    public ManagedESClient provideManagedNode(ObjectMapper mapper)
     {
-        return new ManagedNode(config.getElasticSearchProperties(),
+        return new ManagedESClient(config.getElasticSearchProperties(),
                                mapper);
     }
 

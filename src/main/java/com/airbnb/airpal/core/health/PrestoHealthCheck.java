@@ -14,9 +14,6 @@ import java.util.concurrent.TimeUnit;
 
 import static com.airbnb.airpal.presto.QueryRunner.QueryRunnerFactory;
 
-/**
- * Author: @andykram
- */
 public class PrestoHealthCheck extends HealthCheck
 {
     private static final String HEALTH_CHECK_QUERY = "SELECT 1";

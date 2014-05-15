@@ -5,9 +5,6 @@ import com.airbnb.airpal.presto.Table;
 
 import java.util.List;
 
-/**
- * Author: @andykram
- */
 public interface JobHistoryStore {
 
     public List<Job> getRecentlyRun();

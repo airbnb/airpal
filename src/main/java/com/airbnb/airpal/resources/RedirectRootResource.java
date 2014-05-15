@@ -5,9 +5,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 import java.net.URI;
 
-/**
- * Author: @andykram
- */
 @Path("/")
 public class RedirectRootResource {
 

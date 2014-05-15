@@ -12,9 +12,6 @@ import java.util.List;
 
 import static java.lang.String.format;
 
-/**
- * Author: @andykram
- */
 @Immutable
 public class HivePartition extends Column
 {

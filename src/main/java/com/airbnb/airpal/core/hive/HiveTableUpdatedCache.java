@@ -29,9 +29,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 
-/**
- * Author: @andykram
- */
 public class HiveTableUpdatedCache implements TableUpdatedCache
 {
     public static final int MIN_CACHE_SIZE = 5;

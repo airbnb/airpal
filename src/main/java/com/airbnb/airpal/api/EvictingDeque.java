@@ -6,9 +6,6 @@ import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Author: @andykram
- */
 public class EvictingDeque<E> extends ForwardingBlockingDeque<E>
 {
     private final LinkedBlockingDeque<E> blockingDeque;

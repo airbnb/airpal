@@ -6,9 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.annotation.concurrent.Immutable;
 
-/**
- * Author: @andykram
- */
 @Immutable
 public class HiveColumn extends Column {
 

@@ -6,9 +6,6 @@ import lombok.Getter;
 
 import java.util.List;
 
-/**
- * Author: @andykram
- */
 public class ShiroConfiguration
 {
     @JsonProperty

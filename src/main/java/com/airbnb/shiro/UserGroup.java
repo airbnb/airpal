@@ -11,9 +11,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
-/**
- * Author: @andykram
- */
 public class UserGroup
 {
     @Getter @Setter

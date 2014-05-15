@@ -36,9 +36,6 @@ import java.util.concurrent.Executors;
 
 import static com.airbnb.airpal.presto.QueryRunner.QueryRunnerFactory;
 
-/**
- * Author: @andykram
- */
 public class ExecutionClient
 {
     private final ListeningExecutorService executor = MoreExecutors.listeningDecorator(

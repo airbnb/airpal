@@ -12,9 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingDeque;
 
-/**
- * Author: @andykram
- */
 public class LocalJobHistoryStore implements JobHistoryStore {
 
     public static class FinishedJobEvictingDeque extends EvictingDeque<Job> {

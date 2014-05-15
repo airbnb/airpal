@@ -8,9 +8,6 @@ import javax.annotation.Nullable;
 
 import static java.lang.String.format;
 
-/**
- * Author: @andykram
- */
 public class AuthorizationUtil
 {
     public static boolean isAuthorizedRead(Subject subject, Table table)

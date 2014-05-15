@@ -1,7 +1,7 @@
 package com.airbnb.airpal.core.store.es;
 
 import com.airbnb.airpal.api.Job;
-import com.airbnb.airpal.core.ManagedNode;
+import com.airbnb.airpal.core.ManagedESClient;
 import com.airbnb.airpal.core.store.JobHistoryStore;
 import com.airbnb.airpal.presto.Table;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,15 +15,12 @@ import io.dropwizard.util.Duration;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-/**
- * Author: @andykram
- */
 public class CachingESJobHistoryStore implements JobHistoryStore
 {
     private final ESJobHistoryStore delegateStore;
     private final LoadingCache<Table, Iterable<Job>> delegateCache;
 
-    public CachingESJobHistoryStore(ManagedNode managedNode,
+    public CachingESJobHistoryStore(ManagedESClient managedNode,
                                     ObjectMapper objectMapper,
                                     Duration cacheTime)
     {

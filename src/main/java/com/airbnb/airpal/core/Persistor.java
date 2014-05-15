@@ -5,9 +5,6 @@ import com.facebook.presto.client.Column;
 
 import java.util.List;
 
-/**
- * Author: @andykram
- */
 public interface Persistor
 {
     public void onColumns(List<Column> columns);

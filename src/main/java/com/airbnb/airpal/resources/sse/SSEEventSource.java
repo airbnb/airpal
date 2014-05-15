@@ -8,9 +8,6 @@ import java.io.IOException;
 import static com.airbnb.airpal.resources.sse.SSEEventSourceServlet.JobUpdateToSSERelay;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-/**
- * Author: @andykram
- */
 @Slf4j
 public class SSEEventSource implements EventSource
 {

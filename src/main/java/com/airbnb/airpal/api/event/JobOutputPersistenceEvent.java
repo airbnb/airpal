@@ -5,9 +5,6 @@ import lombok.Data;
 
 import java.util.UUID;
 
-/**
- * Author: @andykram
- */
 @Data
 public class JobOutputPersistenceEvent {
     public enum JobPersistenceStatus {

@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Sets;
-import io.airlift.units.Duration;
 import lombok.Data;
 import lombok.experimental.Wither;
 import org.joda.time.DateTime;
@@ -20,9 +19,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-/**
- * Author: @andykram
- */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 public class Job {

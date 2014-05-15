@@ -7,9 +7,6 @@ import lombok.Data;
 import java.net.URI;
 import java.util.List;
 
-/**
- * Author: @andykram
- */
 @Data
 public class JobUpdateEvent implements JobEvent {
     @JsonProperty
