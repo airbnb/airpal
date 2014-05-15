@@ -1,28 +1,26 @@
 package com.airbnb.airpal.core;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.net.HostAndPort;
 import io.dropwizard.lifecycle.Managed;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.ImmutableSettings;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.node.Node;
-import org.elasticsearch.node.NodeBuilder;
+import org.elasticsearch.common.transport.InetSocketTransportAddress;
 
 import java.util.List;
 
 import static com.airbnb.airpal.AirpalConfiguration.ElasticSearchConfiguration;
 
-/**
- * Author: @andykram
- */
-public class ManagedNode implements Managed
+public class ManagedESClient
+        implements Managed
 {
     private final ObjectMapper mapper;
     private final ElasticSearchConfiguration configuration;
-    Node node;
+    private TransportClient client;
 
-    public ManagedNode(ElasticSearchConfiguration configuration,
-                       ObjectMapper mapper)
+    public ManagedESClient(ElasticSearchConfiguration configuration,
+            ObjectMapper mapper)
     {
         this.configuration = configuration;
         this.mapper = mapper;
@@ -30,11 +28,7 @@ public class ManagedNode implements Managed
 
     public Client client()
     {
-        if (node != null) {
-            return node.client();
-        } else {
-            return null;
-        }
+        return this.client;
     }
 
     @Override
@@ -43,24 +37,21 @@ public class ManagedNode implements Managed
         List<String> hosts = configuration.getHosts();
         final ImmutableSettings.Builder builder = ImmutableSettings
                 .builder()
-                .putArray("discovery.zen.ping.unicast.hosts", hosts.toArray(new String[hosts.size()]))
                 .put("cluster.name", configuration.getClusterName())
-                .put("discovery.zen.ping.multicast.enabled", configuration.getMulticastEnabled())
                 .put("processors", 3);
 
-        Settings settings = builder.build();
+        TransportClient client = new TransportClient(builder);
 
+        for (String host : hosts) {
+            HostAndPort hostAndPort = HostAndPort.fromString(host);
+            client.addTransportAddress(new InetSocketTransportAddress(hostAndPort.getHostText(), hostAndPort.getPort()));
+        }
 
-        this.node = NodeBuilder.nodeBuilder()
-                               .client(true)
-                               .settings(settings)
-                               .node();
+        this.client = client;
     }
 
     @Override
     public void stop() throws Exception {
-        if (node != null) {
-            node.close();
-        }
+        client.close();
     }
 }
