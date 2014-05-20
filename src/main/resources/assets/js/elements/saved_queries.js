@@ -3,7 +3,7 @@
 var React = require('react/addons'),
     _ = require('lodash'),
     cx = React.addons.classSet,
-    Highlight = require('highlight.js'),
+    Highlighter = require('./highlighter'),
     SavedQueries,
     SavedQuery;
 
@@ -17,25 +17,15 @@ SavedQuery = React.createClass({
     };
   },
   render: function() {
-    var highlighted = Highlight.highlight(
-          'sql',
-          this.props.query.queryWithPlaceholders.query).value;
-
     return (<div className="panel saved-query row-space-2">
       <div className="panel-header panel-header-small">
         {this.props.query.name}
       </div>
       <div className="panel-body">
         <p>{this.props.query.description}</p>
-        <pre
-          className="hljs sql"
-          onClick={this.handleQuerySelected}>
-          <code
-            className="hljs sql"
-            dangerouslySetInnerHTML={{
-              __html: highlighted,
-            }} />
-        </pre>
+        <Highlighter
+            query={this.props.query.queryWithPlaceholders.query}
+            onClick={this.handleQuerySelected} />
       </div>
       <div className="panel-footer">
         <button className="btn btn-small delete" onClick={this.handleDelete}>Delete</button>

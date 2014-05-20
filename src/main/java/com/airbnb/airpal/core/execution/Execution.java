@@ -190,12 +190,10 @@ public class Execution implements Callable<Job>
                     List<List<Object>> resultsData = ImmutableList.copyOf(results.getData());
                     persistor.onData(resultsData);
 
-                    /*
                     int remainingCapacity = maxRowsPreviewOutput - outputPreview.size();
                     if (remainingCapacity > 0) {
-                        outputPreview.addAll(resultsData.subList(0, Math.min(remainingCapacity, resultsData.size()) - 1));
+                        outputPreview.addAll(resultsData.subList(0, Math.min(remainingCapacity, resultsData.size())));
                     }
-                    */
                 }
 
                 rlUpdateJobInfo(tables, resultColumns, queryStats, jobState, queryError, outputPreview);
@@ -227,7 +225,7 @@ public class Execution implements Callable<Job>
             throw new ExecutionFailureException(job, null, null);
         }
 
-        System.out.println("Posting update event because finished");
+        log.info("Job finished successfully");
 
         return getJob();
     }

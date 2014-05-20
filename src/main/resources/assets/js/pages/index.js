@@ -8,6 +8,7 @@ var React = require('react/addons'),
     PreviewQuery = require('../elements/preview_query'),
     SavedQueries = require('../elements/saved_queries'),
     EventEmitter = require('events').EventEmitter,
+    SSEConnection = require('../core/sse_connection'),
     _ = require('lodash'),
     cx = React.addons.classSet,
     IndexPage;
@@ -33,7 +34,9 @@ var mediator = new EventEmitter();
 
 IndexPage = React.createClass({
   getDefaultProps: function() {
-    return {};
+    return {
+      notifyOfSSE: ['previewOutput', 'history'],
+    };
   },
   getInitialState: function() {
     return {
@@ -72,6 +75,25 @@ IndexPage = React.createClass({
         });
       }.bind(this),
     });
+
+    var sseConnection = new SSEConnection();
+    sseConnection.on('stateTransition', function(transition) {
+    }).on('message', function(data) {
+      var parsed, job;
+      try {
+        parsed = JSON.parse(data);
+        job = parsed.job;
+      } catch (e) {
+        console.log('Could not parse json data', e, e.message, 'data\n', data);
+      }
+
+      _.each(this.props.notifyOfSSE, function(ref) {
+        this.refs[ref].handleSSEEvent(parsed, job);
+      }.bind(this));
+    }.bind(this));
+    sseConnection.connect();
+
+    this.connection = sseConnection;
   },
   render: function() {
     var queryLines;
@@ -116,6 +138,7 @@ IndexPage = React.createClass({
           selected={this.state.selectedTab}
           onTabChange={this.handleTabChange}>
           <QueryHistory
+                  ref='history'
                   tabTitle='History'
                   onQuerySelected={this.handleQuerySelected}
                   onTableSelected={this.handleTableSelected}
@@ -127,6 +150,11 @@ IndexPage = React.createClass({
                   onQuerySelected={this.handleQuerySelected}
                   onQueryDeleted={this.handleSavedQueryDeleted}
                   onQueryRun={this.handleSavedQueryRun} />
+          <PreviewQuery
+                  ref='previewOutput'
+                  tabTitle='Output'
+                  previewData={[]}
+                  emitter={mediator} />
         </Tabs>
       </div>
 

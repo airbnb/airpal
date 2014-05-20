@@ -3,7 +3,6 @@
 var React = require('react'),
     _ = require('lodash'),
     Modal = require('../lib/o2/o2').Modal,
-    SSEConnection = require('../core/sse_connection'),
     EventEmitter = require('events').EventEmitter,
     Formatters = require('../slick_formatters'),
     models = require('../models'),
@@ -120,31 +119,12 @@ QueryHistory = React.createClass({
     };
   },
   componentWillMount: function() {
-    var sseConnection = new SSEConnection();
-    sseConnection.on('stateTransition', function(transition) {
-      // TODO(ak): Bring back stateTransition responses from app.js
-    }).on('message', function(data) {
-      var parsed, job;
-      try {
-        parsed = JSON.parse(data);
-        job = parsed.job;
-      } catch (e) {
-        console.log('Could not parse json data', e, e.message, 'data\n', data);
-      }
-
-      //this.props.emitter.emit('query:update', parsed);
-
-      this.historyData.update(job);
-    }.bind(this));
-    sseConnection.connect();
-
-    this.connection = sseConnection;
   },
   render: function() {
     var that = this,
         columns;
 
-    return (<div className="hot-container">
+    return (<div>
       <div ref="historyGrid" id="history-grid" />
     </div>);
   },
@@ -214,6 +194,9 @@ QueryHistory = React.createClass({
     } else if (jobOutputIsHiveTable(job)) {
       this.props.onTableSelected($target.text());
     }
+  },
+  handleSSEEvent: function(message, job) {
+    this.historyData.update(job);
   },
 });
 

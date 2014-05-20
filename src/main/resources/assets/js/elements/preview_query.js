@@ -4,6 +4,8 @@ var React = require('react'),
     _ = require('lodash'),
     ScrollableTable = require('./scrollable_table'),
     EventEmitter = require('events').EventEmitter,
+    GridOpts = require('../util').GridOpts,
+    Highlighter = require('./highlighter'),
     PreviewQuery;
 
 function rowUuid(row, rowIdx) {
@@ -28,49 +30,65 @@ PreviewQuery = React.createClass({
       !((this.state.previewData.job.uuid === nextState.previewData.job.uuid) &&
         (this.state.previewData.sample.length === nextState.previewData.sample.length));
   },
-  componentWillMount: function() {
-    //this.props.emitter.on('query:update', function(data) {
-      //console.log('[PreviewQuery#query:update]', data, this, arguments);
-      //if (data && data.job && (data.job.uuid === this.props.activeQuery)) {
-        //var newData = data;
-        //if (_.isEmpty(data.sample)) {
-          //newData = _.extend({}, data, {
-            //sample: !!this.state.previewData ? this.state.previewData.sample : [],
-          //});
-        //}
-        //this.setState({
-          //previewData: newData,
-        //});
-      //}
-    //}.bind(this));
+  componentDidMount: function() {
+    this.grid = new Slick.Grid(this.refs.grid.getDOMNode(), [], [], GridOpts({fullWidthRows: true}));
   },
   render: function() {
-    var headers, rows, data;
+    var headers, rows, data, isEmpty, queryToPreview;
 
-    if (_.isEmpty(this.state.previewData)) {
-      return (<h2>No active query</h2>);
+    isEmpty = _.isEmpty(this.state.previewData);
+
+    if (this.state && this.state.previewData && this.state.previewData.job && this.state.previewData.job.query) {
+      queryToPreview = this.state.previewData.job.query;
     }
 
-    data = this.state.previewData;
+    console.log('RENDER CALLED', 'isEmpty', isEmpty);
 
-    headers = _.map(data.job.columns, function(col) {
-      return {
-        className: 'preview-query-' + col.name,
-        label: col.name,
-        width: 200,
-        render: function(row) {
-          return row[data.job.columns.indexOf(col)];
-        }.bind(this),
-      };
-    }.bind(this));
-
-    return (<div className="scroll-table-container" id="preview-grid">
-      <ScrollableTable
-        uuid={rowUuid}
-        columns={headers}
-        noScroll={true}
-        data={data.sample} />
+    return (<div>
+      <h2 className={isEmpty ? '' : 'hide'}>No active query</h2>
+      <div className={isEmpty ? 'hide' : ''}>
+        <Highlighter query={queryToPreview} />
+      </div>
+      <div className={isEmpty ? 'empty' : ''}>
+        <div ref="grid" id="preview-grid" />
+      </div>
     </div>);
+  },
+  handleSSEEvent: function(message) {
+    console.log('preview saw message', _.clone(message));
+    console.log('sample?', message.sample);
+
+    var dataObjs, cols, columns;
+
+    if (!_.isEmpty(message) && !_.isEmpty(message.sample) && !!this.grid) {
+      console.log('updating state');
+      this.setState({
+        previewData: message,
+      });
+
+      columns = message.job.columns;
+
+      dataObjs = _.map(message.sample, function(row) {
+        return _.reduce(row, function(memo, value, i) {
+          memo[columns[i].name] = value;
+          return memo;
+        }, {});
+      });
+
+      cols = _.map(columns, function(col, i) {
+        return {
+          name: col.name,
+          field: col.name,
+          id: i,
+          minWidth: 50,
+          maxWidth: 140
+        };
+      });
+
+      this.grid.setColumns(cols);
+      this.grid.setData(dataObjs);
+      this.grid.invalidate();
+    }
   },
 });
 
