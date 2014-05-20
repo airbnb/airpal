@@ -75,7 +75,9 @@ PartitionSelector = React.createClass({
       this.refs.selectize.disable();
       return callback();
     }
-    var url = '/api/table/hive/' + this.state.activeTable + '/partitions';
+    var schema = Fqn.schema(this.state.activeTable),
+        table = Fqn.table(this.state.activeTable),
+        url = '/api/table/' + schema + '/' + table + '/partitions';
 
     $.ajax({
       url: url,

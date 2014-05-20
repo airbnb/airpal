@@ -46,10 +46,10 @@ public class TablesResource
 
     @Inject
     public TablesResource(final SchemaCache schemaCache,
-                          final ColumnCache columnCache,
-                          final PreviewTableCache previewTableCache,
-                          final UsageStore usageStore,
-                          final HiveTableUpdatedCache updatedCache)
+            final ColumnCache columnCache,
+            final PreviewTableCache previewTableCache,
+            final UsageStore usageStore,
+            final HiveTableUpdatedCache updatedCache)
     {
         this.schemaCache = schemaCache;
         this.columnCache = columnCache;
@@ -86,14 +86,17 @@ public class TablesResource
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{schema}/{tableName}/columns")
-    public Response getTableColumns(@PathParam("schema") String schema,
-            @PathParam("tableName") String tableName) throws ExecutionException
+    public Response getTableColumns(
+            @PathParam("schema") String schema,
+            @PathParam("tableName") String tableName)
+            throws ExecutionException
     {
         Subject subject = SecurityUtils.getSubject();
 
         if (isAuthorizedRead(subject, "hive", schema, tableName)) {
             return Response.ok(columnCache.getColumns(schema, tableName)).build();
-        } else {
+        }
+        else {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
     }
@@ -101,14 +104,17 @@ public class TablesResource
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{schema}/{tableName}/partitions")
-    public Response getTablePartitions(@PathParam("schema") String schema,
-                                       @PathParam("tableName") String tableName) throws ExecutionException
+    public Response getTablePartitions(
+            @PathParam("schema") String schema,
+            @PathParam("tableName") String tableName)
+            throws ExecutionException
     {
         Subject subject = SecurityUtils.getSubject();
 
         if (isAuthorizedRead(subject, "hive", schema, tableName)) {
             return Response.ok(getPartitionsWithMetaData(new PartitionedTable("hive", schema, tableName))).build();
-        } else {
+        }
+        else {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
     }
@@ -117,13 +123,15 @@ public class TablesResource
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{schema}/{tableName}/preview")
     public Response getTablePreview(@PathParam("schema") String schema,
-                                    @PathParam("tableName") String tableName) throws ExecutionException
+            @PathParam("tableName") String tableName)
+            throws ExecutionException
     {
         Subject subject = SecurityUtils.getSubject();
 
         if (isAuthorizedRead(subject, "hive", schema, tableName)) {
             return Response.ok(previewTableCache.getPreview(schema, tableName)).build();
-        } else {
+        }
+        else {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
     }
@@ -149,37 +157,37 @@ public class TablesResource
         private final DateTime lastUpdated;
 
         public static PartitionedTableWithMetaData fromTable(final Table table,
-                                                             final long usages,
-                                                             final TimeUnit windowUnit,
-                                                             final int windowCount,
-                                                             final DateTime lastUpdated)
+                final long usages,
+                final TimeUnit windowUnit,
+                final int windowCount,
+                final DateTime lastUpdated)
         {
             return fromPartionedTable(PartitionedTable.fromTable(table),
-                                      usages,
-                                      windowUnit,
-                                      windowCount,
-                                      lastUpdated);
+                    usages,
+                    windowUnit,
+                    windowCount,
+                    lastUpdated);
         }
 
         public static PartitionedTableWithMetaData fromPartionedTable(final PartitionedTable table,
-                                                                      final long usages,
-                                                                      final TimeUnit windowUnit,
-                                                                      final int windowCount,
-                                                                      final DateTime lastUpdated)
+                final long usages,
+                final TimeUnit windowUnit,
+                final int windowCount,
+                final DateTime lastUpdated)
         {
             return new PartitionedTableWithMetaData(table.getSchema(),
-                                                    table.getTable(),
-                                                    table.getPartitionName(),
-                                                    format("%s.%s", table.getSchema(), table.getTable()),
-                                                    usages,
-                                                    windowCount,
-                                                    windowUnit,
-                                                    lastUpdated);
+                    table.getTable(),
+                    table.getPartitionName(),
+                    format("%s.%s", table.getSchema(), table.getTable()),
+                    usages,
+                    windowCount,
+                    windowUnit,
+                    lastUpdated);
         }
     }
 
     private List<PartitionedTableWithMetaData> createTablesWithMetaData(final Map<Table, Long> tableUsageMap,
-                                                                        final Map<PartitionedTable, DateTime> tableUpdateMap)
+            final Map<PartitionedTable, DateTime> tableUpdateMap)
     {
         final ImmutableList.Builder<PartitionedTableWithMetaData> builder = ImmutableList.builder();
         final Duration usageWindow = usageStore.window();
@@ -189,16 +197,17 @@ public class TablesResource
             final PartitionedTable partitionedTable = PartitionedTable.fromTable(table);
             DateTime updatedAt = tableUpdateMap.get(partitionedTable);
             builder.add(PartitionedTableWithMetaData.fromTable(table,
-                                                               entry.getValue(),
-                                                               usageWindow.getUnit(),
-                                                               (int) usageWindow.getQuantity(),
-                                                               updatedAt));
+                    entry.getValue(),
+                    usageWindow.getUnit(),
+                    (int) usageWindow.getQuantity(),
+                    updatedAt));
         }
 
         return builder.build();
     }
 
-    private List<HivePartitionItem> getPartitionsWithMetaData(PartitionedTable table) throws ExecutionException
+    private List<HivePartitionItem> getPartitionsWithMetaData(PartitionedTable table)
+            throws ExecutionException
     {
         List<HivePartition> partitions = columnCache.getPartitions(table.getSchema(), table.getTable());
         ImmutableList.Builder<HivePartitionItem> partitionItems = ImmutableList.builder();
