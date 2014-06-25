@@ -122,6 +122,9 @@ public class S3CsvPersistentOutput implements PersistentJobOutput
                     "Could not generate presigned URL for CSV",
                     e);
         }
+        finally {
+            builder.delete();
+        }
     }
 
     private String getOutputBucket() {

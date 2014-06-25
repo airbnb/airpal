@@ -71,4 +71,10 @@ public class CsvOutputBuilder implements JobOutputBuilder
             return null;
         }
     }
+
+    @Override
+    public void delete()
+    {
+        outputFile.delete();
+    }
 }
