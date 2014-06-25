@@ -12,4 +12,6 @@ public interface JobOutputBuilder
     public void addColumns(List<Column> columns);
 
     public Iterable<File> build();
+
+    public void delete();
 }
