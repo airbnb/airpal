@@ -218,7 +218,7 @@ public class AirpalModule extends AbstractModule
     @Singleton
     @Provides
     public SchemaCache provideSchemaCache(QueryRunnerFactory queryRunnerFactory,
-                                          @Named("completer") ExecutorService executorService)
+                                          @Named("presto") ExecutorService executorService)
     {
         final SchemaCache cache = new SchemaCache(queryRunnerFactory, executorService);
         cache.populateCache(config.getPrestoCatalog());
@@ -229,7 +229,7 @@ public class AirpalModule extends AbstractModule
     @Singleton
     @Provides
     public ColumnCache provideColumnCache(QueryRunnerFactory queryRunnerFactory,
-                                          @Named("completer") ExecutorService executorService)
+                                          @Named("presto") ExecutorService executorService)
     {
         return new ColumnCache(queryRunnerFactory,
                                new Duration(5, TimeUnit.MINUTES),
@@ -240,7 +240,7 @@ public class AirpalModule extends AbstractModule
     @Singleton
     @Provides
     public PreviewTableCache providePreviewTableCache(QueryRunnerFactory queryRunnerFactory,
-                                                      @Named("completer") ExecutorService executorService)
+                                                      @Named("presto") ExecutorService executorService)
     {
         return new PreviewTableCache(queryRunnerFactory,
                                      new Duration(20, TimeUnit.MINUTES),
@@ -257,11 +257,11 @@ public class AirpalModule extends AbstractModule
     }
 
     @Singleton
-    @Named("completer")
+    @Named("presto")
     @Provides
     public ExecutorService provideCompleterExecutorService()
     {
-        return Executors.newCachedThreadPool(SchemaCache.daemonThreadsNamed("completer-%d"));
+        return Executors.newCachedThreadPool(SchemaCache.daemonThreadsNamed("presto-%d"));
     }
 
     @Singleton
@@ -312,7 +312,7 @@ public class AirpalModule extends AbstractModule
 
     @Singleton
     @Provides
-    public HiveTableUpdatedCache provideHiveTableUpdatedCache(@Named("completer") ExecutorService executorService)
+    public HiveTableUpdatedCache provideHiveTableUpdatedCache(@Named("presto") ExecutorService executorService)
     {
         AirpalConfiguration.HiveMetastoreConfiguration metastoreConfiguration = config.getMetaStoreConfiguration();
 
