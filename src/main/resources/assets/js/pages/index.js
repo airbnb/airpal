@@ -10,6 +10,7 @@ var React = require('react/addons'),
     EventEmitter = require('events').EventEmitter,
     _ = require('lodash'),
     cx = React.addons.classSet,
+    keymaster = require('keymaster'),
     IndexPage;
 
 function getIn(obj, nestedKey, defaultVal) {
@@ -72,6 +73,13 @@ IndexPage = React.createClass({
         });
       }.bind(this),
     });
+
+    keymaster('backspace', this.handleBackspace);
+    keymaster('⌘+r, ctrl+r', this.handleRun);
+  },
+  componentWillUnmount: function() {
+    keymaster.unbind('backspace', this.handleBackspace);
+    keymaster.unbind('⌘-r, ctrl-r', this.handleRun);
   },
   render: function() {
     var queryLines;
@@ -237,6 +245,16 @@ IndexPage = React.createClass({
         return q.uuid === uuid;
       }),
     });
+  },
+  handleBackspace: function(event, handler) {
+    if (handler.scope === 'all') {
+      event.preventDefault();
+    }
+  },
+  handleRun: function(event, handler) {
+    console.log('handleRun', event, handler);
+    event.preventDefault();
+    this.refs.editor.handleRunClick();
   },
 });
 

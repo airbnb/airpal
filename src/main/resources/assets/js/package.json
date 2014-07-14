@@ -12,7 +12,8 @@
     "moment": "2.4.0",
     "highlight.js": "8.0.0",
     "react": "0.10.0",
-    "cortexjs": "0.4.5"
+    "cortexjs": "0.4.5",
+    "keymaster": "1.6.2"
   },
   "devDependencies": {
     "browserify": "3.41.0",
