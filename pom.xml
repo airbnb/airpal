@@ -41,7 +41,7 @@
         <lombok.version>1.12.2</lombok.version>
         <mysql-connector-java.version>5.1.27</mysql-connector-java.version>
         <opencsv.version>2.3</opencsv.version>
-        <presto.version>0.66-SNAPSHOT</presto.version>
+        <presto.version>0.74</presto.version>
         <shiro.version>1.2.3</shiro.version>
         <slf4j.version>1.7.5</slf4j.version>
 
