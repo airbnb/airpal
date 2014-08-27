@@ -5,6 +5,7 @@ import com.airbnb.airpal.core.store.UsageStore;
 import com.airbnb.airpal.presto.Table;
 import com.google.common.collect.ImmutableMap;
 import io.dropwizard.util.Duration;
+import org.elasticsearch.ElasticSearchException;
 import org.elasticsearch.action.count.CountResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
@@ -89,19 +90,24 @@ public class ESUsageStore
             );
         }
 
-        final SearchResponse response = search.execute().actionGet();
         ImmutableMap.Builder<Table, Long> builder = ImmutableMap.builder();
 
-        if (response.getFacets() != null) {
-            Map<String, Facet> facetsMap = response.getFacets().facetsAsMap();
+        try {
+            SearchResponse response = search.execute().actionGet(8_000);
 
-            for (Table table : tables) {
-                TermsFacet facet = (TermsFacet) facetsMap.get(tableToFacet(table));
+            if (response.getFacets() != null) {
+                Map<String, Facet> facetsMap = response.getFacets().facetsAsMap();
 
-                if (facet != null) {
-                    builder.put(table, facet.getTotalCount());
+                for (Table table : tables) {
+                    TermsFacet facet = (TermsFacet) facetsMap.get(tableToFacet(table));
+
+                    if (facet != null) {
+                        builder.put(table, facet.getTotalCount());
+                    }
                 }
             }
+        } catch (ElasticSearchException e) {
+            e.printStackTrace();
         }
 
         return builder.build();

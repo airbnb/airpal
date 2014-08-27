@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import io.dropwizard.util.Duration;
 import lombok.Data;
+import lombok.NonNull;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.joda.time.DateTime;
@@ -62,8 +63,7 @@ public class TablesResource
     @Produces(MediaType.APPLICATION_JSON)
     public Response getTableUpdates(@DefaultValue("hive") @QueryParam("catalog") String catalog)
     {
-        Subject subject = SecurityUtils.getSubject();
-
+        final Subject subject = SecurityUtils.getSubject();
         final Map<String, List<String>> schemaMap = schemaCache.getSchemaMap(catalog);
         final ImmutableList.Builder<Table> builder = ImmutableList.builder();
 
@@ -80,7 +80,7 @@ public class TablesResource
         final Map<Table, Long> allUsages = usageStore.getUsages(tables);
         final Map<PartitionedTable, DateTime> updateMap = updateCache.getAllPresent(tables);
 
-        return Response.ok(createTablesWithMetaData(allUsages, updateMap)).build();
+        return Response.ok(createTablesWithMetaData(tables, allUsages, updateMap)).build();
     }
 
     @GET
@@ -186,21 +186,30 @@ public class TablesResource
         }
     }
 
-    private List<PartitionedTableWithMetaData> createTablesWithMetaData(final Map<Table, Long> tableUsageMap,
-            final Map<PartitionedTable, DateTime> tableUpdateMap)
+    private List<PartitionedTableWithMetaData> createTablesWithMetaData(
+            @NonNull final List<Table> tables,
+            @NonNull final Map<Table, Long> tableUsageMap,
+            @NonNull final Map<PartitionedTable, DateTime> tableUpdateMap)
     {
         final ImmutableList.Builder<PartitionedTableWithMetaData> builder = ImmutableList.builder();
         final Duration usageWindow = usageStore.window();
 
-        for (Map.Entry<Table, Long> entry : tableUsageMap.entrySet()) {
-            final Table table = entry.getKey();
-            final PartitionedTable partitionedTable = PartitionedTable.fromTable(table);
+        for (Table table : tables) {
+            PartitionedTable partitionedTable = PartitionedTable.fromTable(table);
             DateTime updatedAt = tableUpdateMap.get(partitionedTable);
-            builder.add(PartitionedTableWithMetaData.fromTable(table,
-                    entry.getValue(),
+
+            long lastUsage = 0;
+            if (tableUsageMap.containsKey(partitionedTable)) {
+                lastUsage = tableUsageMap.get(partitionedTable);
+            }
+
+            builder.add(PartitionedTableWithMetaData.fromTable(
+                    table,
+                    lastUsage,
                     usageWindow.getUnit(),
                     (int) usageWindow.getQuantity(),
-                    updatedAt));
+                    updatedAt
+            ));
         }
 
         return builder.build();
