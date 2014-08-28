@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Objects;
+import com.google.common.net.MediaType;
 import io.airlift.http.client.AsyncHttpClient;
 import io.airlift.http.client.FullJsonResponseHandler;
 import io.airlift.http.client.HttpClientConfig;
@@ -21,6 +22,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.net.HttpHeaders.ACCEPT;
 import static com.google.common.net.HttpHeaders.USER_AGENT;
 import static io.airlift.http.client.FullJsonResponseHandler.createFullJsonResponseHandler;
 import static io.airlift.http.client.Request.Builder.prepareGet;
@@ -47,6 +49,7 @@ public class QueryInfoClient
 
         Request request = prepareGet()
                 .setHeader(USER_AGENT, USER_AGENT_VALUE)
+                .setHeader(ACCEPT, MediaType.JSON_UTF_8.toString())
                 .setUri(infoUri)
                 .build();
 

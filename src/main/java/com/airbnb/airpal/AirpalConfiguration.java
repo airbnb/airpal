@@ -65,7 +65,7 @@ public class AirpalConfiguration extends Configuration
     @Setter
     @JsonProperty
     @NotNull
-    private Duration usageWindow = Duration.hours(24);
+    private Duration usageWindow = Duration.hours(6);
 
     @Getter
     @Setter

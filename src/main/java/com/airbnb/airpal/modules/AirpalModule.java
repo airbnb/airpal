@@ -7,6 +7,7 @@ import com.airbnb.airpal.core.PersistentJobOutputFactory;
 import com.airbnb.airpal.core.execution.ExecutionClient;
 import com.airbnb.airpal.core.health.PrestoHealthCheck;
 import com.airbnb.airpal.core.hive.HiveTableUpdatedCache;
+import com.airbnb.airpal.core.store.CachingUsageStore;
 import com.airbnb.airpal.core.store.JobHistoryStore;
 import com.airbnb.airpal.core.store.QueryStore;
 import com.airbnb.airpal.core.store.UsageStore;
@@ -297,9 +298,12 @@ public class AirpalModule extends AbstractModule
     @Provides
     public UsageStore provideUsageCache(ManagedESClient managedNode)
     {
-        return new CachingESUsageStore(managedNode,
-                                       config.getUsageWindow(),
-                                       io.dropwizard.util.Duration.minutes(2));
+        UsageStore delegate =  new CachingESUsageStore(
+                managedNode,
+                config.getUsageWindow(),
+                io.dropwizard.util.Duration.minutes(2));
+
+        return new CachingUsageStore(delegate, io.dropwizard.util.Duration.minutes(6));
     }
 
     @Singleton
