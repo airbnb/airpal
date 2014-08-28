@@ -79,7 +79,8 @@ public class ESUsageStore
     @Override
     public Map<Table, Long> getUsages(Iterable<Table> tables)
     {
-        SearchRequestBuilder search = client().prepareSearch("jobs")
+        SearchRequestBuilder search = client()
+                .prepareSearch("jobs")
                 .setQuery(mkRecentUsageQuery());
 
         for (Table table : tables) {

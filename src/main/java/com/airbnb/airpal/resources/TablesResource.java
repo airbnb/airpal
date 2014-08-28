@@ -199,8 +199,8 @@ public class TablesResource
             DateTime updatedAt = tableUpdateMap.get(partitionedTable);
 
             long lastUsage = 0;
-            if (tableUsageMap.containsKey(partitionedTable)) {
-                lastUsage = tableUsageMap.get(partitionedTable);
+            if (tableUsageMap.containsKey(table)) {
+                lastUsage = tableUsageMap.get(table);
             }
 
             builder.add(PartitionedTableWithMetaData.fromTable(

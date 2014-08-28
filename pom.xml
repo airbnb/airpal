@@ -33,7 +33,7 @@
         <dropwizard.version>0.7.0</dropwizard.version>
         <dropwizard-common.version>1.0.1</dropwizard-common.version>
         <elasticsearch.version>0.90.5</elasticsearch.version>
-        <guava.version>15.0</guava.version>
+        <guava.version>18.0</guava.version>
         <jackson.version>2.3.2</jackson.version>
         <jdo-api.version>2.3-ec</jdo-api.version>
         <jetty.version>9.0.7.v20131107</jetty.version>
