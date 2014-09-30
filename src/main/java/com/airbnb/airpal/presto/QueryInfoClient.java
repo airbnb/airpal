@@ -16,6 +16,7 @@ import io.airlift.http.client.Request;
 import io.airlift.json.JsonCodec;
 import io.airlift.units.Duration;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
 import java.util.Set;
@@ -28,6 +29,7 @@ import static io.airlift.http.client.FullJsonResponseHandler.createFullJsonRespo
 import static io.airlift.http.client.Request.Builder.prepareGet;
 import static io.airlift.json.JsonCodec.jsonCodec;
 
+@Slf4j
 public class QueryInfoClient
 {
     private static final String USER_AGENT_VALUE = QueryInfoClient.class.getSimpleName() +
@@ -65,6 +67,7 @@ public class QueryInfoClient
             }
         }
         catch (RuntimeException e) {
+            log.error("Caught error in QueryInfoClient load", e);
         }
 
         return null;

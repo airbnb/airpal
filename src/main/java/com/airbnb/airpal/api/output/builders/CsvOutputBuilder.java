@@ -5,6 +5,7 @@ import com.facebook.presto.client.Column;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 public class CsvOutputBuilder implements JobOutputBuilder
 {
     private static final String FILE_SUFFIX = ".csv";
@@ -75,6 +77,9 @@ public class CsvOutputBuilder implements JobOutputBuilder
     @Override
     public void delete()
     {
-        outputFile.delete();
+        log.info("Deleting outputFile {}", outputFile);
+        if (!outputFile.delete()) {
+            log.error("Failed to delete outputFile {}", outputFile);
+        }
     }
 }

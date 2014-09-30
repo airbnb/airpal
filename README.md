@@ -30,7 +30,6 @@ To run:
 ```
 java -server \
      -Ddw.prestoCoordinator=http://presto-coordinator-url.com \
-     -Ddw.discoveryServer=http://127.0.0.1:3341 \
      -Ddw.s3AccessKey=$ACCESS_KEY \
      -Ddw.s3SecretKey=$SECRET_KEY \
      -Ddw.s3Bucket=airpal \
@@ -40,5 +39,3 @@ java -server \
      -Duser.timezone=UTC \
      -jar target/airpal-1.0.2-SNAPSHOT.jar server reference.yml 
 ```
-
-**Note:** I originally tried to just feed the server a reference to the discovery server, so that if the coordinator came and went, the UI would know which server to contact. Apparently, I failed to entirely grasp how to properly set it up, so I usually just use `dw.prestoCoordinator`. `dw.discoveryServer` should either be fixed or removed.

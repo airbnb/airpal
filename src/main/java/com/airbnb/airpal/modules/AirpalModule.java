@@ -41,21 +41,10 @@ import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
-import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
 import io.airlift.configuration.ConfigurationFactory;
-import io.airlift.discovery.client.CachingServiceSelectorFactory;
-import io.airlift.discovery.client.DiscoveryLookupClient;
-import io.airlift.discovery.client.ForDiscoveryClient;
-import io.airlift.discovery.client.HttpDiscoveryLookupClient;
-import io.airlift.discovery.client.HttpServiceSelector;
-import io.airlift.discovery.client.ServiceAnnouncement;
-import io.airlift.discovery.client.ServiceDescriptorsRepresentation;
-import io.airlift.discovery.client.ServiceSelectorFactory;
-import io.airlift.discovery.client.ServiceType;
 import io.airlift.http.client.AsyncHttpClient;
 import io.airlift.http.client.HttpClientConfig;
-import io.airlift.node.NodeInfo;
 import io.airlift.units.Duration;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.web.env.EnvironmentLoaderListener;
@@ -65,27 +54,20 @@ import javax.inject.Named;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static com.airbnb.airpal.presto.QueryRunner.QueryRunnerFactory;
-import static io.airlift.discovery.client.DiscoveryBinder.discoveryBinder;
-import static io.airlift.json.JsonCodec.jsonCodec;
 
 @Slf4j
 public class AirpalModule extends AbstractModule
 {
-    public static final String PRESTO_COORDINATOR = "presto-coordinator";
     private final AirpalConfiguration config;
-    private final Random clientSessionRandomizer;
 
     public AirpalModule(AirpalConfiguration config)
     {
         this.config = config;
-        this.clientSessionRandomizer = new Random();
     }
 
     @Override
@@ -110,12 +92,6 @@ public class AirpalModule extends AbstractModule
 
         bind(JobHistoryStore.class).to(ESJobHistoryStore.class).in(Scopes.SINGLETON);
         bind(QueryStore.class).to(ESQueryStore.class).in(Scopes.SINGLETON);
-
-        Multibinder.newSetBinder(binder(), ServiceAnnouncement.class);
-
-        binder().bind(ServiceSelectorFactory.class).to(CachingServiceSelectorFactory.class).in(Scopes.SINGLETON);
-
-        discoveryBinder(binder()).bindHttpSelector(PRESTO_COORDINATOR);
     }
 
     @Singleton
@@ -123,31 +99,6 @@ public class AirpalModule extends AbstractModule
     public ConfigurationFactory provideConfigurationFactory()
     {
         return new ConfigurationFactory(Collections.<String, String>emptyMap());
-    }
-
-    @Singleton
-    @ForDiscoveryClient
-    @Provides
-    public ScheduledExecutorService provideDiscoveryClientScheduledExecutorService()
-    {
-        return Executors.newScheduledThreadPool(2);
-    }
-
-    @Named("discovery-uri")
-    @Provides
-    public URI provideDiscoveryURI()
-    {
-        return config.getDiscoveryServer();
-    }
-
-    @Singleton
-    @Named("discovery-http-client")
-    @Provides
-    public AsyncHttpClient provideDiscoveryHttpClient()
-    {
-        final HttpClientConfig httpClientConfig = new HttpClientConfig().setConnectTimeout(new Duration(10, TimeUnit.SECONDS));
-
-        return new OldJettyHttpClient(httpClientConfig);
     }
 
     @Singleton
@@ -160,35 +111,11 @@ public class AirpalModule extends AbstractModule
         return new OldJettyHttpClient(httpClientConfig);
     }
 
-    @Singleton
-    @Provides
-    public DiscoveryLookupClient provideDiscoveryLookupClient(@Named("discovery-uri") Provider<URI> uriProvider,
-                                                              @Named("discovery-http-client") AsyncHttpClient httpClient)
-    {
-        return new HttpDiscoveryLookupClient(uriProvider,
-                                             new NodeInfo("production"),
-                                             jsonCodec(ServiceDescriptorsRepresentation.class),
-                                             httpClient);
-    }
-
     @Named("coordinator-uri")
     @Provides
-    public URI providePrestoCoordinatorURI(@ServiceType(PRESTO_COORDINATOR) HttpServiceSelector serviceSelector)
+    public URI providePrestoCoordinatorURI()
     {
-        URI nextService = null;
-
-        if (config.getPrestoCoordinator() != null) {
-            nextService = config.getPrestoCoordinator();
-        } else {
-            List<URI> httpServices = serviceSelector.selectHttpService();
-            if (httpServices.isEmpty()) {
-                log.error("No Presto Coordinator available to service selector! {}", httpServices);
-            } else {
-                nextService = httpServices.get(clientSessionRandomizer.nextInt(httpServices.size()));
-            }
-        }
-
-        return nextService;
+        return config.getPrestoCoordinator();
     }
 
     @Provides

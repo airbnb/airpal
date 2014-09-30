@@ -29,12 +29,6 @@ public class AirpalConfiguration extends Configuration
     @Setter
     @JsonProperty
     @NotNull
-    private URI discoveryServer;
-
-    @Getter
-    @Setter
-    @JsonProperty
-    @NotNull
     private String prestoUser = "andykram";
 
     @Getter
