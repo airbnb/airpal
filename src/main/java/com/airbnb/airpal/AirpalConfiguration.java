@@ -6,12 +6,14 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.airlift.units.DataSize;
 import io.dropwizard.Configuration;
+import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.util.Duration;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import java.net.URI;
@@ -106,6 +108,13 @@ public class AirpalConfiguration extends Configuration
     @Getter
     @Setter
     private DataSize bufferSize = DataSize.valueOf("512kB");
+
+    @Getter
+    @Setter
+    @Valid
+    @JsonProperty
+    @NotNull
+    private DataSourceFactory dataSourceFactory = new DataSourceFactory();
 
     public static class ElasticSearchConfiguration
     {

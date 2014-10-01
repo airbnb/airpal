@@ -21,8 +21,8 @@ import java.util.UUID;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
-public class Job {
-
+public class Job
+{
     @JsonProperty
     private final String user;
 

@@ -19,6 +19,9 @@ import com.google.inject.Injector;
 import com.google.inject.Stage;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
+import io.dropwizard.db.DataSourceFactory;
+import io.dropwizard.flyway.FlywayBundle;
+import io.dropwizard.flyway.FlywayFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
@@ -41,9 +44,23 @@ public class AirpalApplication extends Application<AirpalConfiguration>
     public void initialize(Bootstrap<AirpalConfiguration> bootstrap) {
         final AssetsBundle assetBundle = new AssetsBundle("/assets", "/app", "index.html");
         final ViewBundle viewBundle = new ViewBundle();
+        final FlywayBundle<AirpalConfiguration> flywayBundle = new FlywayBundle<AirpalConfiguration>() {
+            @Override
+            public DataSourceFactory getDataSourceFactory(AirpalConfiguration airpalConfiguration)
+            {
+                return airpalConfiguration.getDataSourceFactory();
+            }
+
+            @Override
+            public FlywayFactory getFlywayFactory(AirpalConfiguration configuration)
+            {
+                return super.getFlywayFactory(configuration);
+            }
+        };
 
         bootstrap.addBundle(assetBundle);
         bootstrap.addBundle(viewBundle);
+        bootstrap.addBundle(flywayBundle);
     }
 
     @Override

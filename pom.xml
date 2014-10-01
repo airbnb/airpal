@@ -29,6 +29,7 @@
 
         <aws-java-sdk.version>1.6.8</aws-java-sdk.version>
         <dropwizard.version>0.7.1</dropwizard.version>
+        <dropwizard-flyway.version>0.7.0-1</dropwizard-flyway.version>
         <elasticsearch.version>0.90.5</elasticsearch.version>
         <guava.version>18.0</guava.version>
         <jackson.version>2.3.2</jackson.version>
@@ -115,6 +116,12 @@
             <version>${dropwizard.version}</version>
         </dependency>
         <!--// Server Dependencies -->
+
+        <dependency>
+            <groupId>io.dropwizard.modules</groupId>
+            <artifactId>dropwizard-flyway</artifactId>
+            <version>${dropwizard-flyway.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

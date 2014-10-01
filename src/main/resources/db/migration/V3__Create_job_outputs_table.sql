@@ -1,0 +1,8 @@
+CREATE TABLE job_outputs (
+  id INT NOT NULL AUTO_INCREMENT,
+  type VARCHAR(256) NOT NULL,
+  description VARCHAR(256) NOT NULL,
+  location VARCHAR(512) NOT NULL,
+
+  PRIMARY KEY (id)
+);

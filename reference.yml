@@ -41,3 +41,5 @@ shiroConfiguration:
 airpalHosts:
   - http://127.0.0.1:8082
 
+dataSourceFactory:
+  driverClass: com.mysql.jdbc.Driver
