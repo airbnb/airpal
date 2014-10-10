@@ -256,7 +256,7 @@
                         <configuration>
                             <target>
                                 <exec executable="${npm}"
-                                      dir="${project.basedir}/src/main/resources/assets/js/"
+                                      dir="${project.basedir}/src/main/resources/assets/"
                                       failonerror="true">
                                     <env key="node" path="${node}" />
                                     <arg value="install" />
@@ -272,7 +272,7 @@
                         <phase>generate-resources</phase>
                         <configuration>
                             <target>
-                                <exec executable="${project.basedir}/src/main/resources/assets/js/node_modules/browserify/bin/cmd.js"
+                                <exec executable="${project.basedir}/src/main/resources/assets/node_modules/browserify/bin/cmd.js"
                                       dir="${project.basedir}/src/main/resources/assets/js/"
                                       failonerror="true">
                                     <env key="node" path="${node}" />
