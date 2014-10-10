@@ -1,4 +1,4 @@
-var gulp, gutil, source, watchify, browserify,
+var gulp, gutil, source, watchify, browserify, bundler,
     reactify, paths, uglify, buffer, livereload;
 
 // Require all file dependencies
@@ -18,12 +18,23 @@ paths = {
 
 // Create a "browserify" task
 gulp.task('browserify', function() {
-  watchify(browserify('./js/app.js', {
+
+  // Define the browserify bundler
+  bundler = browserify('./js/app.js', {
     transform: [reactify],
     cache: {},
     packageCache: {},
     fullPaths: false
-  }))
+  });
+
+  // Define or the bundler should use the watchify command or
+  // just use browserify
+  if( typeof gutil.env.watchify === 'undefined' || !gutil.env.watchify ) {
+    bundler = watchify(bundler);
+  }
+
+  // Configure the actions on the bundler
+  bundler
     .bundle()
     .on('error', gutil.log.bind(gutil, 'Browserify Error'))
     .pipe(source('main.js'))
