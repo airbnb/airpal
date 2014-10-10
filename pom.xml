@@ -278,8 +278,6 @@
                                       failonerror="true">
                                     <env key="node" path="${node}" />
                                     <arg value="browserify" />
-                                    <arg value="--watchify" />
-                                    <arg value="false" />
                                 </exec>
                             </target>
                         </configuration>
