@@ -4,5 +4,4 @@ require('./lib/slick.core');
 require('./lib/slick.grid');
 
 var InitReact = require('./app2');
-
 $(InitReact);

@@ -56,6 +56,7 @@
 
         <npm>npm</npm>
         <node>node</node>
+        <gulp>gulp</gulp>
     </properties>
 
     <repositories>
@@ -261,7 +262,7 @@
                         <configuration>
                             <target>
                                 <exec executable="${npm}"
-                                      dir="${project.basedir}/src/main/resources/assets/js/"
+                                      dir="${project.basedir}/src/main/resources/assets/"
                                       failonerror="true">
                                     <env key="node" path="${node}" />
                                     <arg value="install" />
@@ -277,15 +278,11 @@
                         <phase>generate-resources</phase>
                         <configuration>
                             <target>
-                                <exec executable="${project.basedir}/src/main/resources/assets/js/node_modules/browserify/bin/cmd.js"
-                                      dir="${project.basedir}/src/main/resources/assets/js/"
+                                <exec executable="${gulp}"
+                                      dir="${project.basedir}/src/main/resources/assets/"
                                       failonerror="true">
                                     <env key="node" path="${node}" />
-                                    <arg value="-t" />
-                                    <arg value="reactify" />
-                                    <arg value="app.js" />
-                                    <arg value="-o" />
-                                    <arg value="main.js" />
+                                    <arg value="browserify" />
                                 </exec>
                             </target>
                         </configuration>
