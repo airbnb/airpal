@@ -17,8 +17,7 @@ concat      = require('gulp-concat');
 paths = {
   scripts: ['./js/**/*.js'],
   stylesheets: ['./css/**/*.css'],
-  fonts: ['./fonts/*'],
-  javascriptVendorFiles: './vendor/javascripts/*.js'
+  fonts: ['./fonts/*']
 };
 
 // Create a "browserify" task
