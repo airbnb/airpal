@@ -1,41 +1,27 @@
 /** @jsx React.DOM */
+var React                     = require('react'),
 
-var React = require('react/addons'),
-    PartitionedTableSelector = require('../elements/partitioned_table_selector'),
-    Editor = require('../elements/editor'),
-    Tabs = require('../elements/tabs'),
-    QueryHistory = require('../elements/query_history'),
-    PreviewQuery = require('../elements/preview_query'),
-    SavedQueries = require('../elements/saved_queries'),
-    EventEmitter = require('events').EventEmitter,
-    _ = require('lodash'),
-    cx = React.addons.classSet,
-    keymaster = require('keymaster'),
-    IndexPage;
+    // Partials
+    Header                    = require('./partials/_header'),
+    PartitionedTableSelector  = require('./partials/_partitioned_table_selector'),
 
-function getIn(obj, nestedKey, defaultVal) {
-  var dVal = defaultVal || null,
-      keys = nestedKey.split('.').reverse(),
-      lastVal = obj,
-      key;
+    // Elements
+    Editor                    = require('../elements/editor'),
+    QueryHistory              = require('../elements/query_history'),
+    PreviewQuery              = require('../elements/preview_query'),
+    SavedQueries              = require('../elements/saved_queries'),
+    TabbedArea                = require('../elements/tabbed_area'),
+    TabPane                   = require('../elements/tab_pane'),
 
-  while (!_.isUndefined(key = keys.pop())) {
-    if (lastVal && lastVal[key]) {
-      lastVal = lastVal[key];
-    } else {
-      return dVal;
-    }
-  }
-
-  return lastVal;
-}
+    // Third party libs
+    EventEmitter              = require('events').EventEmitter,
+    _                         = require('lodash'),
+    keymaster                 = require('keymaster');
 
 var mediator = new EventEmitter();
 
-IndexPage = React.createClass({
-  getDefaultProps: function() {
-    return {};
-  },
+var IndexPage = React.createClass({
+
   getInitialState: function() {
     return {
       activeSchema: 'default',
@@ -48,99 +34,56 @@ IndexPage = React.createClass({
       permissionLevel: '',
     };
   },
-  componentWillMount: function() {
-    $.ajax({
-      url: '/api/query/saved',
-      type: 'GET',
-      error: function() {},
-      success: function(featuredQueries) {
-        if (_.isEmpty(featuredQueries)) {
-          return;
-        }
-        this.setState({
-          savedQueries: featuredQueries
-        });
-      }.bind(this),
-    });
-    $.ajax({
-      url: '/api/execute/permissions',
-      type: 'GET',
-      success: function(data) {
-        this.setState({
-          canCreateTable: data.canCreateTable,
-          userName: data.userName,
-          accessLevel: data.accessLevel,
-        });
-      }.bind(this),
-    });
 
+  componentWillMount: function() {
+
+    // Get the previously saved queries
+    this._getSavedQueries();
+
+    // Check the permissions
+    this._getUserPermissions();
+
+    // Bind several keys strokes
     keymaster('backspace', this.handleBackspace);
     keymaster('⌘+r, ctrl+r', this.handleRun);
   },
+
   componentWillUnmount: function() {
     keymaster.unbind('backspace', this.handleBackspace);
     keymaster.unbind('⌘-r, ctrl-r', this.handleRun);
   },
+
   render: function() {
     var queryLines;
 
-    if (getIn(this.state, 'currentJob.query') != null) {
+    if (this._getIn(this.state, 'currentJob.query') != null) {
       queryLines = _.map(this.state.currentJob.query.split('\n'), function(line, i) {
         return (<span key={'query-line-' + i} className="line">{line}</span>);
       });
     }
+
     return (<div>
-      <header className="row-space-1 row-space-top-2">
-        <div className="col-4 pull-right">
-          <a href="#"
-             className="btn pull-right"
-             id="start-tour">Take Tour</a>
-          <dl className="col-4">
-            <dt>User Name</dt>
-            <dd>{this.state.userName}</dd>
-          </dl>
-          <dl className="col-4">
-            <dt>Access Level &nbsp;
-              <a href="https://airbnb.hackpad.com/Airpal-9FiIU3O2BJ1#:h=Access-Levels"
-                 target="_blank">
-                <i className="icon icon-question"></i>
-              </a>
-            </dt>
-            <dd>{this.state.accessLevel}</dd>
-          </dl>
-        </div>
-        <h1 className="text-special">Airpal</h1>
-      </header>
-      <PartitionedTableSelector
-          onActiveTable={this.handleActiveTable}
-          activeTable={this.state.activeTable}
-          activeSchema={this.state.activeSchema} />
-      <Editor
-        ref="editor"
-        onQueryRun={this.handleQueryRun}
-        onQuerySave={this.handleQuerySave} />
-      <div className="row-12 row-space-top-2 row-space-5">
-        <Tabs
-          selected={this.state.selectedTab}
-          onTabChange={this.handleTabChange}>
-          <QueryHistory
-                  tabTitle='History'
-                  onQuerySelected={this.handleQuerySelected}
-                  onTableSelected={this.handleTableSelected}
-                  onErrorSelected={this.handleErrorSelected}
-                  emitter={mediator} />
-          <SavedQueries
-                  tabTitle='Saved'
-                  queries={this.state.savedQueries}
-                  onQuerySelected={this.handleQuerySelected}
-                  onQueryDeleted={this.handleSavedQueryDeleted}
-                  onQueryRun={this.handleSavedQueryRun} />
-        </Tabs>
+      <Header userName={this.state.userName} accessLevel={this.state.accessLevel} />
+
+      <PartitionedTableSelector ref="partitionedTableSelector" onActiveTable={this.handleActiveTable} activeTable={this.state.activeTable} activeSchema={this.state.activeSchema} />
+
+      <Editor ref="editor" onQueryRun={this.handleQueryRun} onQuerySave={this.handleQuerySave} />
+
+      <div className="row">
+        <TabbedArea selectedTab={this.state.selectedTab} onTabChange={this.handleTabChange}>
+
+          <TabPane key={1} name="History" selectedTab={this.state.selectedTab}>
+            <QueryHistory onQuerySelected={this.handleQuerySelected} onTableSelected={this.handleTableSelected} onErrorSelected={this.handleErrorSelected} emitter={mediator} />
+          </TabPane>
+
+          <TabPane key={2} name="Saved Queries" selectedTab={this.state.selectedTab}>
+            <SavedQueries queries={this.state.savedQueries} onQuerySelected={this.handleQuerySelected} onQueryDeleted={this.handleSavedQueryDeleted} onQueryRun={this.handleSavedQueryRun} />
+          </TabPane>
+
+        </TabbedArea>
       </div>
 
-      <div className="modal"
-           aria-hidden={this.state.currentModal !== 'error'}
-           ref="errorModal">
+      <div className="modal" aria-hidden={this.state.currentModal !== 'error'} ref="errorModal">
         <div className="modal-table">
           <div className="modal-cell">
             <div className="modal-content">
@@ -153,7 +96,7 @@ IndexPage = React.createClass({
                   {queryLines}
                 </pre>
                 <p id="error-message">
-                  {getIn(this.state.currentJob, 'error.message')}
+                  {this._getIn(this.state.currentJob, 'error.message')}
                 </p>
               </div>
               <div className="panel-footer">
@@ -196,49 +139,104 @@ IndexPage = React.createClass({
       </div>
     </div>);
   },
+
+  /* Internal helpers ------------------------------------------------------- */
+  _getIn: function(obj, nestedKey, defaultVal) {
+    var dVal = defaultVal || null,
+        keys = nestedKey.split('.').reverse(),
+        lastVal = obj,
+        key;
+
+    while (!_.isUndefined(key = keys.pop())) {
+      if (lastVal && lastVal[key]) {
+        lastVal = lastVal[key];
+      } else {
+        return dVal;
+      }
+    }
+
+    return lastVal;
+  },
+
+  _getSavedQueries: function() {
+    $.ajax({
+      url: '/api/query/saved',
+      type: 'GET',
+      error: function() {},
+      success: function(featuredQueries) {
+        if (_.isEmpty(featuredQueries)) { return; }
+
+        // Add the saved queries in the savedQueries state
+        this.setState({ savedQueries: featuredQueries });
+      }.bind(this)
+    });
+  },
+
+  _getUserPermissions: function() {
+    $.ajax({
+      url: '/api/execute/permissions',
+      type: 'GET',
+      success: function(data) {
+        this.setState({
+          canCreateTable: data.canCreateTable,
+          userName: data.userName,
+          accessLevel: data.accessLevel,
+        });
+      }.bind(this)
+    });
+  },
+
+  /* Event Handlers --------------------------------------------------------- */
   handleQuerySelected: function(query) {
     this.refs.editor.setValue(query);
   },
-  handleTableSelected: function(table) {
-  },
+
+  handleTableSelected: function(table) {},
+
   handleErrorSelected: function(job) {
     this.setState({
       currentModal: 'error',
       currentJob: job,
     });
   },
+
   handleActiveTable: function(schema, table, partition) {
     this.setState({
       activeSchema: schema,
       activeTable: table,
     });
   },
-  handleTabChange: function(panel) {
+
+  handleTabChange: function(tab) {
     this.setState({
-      selectedTab: panel.props.tabTitle,
+      selectedTab: tab.props.name,
     });
   },
+
   handleCloseModal: function(e) {
     e.preventDefault();
     this.setState({
       currentModal: null,
     });
   },
+
   handleQueryRun: function(query) {
   },
+
   handleSavedQueryRun: function(query) {
     this.handleQuerySelected(query.queryWithPlaceholders.query);
     this.refs.editor.handleRunClick();
-    this.setState({
-      selectedTab: 'history',
-    });
+
+    // Set the selected tab to history
+    this.setState({ selectedTab: 'history' });
   },
+
   handleQuerySave: function(savedQuery) {
-    console.log('handleQuerySave', savedQuery, 'savedQueries', this.state.savedQueries);
-    this.setState({
-      savedQueries: [savedQuery].concat(this.state.savedQueries),
-    });
+
+    // Add the newly saved query to the state
+    this.setState({ savedQueries: [savedQuery].concat(this.state.savedQueries) });
   },
+
   handleSavedQueryDeleted: function(uuid) {
     this.setState({
       savedQueries: _.reject(this.state.savedQueries, function(q) {
@@ -246,16 +244,15 @@ IndexPage = React.createClass({
       }),
     });
   },
-  handleBackspace: function(event, handler) {
-    if (handler.scope === 'all') {
-      event.preventDefault();
-    }
+
+  handleBackspace: function($event, handler) {
+    if (handler.scope === 'all') { $event.preventDefault(); }
   },
-  handleRun: function(event, handler) {
-    console.log('handleRun', event, handler);
-    event.preventDefault();
+
+  handleRun: function($event, handler) {
+    $event.preventDefault();
     this.refs.editor.handleRunClick();
-  },
+  }
 });
 
 module.exports = IndexPage;
