@@ -15,8 +15,8 @@ import com.facebook.presto.client.FailureInfo;
 import com.facebook.presto.client.QueryError;
 import com.facebook.presto.client.QueryResults;
 import com.facebook.presto.client.StatementClient;
-import com.facebook.presto.execution.Input;
 import com.facebook.presto.execution.QueryStats;
+import com.facebook.presto.sql.parser.SqlParser;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Stopwatch;
@@ -48,6 +48,8 @@ import static java.lang.String.format;
 @RequiredArgsConstructor
 public class Execution implements Callable<Job>
 {
+    private static final SqlParser SQL_PARSER = new SqlParser();
+
     @Getter
     private final Job job;
     @Getter
@@ -57,7 +59,7 @@ public class Execution implements Callable<Job>
     @Getter
     private final QueryInfoClient queryInfoClient;
     @Getter
-    private final ExecutionAuthorizer authorizer;
+    private final QueryExecutionAuthorizer authorizer;
     @Getter
     private final Duration timeout;
     private final ColumnCache columnCache;
@@ -128,11 +130,15 @@ public class Execution implements Callable<Job>
 
         final Stopwatch stopwatch = Stopwatch.createStarted();
         final List<List<Object>> outputPreview = new ArrayList<>(maxRowsPreviewOutput);
+        final Set<Table> tables = authorizer.tablesUsedByQuery(query);
+
+        if (!authorizer.isAuthorizedRead(tables)) {
+            cancelAndThrow(null, stopwatch, new ExecutionFailureException(job, "Cannot access tables", null));
+        }
 
         try (StatementClient client = queryRunner.startInternalQuery(query)) {
             while (client.isValid() && !Thread.currentThread().isInterrupted()) {
                 QueryResults results = client.current();
-                Set<Table> tables = null;
                 List<Column> resultColumns = null;
                 JobState jobState = null;
                 QueryError queryError = null;
@@ -153,27 +159,9 @@ public class Execution implements Callable<Job>
 
                 if ((results.getInfoUri() != null) && (jobState != JobState.FAILED)) {
                     BasicQueryInfo queryInfo = queryInfoClient.from(results.getInfoUri());
-                    ImmutableSet.Builder<Table> tableBuilder = ImmutableSet.builder();
 
                     if (queryInfo != null) {
-                        Set<Input> inputs = queryInfo.getInputs();
-
-                        for (Input input : inputs) {
-                            tableBuilder.add(Table.fromInput(input));
-                        }
-
-                        tables = tableBuilder.build();
                         queryStats = queryInfo.getQueryStats();
-
-                        if (!tables.isEmpty()) {
-                            if (!authorizer.isAuthorizedRead(tables)) {
-                                cancelAndThrow(client,
-                                        stopwatch,
-                                        new ExecutionFailureException(job,
-                                                "Cannot access tables",
-                                                null));
-                            }
-                        }
                     }
                 }
 
@@ -261,7 +249,7 @@ public class Execution implements Callable<Job>
             throws ExecutionFailureException
     {
         try {
-            if (!client.cancelLeafStage()) {
+            if (client != null && !client.cancelLeafStage()) {
                 client.close();
             }
         }
