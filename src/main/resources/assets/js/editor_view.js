@@ -1,9 +1,9 @@
-var ace = require('brace'),
-    _ = require('lodash'),
-    Placeholder = ace.acequire('ace/placeholder').PlaceHolder,
-    Range = ace.acequire('ace/range').Range,
-    EventEmitter = require('events').EventEmitter,
-    slice = Array.prototype.slice;
+var ace           = require('brace'),
+    _             = require('lodash'),
+    Placeholder   = ace.acequire('ace/placeholder').PlaceHolder,
+    Range         = ace.acequire('ace/range').Range,
+    EventEmitter  = require('events').EventEmitter,
+    slice         = Array.prototype.slice;
 
 require('./lib/jquery.event.drag-2.2');
 require('brace/theme/monokai');
@@ -47,16 +47,18 @@ _.extend(TemplateCreator.prototype, {
     var cursor = editor.selection.getCursor(),
         placeholder;
 
-    console.log('inserting placeholder', editor, arguments, this,
-                'cursor', cursor,
-                'Placeholder', Placeholder);
+    // Should be removed before open-sourcing
+    console.log('inserting placeholder', editor, arguments, this, 'cursor', cursor, 'Placeholder', Placeholder);
 
     editor.insert(defaultPlaceholder);
     editor.getSelection().setSelectionRange(
-      new Range(cursor.row,
-                cursor.column + placeHolderNameOffset,
-                cursor.row,
-                cursor.column + defaultPlaceholder.length - 2));
+      new Range(
+        cursor.row,
+        cursor.column + placeHolderNameOffset,
+        cursor.row,
+        cursor.column + defaultPlaceholder.length - 2
+      )
+    );
   }
 });
 
@@ -75,10 +77,8 @@ _.extend(EditorView.prototype, {
     return this._emitter.on.apply(this._emitter, slice.call(arguments, 0));
   },
   render: function(canBuildTemplate) {
+    if (!!this.rendered) { return this; }
     var editor;
-
-    if (!!this.rendered)
-      return this;
 
     editor = ace.edit(this.$editor.attr('id'));
     editor.setTheme('ace/theme/monokai');
@@ -99,6 +99,7 @@ _.extend(EditorView.prototype, {
         eventMessage.text = this.getQuery();
       }
 
+      // Should be removed before open-sourcing
       console.log('[DEBOUNCED changeSelection]', range, eventMessage);
 
       this._emitter.emit('selection', eventMessage);
@@ -106,9 +107,13 @@ _.extend(EditorView.prototype, {
       maxWait: 150,
     }));
   },
-  getValue: function() {
-    return this.editor.getValue();
-  },
+
+  getValue: function() { return this.editor.getValue(); },
+
+  setValue: function(val) { return this.editor.setValue(val); },
+
+  setValueWithPlaceholders: function(val) {},
+
   getQuery: function() {
     var range = this.editor.selection.getRange(),
         rangeSelected = !rangeStartEndSame(range.start, range.end);
@@ -119,11 +124,7 @@ _.extend(EditorView.prototype, {
       return this.getValue();
     }
   },
-  setValue: function(val) {
-    return this.editor.setValue(val);
-  },
-  setValueWithPlaceholders: function(val) {
-  },
+
   _installResize: function() {
     var editor = this.editor;
 
@@ -132,6 +133,7 @@ _.extend(EditorView.prototype, {
       drag(resizeDrag(this.$editor), {handle: this.$handle}).
       drag('end', function(ev, dd) { editor.resize(true); });
   },
+
   _installTemplateCreator: function() {
     if (!this.canBuildTemplate || !!this.templateCreator) {
       return;
@@ -160,12 +162,8 @@ function resizeDrag($input) {
     var controlGroupHeight = Math.max(dd.minHeight, dd.height + dd.deltaY),
         controlLabelHeight = dd.labelHeight;
 
-    $(this).css({
-      height: controlGroupHeight
-    });
-    $input.css({
-      height: controlGroupHeight - controlLabelHeight
-    });
+    $(this).css({ height: controlGroupHeight });
+    $input.css({ height: controlGroupHeight - controlLabelHeight });
   };
 }
 
