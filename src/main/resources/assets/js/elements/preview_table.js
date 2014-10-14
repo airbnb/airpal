@@ -91,12 +91,14 @@ PreviewTable = React.createClass({
   },
   render: function() {
     var isEmpty = _.isEmpty(this.state.columns);
-    return (<div>
-      <h2 className={isEmpty ? '' : 'hide'}>No table selected</h2>
-      <div className={isEmpty ? 'empty' : ''}>
-        <div ref="historyGrid" id="history-grid" />
+    return (
+      <div>
+        <p className={isEmpty ? '' : 'hide'}>No table selected</p>
+        <div className={isEmpty ? 'empty' : ''}>
+          <div ref="historyGrid" id="history-grid" />
+        </div>
       </div>
-    </div>);
+    );
   },
 });
 

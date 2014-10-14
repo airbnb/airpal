@@ -70,13 +70,13 @@ var IndexPage = React.createClass({
       <Editor ref="editor" onQueryRun={this.handleQueryRun} onQuerySave={this.handleQuerySave} />
 
       <div className="row">
-        <TabbedArea selectedTab={this.state.selectedTab} onTabChange={this.handleTabChange}>
+        <TabbedArea name="queries" selectedTab={this.state.selectedTab} onTabChange={this.handleTabChange}>
 
-          <TabPane key={1} name="History" selectedTab={this.state.selectedTab}>
+          <TabPane key={1} name="History">
             <QueryHistory onQuerySelected={this.handleQuerySelected} onTableSelected={this.handleTableSelected} onErrorSelected={this.handleErrorSelected} emitter={mediator} />
           </TabPane>
 
-          <TabPane key={2} name="Saved Queries" selectedTab={this.state.selectedTab}>
+          <TabPane key={2} name="Saved Queries">
             <SavedQueries queries={this.state.savedQueries} onQuerySelected={this.handleQuerySelected} onQueryDeleted={this.handleSavedQueryDeleted} onQueryRun={this.handleSavedQueryRun} />
           </TabPane>
 
