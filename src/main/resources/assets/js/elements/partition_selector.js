@@ -45,7 +45,7 @@ PartitionSelector = React.createClass({
     };
   },
   render: function() {
-    return (<form className="col-5">
+    return (<form className="col-sm-5">
       <div className="control-group">
         <label className="label-large">Partition</label>
         <SelectizeInput
