@@ -4,7 +4,7 @@
  */.nav-tabs,.tab-pane{border:1px solid #dbdbdb;border-radius:3px;box-shadow:0 0 2px 0 rgba(0,0,0,.1)}.nav.nav-tabs{background-color:#efefef;padding:10px 10px 0;border-bottom-right-radius:0;border-bottom-left-radius:0}.nav.nav-tabs>li{margin-left:10px}.nav.nav-tabs>li>a{padding:10px;font-weight:700;color:#393c3d;border:1px solid #dbdbdb;border-bottom:none}.nav.nav-tabs>li>a:hover{border-color:#b7b7b7}.tab-pane{padding:15px;background-color:#fff;border-top:0;border-top-right-radius:0;border-top-left-radius:0}/*!
  *
  * Copyright 2013 Airbnb, Inc
- */.container{min-width:1045px}body{background-color:#f7f7f7!important}.btn{margin-left:10px}.header-row{padding-top:20px}.header-row h1{margin:0}.tabable-area{margin:10px 0}/*!
+ */.container{min-width:1045px}body{background-color:#f7f7f7!important}.btn{margin-left:10px}.ace_editor{min-height:350px}.header-row{padding-top:20px}.header-row h1{margin:0}.tabable-area{margin:10px 0}/*!
  * Bootstrap v3.2.0 (http://getbootstrap.com)
  * Copyright 2011-2014 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
