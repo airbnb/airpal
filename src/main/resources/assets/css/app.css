@@ -10,6 +10,7 @@
 
 body { background-color: #f7f7f7 !important; }
 .btn { margin-left: 10px; }
+.ace_editor { min-height: 350px; }
 
 /* ==========================================================================
    Header
