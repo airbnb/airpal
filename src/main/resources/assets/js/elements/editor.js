@@ -37,6 +37,17 @@ var Editor = React.createClass({
     };
   },
 
+  componentDidMount: function() {
+
+    // Listen to the close event, to hide the
+    // current error message
+    $('#saveQueryModal').on('hide.bs.modal', function($event) {
+      this.setState({
+        saveError: _.extend(this.state.saveError, { visible: false })
+      });
+    }.bind(this));
+  },
+
   render: function() {
 
     // Set the right CSS classes
@@ -93,7 +104,7 @@ var Editor = React.createClass({
               <div className="modal-body">
                 <ErrorMessage visible={this.state.saveError.visible} message={this.state.saveError.message} />
 
-                <SavedQueryForm ref="savedQueryForm" query={this.state.modalQuery} onSubmit={this.handleSaveSubmit} context="Save" />
+                <SavedQueryForm ref="savedQueryForm" query={this.state.modalQuery} onSaveSubmit={this.handleSaveSubmit} context="Save" />
               </div>
 
               <div className="modal-footer">

@@ -32,7 +32,9 @@ window.React = React;
 $(initialize());
 
 // Initialize the tooltips
-$('[data-toggle="tooltip"]').tooltip();
+$('[data-toggle="tooltip"]').tooltip({
+  container: 'body'
+});
 
 /**
  * Someday:

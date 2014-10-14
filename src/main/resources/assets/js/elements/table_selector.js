@@ -42,7 +42,7 @@ TableSelector = React.createClass({
   render: function() {
     return (<form className="col-sm-7">
       <div className="control-group">
-        <label className="label-large" for="tables-input">Tables</label>
+        <label className="label-large" htmlFor="tables-input">Tables</label>
         <SelectizeInput
           ref="selectize"
           selectize={this.props.selectizeOpts}

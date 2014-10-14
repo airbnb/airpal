@@ -9,6 +9,10 @@ var ErrorMessage = React.createClass({
     message: React.PropTypes.string.isRequired
   },
 
+  getDefaultProps: function() {
+    return { visible: false, message: '' }
+  },
+
   getInitialState: function() {
     return { visible: this.props.visible };
   },

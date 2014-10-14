@@ -4,9 +4,11 @@ var React = require('react');
 var Header = React.createClass({
   displayName: 'Header',
 
-  propTypes: {
-    userName: React.PropTypes.string.isRequired,
-    accessLevel: React.PropTypes.string.isRequired
+  getDefaultProps: function() {
+    return {
+      userName: 'anonymous',
+      accessLevel: 'default'
+    };
   },
 
   render: function () {
@@ -26,7 +28,8 @@ var Header = React.createClass({
             <div className="col-sm-4">
               <p>
                 <strong>Access Level &nbsp;</strong>
-                <a href="https://airbnb.hackpad.com/Airpal-9FiIU3O2BJ1#:h=Access-Levels" target="_blank">
+                <a href="https://airbnb.hackpad.com/Airpal-9FiIU3O2BJ1#:h=Access-Levels" target="_blank"
+                  data-toggle="tooltip" data-placement="bottom" title="For more info about the access rights, see the HackPad">
                   <span className="glyphicon glyphicon-info-sign"></span>
                 </a>
                 <br />
