@@ -11,12 +11,12 @@ logging:
 server:
   applicationConnectors:
     - type: http
-      port: 8080
+      port: 8081
       idleTimeout: 10 seconds
 
   adminConnectors:
     - type: http
-      port: 8081
+      port: 8082
 
 elasticSearchProperties:
   hosts:
@@ -31,6 +31,7 @@ shiroConfiguration:
   securedUrls:
     - /api/*
     - /app
+    - /login
   dispatchTypes:
     - ERROR
     - FORWARD

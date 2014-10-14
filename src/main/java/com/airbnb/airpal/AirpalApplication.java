@@ -6,7 +6,7 @@ import com.airbnb.airpal.modules.AirpalModule;
 import com.airbnb.airpal.modules.DropwizardModule;
 import com.airbnb.airpal.resources.ExecuteResource;
 import com.airbnb.airpal.resources.HealthResource;
-import com.airbnb.airpal.resources.LoginResource;
+import com.airbnb.airpal.resources.SessionResource;
 import com.airbnb.airpal.resources.PingResource;
 import com.airbnb.airpal.resources.QueryResource;
 import com.airbnb.airpal.resources.RedirectRootResource;
@@ -63,7 +63,7 @@ public class AirpalApplication extends Application<AirpalConfiguration>
         environment.jersey().register(injector.getInstance(RedirectRootResource.class));
         environment.jersey().register(injector.getInstance(HealthResource.class));
         environment.jersey().register(injector.getInstance(PingResource.class));
-        environment.jersey().register(injector.getInstance(LoginResource.class));
+        environment.jersey().register(injector.getInstance(SessionResource.class));
 
         // Setup Authentication
         registerShiro(config, environment, injector.getInstance(EnvironmentLoaderListener.class));
@@ -77,7 +77,8 @@ public class AirpalApplication extends Application<AirpalConfiguration>
 
     private void registerShiro(AirpalConfiguration configuration, Environment environment, ServletContextListener listener)
     {
-        environment.servlets()
+        environment
+                .servlets()
                 .addServletListeners(listener);
         List<String> securedUrlsList = configuration.getShiroConfiguration().getSecuredUrls();
         List<String> dispatchTypesList = configuration.getShiroConfiguration().getDispatchTypes();
