@@ -38,7 +38,7 @@ var PartitionedTableSelector = React.createClass({
           </div>
         </div>
 
-        <TabbedArea selectedTab={this.state.selectedTab} onTabChange={this.handleTabChange}>
+        <TabbedArea name="table-selector" selectedTab={this.state.selectedTab} onTabChange={this.handleTabChange}>
 
           <TabPane key={1} name="Columns" selectedTab={this.state.selectedTab}>
             <ColumnsSelector ref='columns' />
