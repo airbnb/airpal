@@ -1,0 +1,54 @@
+/*!
+ *
+ * Copyright 2013 Airbnb, Inc
+ */
+
+/* ==========================================================================
+   Global modifications
+   ========================================================================== */
+.container { min-width: 1045px; }
+body { background-color: #f7f7f7 !important; }
+
+/* Tabs
+   ========================================================================== */
+.nav-tabs,
+.tab-pane {
+  border: 1px solid #dbdbdb;
+  border-radius: 3px;
+  box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.1);
+}
+
+.nav.nav-tabs {
+  background-color: #efefef;
+  padding: 10px;
+  padding-bottom: 0;
+
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.nav.nav-tabs > li { margin-left: 10px; }
+
+.nav.nav-tabs > li > a {
+  padding: 10px;
+
+  font-weight: 700;
+  color: #393c3d;
+
+  border: 1px solid #dbdbdb;
+  border-bottom: none;
+}
+
+.nav.nav-tabs > li > a:hover {
+  border-color: #b7b7b7;
+}
+
+.tab-pane {
+  padding: 15px;
+  background-color: #ffffff;
+
+  border-top: 0;
+
+  border-top-right-radius: 0;
+  border-top-left-radius: 0;
+}
