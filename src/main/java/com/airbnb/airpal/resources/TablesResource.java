@@ -9,8 +9,10 @@ import com.airbnb.airpal.presto.metadata.ColumnCache;
 import com.airbnb.airpal.presto.metadata.PreviewTableCache;
 import com.airbnb.airpal.presto.metadata.SchemaCache;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import io.dropwizard.util.Duration;
 import lombok.Data;
 import lombok.NonNull;
@@ -18,7 +20,6 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.joda.time.DateTime;
 
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -44,26 +45,31 @@ public class TablesResource
     private final PreviewTableCache previewTableCache;
     private final UsageStore usageStore;
     private final HiveTableUpdatedCache updateCache;
+    private final String defaultCatalog;
 
     @Inject
-    public TablesResource(final SchemaCache schemaCache,
+    public TablesResource(
+            final SchemaCache schemaCache,
             final ColumnCache columnCache,
             final PreviewTableCache previewTableCache,
             final UsageStore usageStore,
-            final HiveTableUpdatedCache updatedCache)
+            final HiveTableUpdatedCache updatedCache,
+            @Named("default-catalog") final String defaultCatalog)
     {
         this.schemaCache = schemaCache;
         this.columnCache = columnCache;
         this.previewTableCache = previewTableCache;
         this.usageStore = usageStore;
         this.updateCache = updatedCache;
+        this.defaultCatalog = defaultCatalog;
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getTableUpdates(@DefaultValue("hive") @QueryParam("catalog") String catalog)
+    public Response getTableUpdates(@QueryParam("catalog") Optional<String> catalogOptional)
     {
         final Subject subject = SecurityUtils.getSubject();
+        final String catalog = catalogOptional.or(defaultCatalog);
         final Map<String, List<String>> schemaMap = schemaCache.getSchemaMap(catalog);
         final ImmutableList.Builder<Table> builder = ImmutableList.builder();
 
@@ -83,6 +89,7 @@ public class TablesResource
         return Response.ok(createTablesWithMetaData(tables, allUsages, updateMap)).build();
     }
 
+    // TODO: Make getTableColumns, getTablePartitions and getTablePreview take a 3rd path parameter for catalog
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{schema}/{tableName}/columns")
@@ -93,7 +100,7 @@ public class TablesResource
     {
         Subject subject = SecurityUtils.getSubject();
 
-        if (isAuthorizedRead(subject, "hive", schema, tableName)) {
+        if (isAuthorizedRead(subject, defaultCatalog, schema, tableName)) {
             return Response.ok(columnCache.getColumns(schema, tableName)).build();
         }
         else {
@@ -111,7 +118,7 @@ public class TablesResource
     {
         Subject subject = SecurityUtils.getSubject();
 
-        if (isAuthorizedRead(subject, "hive", schema, tableName)) {
+        if (isAuthorizedRead(subject, defaultCatalog, schema, tableName)) {
             return Response.ok(getPartitionsWithMetaData(new PartitionedTable("hive", schema, tableName))).build();
         }
         else {
@@ -128,7 +135,7 @@ public class TablesResource
     {
         Subject subject = SecurityUtils.getSubject();
 
-        if (isAuthorizedRead(subject, "hive", schema, tableName)) {
+        if (isAuthorizedRead(subject, defaultCatalog, schema, tableName)) {
             return Response.ok(previewTableCache.getPreview(schema, tableName)).build();
         }
         else {

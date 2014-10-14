@@ -118,6 +118,14 @@ public class AirpalModule extends AbstractModule
         return config.getPrestoCoordinator();
     }
 
+    @Singleton
+    @Named("default-catalog")
+    @Provides
+    public String provideDefaultCatalog()
+    {
+        return config.getPrestoCatalog();
+    }
+
     @Provides
     @Singleton
     public ClientSessionFactory provideClientSessionFactory(@Named("coordinator-uri") Provider<URI> uriProvider)
