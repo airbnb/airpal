@@ -63,7 +63,7 @@ var IndexPage = React.createClass({
     }
 
     return (<div>
-      <Header userName={this.state.userName} accessLevel={this.state.accessLevel} />
+      <Header ref="header" userName={this.state.userName} accessLevel={this.state.accessLevel} />
 
       <PartitionedTableSelector ref="partitionedTableSelector" onActiveTable={this.handleActiveTable} activeTable={this.state.activeTable} activeSchema={this.state.activeSchema} />
 

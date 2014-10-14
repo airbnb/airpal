@@ -1,16 +1,15 @@
 /** @jsx React.DOM */
 var React = require('react/addons'),
-    _ = require('lodash'),
-    SavedQueryForm;
+    _ = require('lodash');
 
-SavedQueryForm = React.createClass({
+var SavedQueryForm = React.createClass({
 
   getDefaultProps: function() {
     return {
       query: '',
       queryName: '',
       queryDescription: '',
-      onSubmit: function(name, description, query) {},
+      onSaveSubmit: function(name, description, query) {},
     };
   },
 
@@ -41,7 +40,13 @@ SavedQueryForm = React.createClass({
   /* Event Handlers --------------------------------------------------------- */
   handleSubmit: function($event) {
     $event.preventDefault();
-    this.props.onSubmit(this.refs.name.value, this.refs.description.value, this.props.query);
+
+    // Return the saved items to the parent
+    this.props.onSaveSubmit(
+      this.refs.name.value,
+      this.refs.description.value,
+      this.props.query
+    );
   },
 });
 

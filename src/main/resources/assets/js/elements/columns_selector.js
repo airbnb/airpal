@@ -73,10 +73,9 @@ ColumnsSelector = React.createClass({
       {cols}
     </div>);
   },
+
   componentWillUpdate: function(nextProps, nextState) {
-    var activeTable = nextState.activeTable,
-        schema,
-        table;
+    var activeTable = nextState.activeTable, schema, table;
 
     console.log('component will update', activeTable, !activeTable);
     if (!activeTable || (this.state.activeTable === activeTable)) {
