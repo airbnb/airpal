@@ -22,7 +22,7 @@ import com.airbnb.airpal.presto.metadata.PreviewTableCache;
 import com.airbnb.airpal.presto.metadata.SchemaCache;
 import com.airbnb.airpal.resources.ExecuteResource;
 import com.airbnb.airpal.resources.HealthResource;
-import com.airbnb.airpal.resources.LoginResource;
+import com.airbnb.airpal.resources.SessionResource;
 import com.airbnb.airpal.resources.PingResource;
 import com.airbnb.airpal.resources.QueryResource;
 import com.airbnb.airpal.resources.RedirectRootResource;
@@ -79,7 +79,7 @@ public class AirpalModule extends AbstractModule
         bind(RedirectRootResource.class).in(Scopes.SINGLETON);
         bind(HealthResource.class).in(Scopes.SINGLETON);
         bind(PingResource.class).in(Scopes.SINGLETON);
-        bind(LoginResource.class).in(Scopes.SINGLETON);
+        bind(SessionResource.class).in(Scopes.SINGLETON);
         bind(SSEEventSourceServlet.class).in(Scopes.SINGLETON);
 
         bind(EnvironmentLoaderListener.class).in(Scopes.SINGLETON);
