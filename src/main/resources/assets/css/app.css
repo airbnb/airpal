@@ -10,13 +10,17 @@
 
 body { background-color: #f7f7f7 !important; }
 .btn { margin-left: 10px; }
-.ace_editor { min-height: 350px; }
 
 /* ==========================================================================
    Header
    ========================================================================== */
 .header-row { padding-top: 20px; }
 .header-row h1 { margin: 0; }
+
+/* ==========================================================================
+   Content
+   ========================================================================== */
+.ace_editor { min-height: 350px; }
 
 /* Table selector
    ========================================================================== */
@@ -62,4 +66,21 @@ body { background-color: #f7f7f7 !important; }
 @keyframes spin {
   from { transform:rotate(0deg); }
   to { transform:rotate(360deg); }
+}
+
+/* Resize handle
+   ========================================================================== */
+.query-editor { position: relative; }
+
+.resize-handle {
+  position: absolute;
+  bottom: 5px;
+  right: 10px;
+}
+
+.resize-handle span {
+  margin-left: 5px;
+
+  cursor: pointer;
+  color: #ffffff;
 }
