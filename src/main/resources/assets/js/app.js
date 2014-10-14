@@ -31,6 +31,9 @@ function initialize() {
 window.React = React;
 $(initialize());
 
+// Initialize the tooltips
+$('[data-toggle="tooltip"]').tooltip();
+
 /**
  * Someday:
 
@@ -70,4 +73,4 @@ function InitReact() {
 window.React = React;
 module.exports = InitReact;
 
-**/
+*/
