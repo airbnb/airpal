@@ -70,6 +70,34 @@ public class QueryExecutionAuthorizerTest
         assertEquals(tablesExpected, tablesUsed);
     }
 
+    static String TEST_ALTER_TABLE2 = "USE SCHEMA the_gibson; ALTER TABLE default.users RENAME TO users_pii; SELECT pii_col FROM users_pii;";
+    @Test
+    public void testTableReferencesRenameTable2()
+            throws Exception
+    {
+        Set<Table> tablesUsed = tablesUsedByQuery(TEST_ALTER_TABLE2, defaultConnector, defaultSchema);
+        Set<Table> tablesExpected = ImmutableSet.of(
+                new Table(defaultConnector, "default", "users"),
+                new Table(defaultConnector, "the_gibson", "users_pii")
+        );
+
+        assertEquals(tablesExpected, tablesUsed);
+    }
+
+    static String TEST_ALTER_TABLE3 = "USE CATALOG cassandra; USE SCHEMA the_gibson; ALTER TABLE hive.default.users RENAME TO users_pii; SELECT pii_col FROM users_pii;";
+    @Test
+    public void testTableReferencesRenameTable3()
+            throws Exception
+    {
+        Set<Table> tablesUsed = tablesUsedByQuery(TEST_ALTER_TABLE3, defaultConnector, defaultSchema);
+        Set<Table> tablesExpected = ImmutableSet.of(
+                new Table(defaultConnector, "default", "users"),
+                new Table("cassandra", "the_gibson", "users_pii")
+        );
+
+        assertEquals(tablesExpected, tablesUsed);
+    }
+
     static String TEST_ACCESS_PII_UNION_VIEW = "SELECT str_col FROM the_gibson.users UNION ALL SELECT pii_str_col FROM users;";
     @Test
     public void testTableReferencesSelectUnion()

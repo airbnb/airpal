@@ -6,8 +6,10 @@ import com.facebook.presto.sql.tree.CreateView;
 import com.facebook.presto.sql.tree.DefaultTraversalVisitor;
 import com.facebook.presto.sql.tree.DropTable;
 import com.facebook.presto.sql.tree.DropView;
+import com.facebook.presto.sql.tree.Node;
 import com.facebook.presto.sql.tree.QualifiedName;
 import com.facebook.presto.sql.tree.RenameTable;
+import com.facebook.presto.sql.tree.UseCollection;
 import com.facebook.presto.sql.tree.WithQuery;
 import com.google.common.collect.Sets;
 import lombok.EqualsAndHashCode;
@@ -20,24 +22,22 @@ import java.util.Set;
 @Value
 @EqualsAndHashCode(callSuper = false)
 public class InputReferenceExtractor
-        extends DefaultTraversalVisitor<Void, Void>
+        extends DefaultTraversalVisitor<InputReferenceExtractor.CatalogSchemaContext, InputReferenceExtractor.CatalogSchemaContext>
 {
     private final Set<Table> references = new HashSet<>();
     private final Set<Table> aliases = new HashSet<>();
-    private final String defaultConnector;
-    private final String defaultSchema;
 
     public Set<Table> getReferences()
     {
         return Sets.difference(references, aliases);
     }
 
-    private Table qualifiedNameToTable(QualifiedName name)
+    private Table qualifiedNameToTable(QualifiedName name, CatalogSchemaContext context)
     {
         List<String> nameParts = name.getParts();
 
-        String connectorId = defaultConnector;
-        String schema = defaultSchema;
+        String connectorId = context.getCatalog();
+        String schema = context.getSchema();
         String table = null;
 
         if (nameParts.size() == 3) {
@@ -55,55 +55,80 @@ public class InputReferenceExtractor
     }
 
     @Override
-    protected Void visitCreateView(CreateView node, Void context)
+    protected CatalogSchemaContext visitCreateView(CreateView node, CatalogSchemaContext context)
     {
-        references.add(qualifiedNameToTable(node.getName()));
+        references.add(qualifiedNameToTable(node.getName(), context));
         visitQuery(node.getQuery(), context);
 
-        return super.visitCreateView(node, context);
+        return context;
     }
 
     @Override
-    protected Void visitCreateTable(CreateTable node, Void context)
+    protected CatalogSchemaContext visitCreateTable(CreateTable node, CatalogSchemaContext context)
     {
-        references.add(qualifiedNameToTable(node.getName()));
+        references.add(qualifiedNameToTable(node.getName(), context));
         visitQuery(node.getQuery(), context);
 
-        return super.visitCreateTable(node, context);
+        return context;
     }
 
     @Override
-    protected Void visitDropTable(DropTable node, Void context)
+    protected CatalogSchemaContext visitDropTable(DropTable node, CatalogSchemaContext context)
     {
-        references.add(qualifiedNameToTable(node.getTableName()));
-        return super.visitDropTable(node, context);
+        references.add(qualifiedNameToTable(node.getTableName(), context));
+        return context;
     }
 
     @Override
-    protected Void visitDropView(DropView node, Void context)
+    protected CatalogSchemaContext visitDropView(DropView node, CatalogSchemaContext context)
     {
-        references.add(qualifiedNameToTable(node.getName()));
-        return super.visitDropView(node, context);
+        references.add(qualifiedNameToTable(node.getName(), context));
+        return context;
     }
 
     @Override
-    protected Void visitTable(com.facebook.presto.sql.tree.Table node, Void context)
+    protected CatalogSchemaContext visitTable(com.facebook.presto.sql.tree.Table node, CatalogSchemaContext context)
     {
-        references.add(qualifiedNameToTable(node.getName()));
-        return super.visitTable(node, context);
+        references.add(qualifiedNameToTable(node.getName(), context));
+        return context;
     }
 
     @Override
-    protected Void visitRenameTable(RenameTable node, Void context)
+    protected CatalogSchemaContext visitRenameTable(RenameTable node, CatalogSchemaContext context)
     {
-        references.add(qualifiedNameToTable(node.getSource()));
-        return super.visitRenameTable(node, context);
+        references.add(qualifiedNameToTable(node.getSource(), context));
+        return context;
     }
 
     @Override
-    protected Void visitWithQuery(WithQuery node, Void context)
+    protected CatalogSchemaContext visitWithQuery(WithQuery node, CatalogSchemaContext context)
     {
-        aliases.add(new Table(defaultConnector, defaultSchema, node.getName()));
+        aliases.add(new Table(context.getCatalog(), context.getSchema(), node.getName()));
         return super.visitWithQuery(node, context);
+    }
+
+    @Override
+    protected CatalogSchemaContext visitUseCollection(UseCollection node, CatalogSchemaContext context)
+    {
+        if (node.getType() == UseCollection.CollectionType.CATALOG) {
+            return new CatalogSchemaContext(node.getCollection(), context.getSchema());
+        } else if (node.getType() == UseCollection.CollectionType.SCHEMA) {
+            return new CatalogSchemaContext(context.getCatalog(), node.getCollection());
+        }
+
+        return context;
+    }
+
+    @Override
+    protected CatalogSchemaContext visitNode(Node node, CatalogSchemaContext context)
+    {
+        return context;
+    }
+
+    @Value
+    public static class CatalogSchemaContext
+    {
+        private final String catalog;
+        private final String schema;
     }
 }

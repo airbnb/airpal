@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 import static com.airbnb.airpal.core.AuthorizationUtil.AuthorizedTablesPredicate;
+import static com.airbnb.airpal.core.execution.InputReferenceExtractor.CatalogSchemaContext;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class QueryExecutionAuthorizer
@@ -54,11 +55,12 @@ public class QueryExecutionAuthorizer
     {
         List<String> statements = STATEMENT_SPLITTER.splitToList(query);
         ImmutableSet.Builder<Table> tables = ImmutableSet.builder();
+        CatalogSchemaContext context = new CatalogSchemaContext(defaultConnector, defaultSchema);
 
         for (String strStatement : statements) {
-            InputReferenceExtractor extractor = new InputReferenceExtractor(defaultConnector, defaultSchema);
+            InputReferenceExtractor extractor = new InputReferenceExtractor();
             Statement statement = SQL_PARSER.createStatement(strStatement);
-            statement.accept(extractor, null);
+            context = statement.accept(extractor, context);
 
             tables.addAll(extractor.getReferences());
         }
