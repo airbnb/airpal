@@ -9,7 +9,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import org.apache.shiro.subject.Subject;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -22,10 +21,8 @@ public class QueryExecutionAuthorizer
     private static final SqlParser SQL_PARSER = new SqlParser();
 
     private final Subject subject;
-    private final Set<Table> seen = new HashSet<>();
     private final String defaultConnector;
     private final String defaultSchema;
-    private boolean lastResult = false;
 
     public QueryExecutionAuthorizer(Subject subject, String defaultConnector, String defaultSchema)
     {
@@ -41,12 +38,7 @@ public class QueryExecutionAuthorizer
 
     public boolean isAuthorizedRead(Set<Table> tables)
     {
-        if (seen.containsAll(tables)) {
-            return lastResult;
-        }
-
-        seen.addAll(tables);
-        return (lastResult = Iterables.all(tables, new AuthorizedTablesPredicate(subject)));
+        return Iterables.all(tables, new AuthorizedTablesPredicate(subject));
     }
 
     private static Splitter STATEMENT_SPLITTER = Splitter.on(";").omitEmptyStrings();
