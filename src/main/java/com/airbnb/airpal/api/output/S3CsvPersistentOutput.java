@@ -4,7 +4,7 @@ import com.airbnb.airpal.api.Job;
 import com.airbnb.airpal.api.output.builders.CsvOutputBuilder;
 import com.airbnb.airpal.api.output.builders.JobOutputBuilder;
 import com.airbnb.airpal.core.Persistor;
-import com.airbnb.airpal.core.execution.ExecutionAuthorizer;
+import com.airbnb.airpal.core.execution.QueryExecutionAuthorizer;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
@@ -188,7 +188,7 @@ public class S3CsvPersistentOutput implements PersistentJobOutput
             }
 
             @Override
-            public boolean canPersist(ExecutionAuthorizer authorizer)
+            public boolean canPersist(QueryExecutionAuthorizer authorizer)
             {
                 return true;
             }

@@ -27,15 +27,11 @@
         <java.version>1.7</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <cdh.version>cdh4.4.0</cdh.version>
-
         <aws-java-sdk.version>1.6.8</aws-java-sdk.version>
         <dropwizard.version>0.7.1</dropwizard.version>
-        <dropwizard-common.version>1.0.1</dropwizard-common.version>
         <elasticsearch.version>0.90.5</elasticsearch.version>
         <guava.version>18.0</guava.version>
         <jackson.version>2.3.2</jackson.version>
-        <jdo-api.version>2.3-ec</jdo-api.version>
         <jetty.version>9.0.7.v20131107</jetty.version>
         <logback.version>1.0.13</logback.version>
         <lombok.version>1.12.2</lombok.version>
@@ -200,6 +196,13 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.10.8</version>
             <scope>test</scope>
         </dependency>
 

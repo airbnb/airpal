@@ -1,6 +1,6 @@
 package com.airbnb.airpal.core;
 
-import com.airbnb.airpal.core.execution.ExecutionAuthorizer;
+import com.airbnb.airpal.core.execution.QueryExecutionAuthorizer;
 import com.facebook.presto.client.Column;
 
 import java.util.List;
@@ -13,5 +13,5 @@ public interface Persistor
 
     public void persist();
 
-    public boolean canPersist(ExecutionAuthorizer authorizer);
+    public boolean canPersist(QueryExecutionAuthorizer authorizer);
 }

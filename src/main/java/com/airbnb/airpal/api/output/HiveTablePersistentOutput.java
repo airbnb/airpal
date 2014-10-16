@@ -2,8 +2,7 @@ package com.airbnb.airpal.api.output;
 
 import com.airbnb.airpal.api.Job;
 import com.airbnb.airpal.core.Persistor;
-import com.airbnb.airpal.core.execution.ExecutionAuthorizer;
-import com.airbnb.airpal.presto.Table;
+import com.airbnb.airpal.core.execution.QueryExecutionAuthorizer;
 import com.facebook.presto.client.Column;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -81,7 +80,7 @@ public class HiveTablePersistentOutput implements PersistentJobOutput
             }
 
             @Override
-            public boolean canPersist(ExecutionAuthorizer authorizer)
+            public boolean canPersist(QueryExecutionAuthorizer authorizer)
             {
                 return authorizer.isAuthorizedWrite("hive", "airpal", tmpTableName);
             }

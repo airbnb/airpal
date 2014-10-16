@@ -106,7 +106,7 @@ public class ExecutionClient
                 eventBus,
                 queryRunnerFactory.create(schema),
                 queryInfoClient,
-                new ExecutionAuthorizer(subject),
+                new QueryExecutionAuthorizer(subject, "hive", "default"),
                 timeout,
                 columnCache);
 
