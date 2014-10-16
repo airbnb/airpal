@@ -16,13 +16,16 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.NewCookie;
+import javax.ws.rs.core.Response;
 
 import java.io.IOException;
+import java.net.URI;
 
-@Path("/login")
 public class SessionResource
 {
     @GET
+    @Path("/login")
     @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
     public LoginView getLogin()
     {
@@ -30,6 +33,7 @@ public class SessionResource
     }
 
     @POST
+    @Path("/login")
     public void doLogin(
             @Context HttpServletRequest request,
             @Context HttpServletResponse response,
@@ -44,5 +48,13 @@ public class SessionResource
         }
 
         WebUtils.redirectToSavedRequest(request, response, "/app");
+    }
+
+    @GET
+    @Path("/login-clear")
+    @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
+    public Response getLoginNoRemember()
+    {
+        return Response.temporaryRedirect(URI.create("/app")).cookie(new NewCookie("rememberMe", null)).build();
     }
 }
