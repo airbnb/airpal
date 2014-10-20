@@ -22,8 +22,18 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.net.URI;
 
+@Path("/")
 public class SessionResource
 {
+
+    @GET
+    public Response redirectToApp()
+    {
+        return Response.temporaryRedirect(URI.create("/app"))
+                .status(Response.Status.MOVED_PERMANENTLY)
+                .build();
+    }
+
     @GET
     @Path("/login")
     @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
@@ -51,7 +61,7 @@ public class SessionResource
     }
 
     @GET
-    @Path("/login-clear")
+    @Path("/postlogin")
     @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
     public Response getLoginNoRemember()
     {
