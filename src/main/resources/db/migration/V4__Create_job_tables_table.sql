@@ -1,5 +1,5 @@
 CREATE TABLE job_tables (
-  id INT NOT NULL AUTO_INCREMENT,
+  id SERIAL,
   job_id INT NOT NULL,
   table_id INT NOT NULL,
 

@@ -1,5 +1,5 @@
 CREATE TABLE tables (
-  id INT NOT NULL AUTO_INCREMENT,
+  id SERIAL,
   connector_id VARCHAR(32) NOT NULL,
   schema_ VARCHAR(64) NOT NULL,
   table_ VARCHAR(128) NOT NULL,

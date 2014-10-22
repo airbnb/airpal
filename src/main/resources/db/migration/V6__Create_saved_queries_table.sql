@@ -1,9 +1,10 @@
 CREATE TABLE saved_queries (
-  id INT NOT NULL AUTO_INCREMENT,
+  id SERIAL,
   query TEXT NOT NULL,
   user VARCHAR(128) NOT NULL,
   description TEXT,
   uuid VARCHAR(128),
+  name VARCHAR(256),
 
   PRIMARY KEY(id)
 );
