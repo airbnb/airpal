@@ -56,11 +56,6 @@ public class LocalJobHistoryStore implements JobHistoryStore {
     }
 
     @Override
-    public List<Job> getRecentlyRun() {
-        return getRecentlyRun(1_000);
-    }
-
-    @Override
     public List<Job> getRecentlyRun(long maxResults) {
         final ImmutableList.Builder<Job> builder = ImmutableList.builder();
         long added = 0;
@@ -77,15 +72,15 @@ public class LocalJobHistoryStore implements JobHistoryStore {
     }
 
     @Override
-    public List<Job> getRecentlyRun(Table table1, Table... otherTables) {
-        return getRecentlyRun(1_000, table1, otherTables);
+    public List<Job> getRecentlyRun(long maxResults, Table table1, Table... otherTables)
+    {
+        return getRecentlyRun(maxResults, Lists.asList(table1, otherTables));
     }
 
     @Override
-    public List<Job> getRecentlyRun(long maxResults, Table table1, Table... otherTables)
+    public List<Job> getRecentlyRun(long maxResults, List<Table> tables)
     {
         final ImmutableList.Builder<Job> builder = ImmutableList.builder();
-        final List<Table> tables = Lists.asList(table1, otherTables);
         long added = 0;
 
         for (Map.Entry<Table, EvictingDeque<Job>> entry : tableHistoryCache.getAllPresent(tables).entrySet()) {

@@ -2,18 +2,17 @@ package com.airbnb.airpal.modules;
 
 import com.airbnb.airlift.http.client.OldJettyHttpClient;
 import com.airbnb.airpal.AirpalConfiguration;
-import com.airbnb.airpal.core.ManagedESClient;
 import com.airbnb.airpal.core.PersistentJobOutputFactory;
 import com.airbnb.airpal.core.execution.ExecutionClient;
 import com.airbnb.airpal.core.health.PrestoHealthCheck;
 import com.airbnb.airpal.core.hive.HiveTableUpdatedCache;
 import com.airbnb.airpal.core.store.CachingUsageStore;
 import com.airbnb.airpal.core.store.JobHistoryStore;
+import com.airbnb.airpal.core.store.JobHistoryStoreDAO;
 import com.airbnb.airpal.core.store.QueryStore;
+import com.airbnb.airpal.core.store.QueryStoreDAO;
+import com.airbnb.airpal.core.store.SQLUsageStore;
 import com.airbnb.airpal.core.store.UsageStore;
-import com.airbnb.airpal.core.store.es.CachingESUsageStore;
-import com.airbnb.airpal.core.store.es.ESJobHistoryStore;
-import com.airbnb.airpal.core.store.es.ESQueryStore;
 import com.airbnb.airpal.presto.ClientSessionFactory;
 import com.airbnb.airpal.presto.QueryInfoClient;
 import com.airbnb.airpal.presto.Table;
@@ -22,12 +21,15 @@ import com.airbnb.airpal.presto.metadata.PreviewTableCache;
 import com.airbnb.airpal.presto.metadata.SchemaCache;
 import com.airbnb.airpal.resources.ExecuteResource;
 import com.airbnb.airpal.resources.HealthResource;
-import com.airbnb.airpal.resources.SessionResource;
 import com.airbnb.airpal.resources.PingResource;
 import com.airbnb.airpal.resources.QueryResource;
-import com.airbnb.airpal.resources.RedirectRootResource;
+import com.airbnb.airpal.resources.SessionResource;
 import com.airbnb.airpal.resources.TablesResource;
 import com.airbnb.airpal.resources.sse.SSEEventSourceServlet;
+import com.airbnb.airpal.sql.beans.TableRow;
+import com.airbnb.airpal.sql.jdbi.QueryStoreMapper;
+import com.airbnb.airpal.sql.jdbi.URIArgumentFactory;
+import com.airbnb.airpal.sql.jdbi.UUIDArgumentFactory;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
@@ -46,8 +48,11 @@ import io.airlift.configuration.ConfigurationFactory;
 import io.airlift.http.client.AsyncHttpClient;
 import io.airlift.http.client.HttpClientConfig;
 import io.airlift.units.Duration;
+import io.dropwizard.jdbi.DBIFactory;
+import io.dropwizard.setup.Environment;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.web.env.EnvironmentLoaderListener;
+import org.skife.jdbi.v2.DBI;
 
 import javax.inject.Named;
 
@@ -64,10 +69,12 @@ import static com.airbnb.airpal.presto.QueryRunner.QueryRunnerFactory;
 public class AirpalModule extends AbstractModule
 {
     private final AirpalConfiguration config;
+    private final Environment environment;
 
-    public AirpalModule(AirpalConfiguration config)
+    public AirpalModule(AirpalConfiguration config, Environment environment)
     {
         this.config = config;
+        this.environment = environment;
     }
 
     @Override
@@ -76,7 +83,6 @@ public class AirpalModule extends AbstractModule
         bind(TablesResource.class).in(Scopes.SINGLETON);
         bind(ExecuteResource.class).in(Scopes.SINGLETON);
         bind(QueryResource.class).in(Scopes.SINGLETON);
-        bind(RedirectRootResource.class).in(Scopes.SINGLETON);
         bind(HealthResource.class).in(Scopes.SINGLETON);
         bind(PingResource.class).in(Scopes.SINGLETON);
         bind(SessionResource.class).in(Scopes.SINGLETON);
@@ -90,8 +96,22 @@ public class AirpalModule extends AbstractModule
         bind(ExecutionClient.class).in(Scopes.SINGLETON);
         bind(PersistentJobOutputFactory.class).in(Scopes.SINGLETON);
 
-        bind(JobHistoryStore.class).to(ESJobHistoryStore.class).in(Scopes.SINGLETON);
-        bind(QueryStore.class).to(ESQueryStore.class).in(Scopes.SINGLETON);
+        bind(JobHistoryStore.class).to(JobHistoryStoreDAO.class).in(Scopes.SINGLETON);
+    }
+
+    @Singleton
+    @Provides
+    public DBI provideDBI(ObjectMapper objectMapper)
+            throws ClassNotFoundException
+    {
+        final DBIFactory factory = new DBIFactory();
+        final DBI dbi =  factory.build(environment, config.getDataSourceFactory(), "mysql");
+        dbi.registerMapper(new TableRow.TableRowMapper(objectMapper));
+        dbi.registerMapper(new QueryStoreMapper(objectMapper));
+        dbi.registerArgumentFactory(new UUIDArgumentFactory());
+        dbi.registerArgumentFactory(new URIArgumentFactory());
+
+        return dbi;
     }
 
     @Singleton
@@ -231,22 +251,11 @@ public class AirpalModule extends AbstractModule
 
     @Singleton
     @Provides
-    public UsageStore provideUsageCache(ManagedESClient managedNode)
+    public UsageStore provideUsageCache(DBI dbi)
     {
-        UsageStore delegate =  new CachingESUsageStore(
-                managedNode,
-                config.getUsageWindow(),
-                io.dropwizard.util.Duration.minutes(2));
+        UsageStore delegate = new SQLUsageStore(config.getUsageWindow(), dbi);
 
         return new CachingUsageStore(delegate, io.dropwizard.util.Duration.minutes(6));
-    }
-
-    @Singleton
-    @Provides
-    public ManagedESClient provideManagedNode(ObjectMapper mapper)
-    {
-        return new ManagedESClient(config.getElasticSearchProperties(),
-                               mapper);
     }
 
     @Singleton
@@ -273,5 +282,11 @@ public class AirpalModule extends AbstractModule
         });
 
         return updatedCache;
+    }
+
+    @Provides
+    public QueryStore provideQueryStore(DBI dbi)
+    {
+        return dbi.onDemand(QueryStoreDAO.class);
     }
 }

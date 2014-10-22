@@ -36,7 +36,7 @@
         <jetty.version>9.0.7.v20131107</jetty.version>
         <logback.version>1.0.13</logback.version>
         <lombok.version>1.12.2</lombok.version>
-        <mysql-connector-java.version>5.1.27</mysql-connector-java.version>
+        <mysql-connector-java.version>5.1.33</mysql-connector-java.version>
         <opencsv.version>2.3</opencsv.version>
         <presto.version>0.77</presto.version>
         <shiro.version>1.2.3</shiro.version>
@@ -54,9 +54,15 @@
         <npm>npm</npm>
         <node>node</node>
         <gulp>gulp</gulp>
+        <jooq.version>3.4.4</jooq.version>
     </properties>
 
     <repositories>
+        <repository>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -162,6 +168,12 @@
             <version>${presto.version}</version>
         </dependency>
         <!--// Presto Dependencies -->
+
+        <dependency>
+            <groupId>com.hubspot.rosetta</groupId>
+            <artifactId>RosettaJdbi</artifactId>
+            <version>2.1-SNAPSHOT</version>
+        </dependency>
 
         <dependency>
             <groupId>net.sf.opencsv</groupId>

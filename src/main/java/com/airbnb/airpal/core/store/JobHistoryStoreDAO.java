@@ -2,6 +2,7 @@ package com.airbnb.airpal.core.store;
 
 import com.airbnb.airpal.api.Job;
 import com.airbnb.airpal.presto.Table;
+import com.airbnb.airpal.sql.Util;
 import com.airbnb.airpal.sql.beans.JobTableOutputJoinRow;
 import com.airbnb.airpal.sql.beans.JobTableRow;
 import com.airbnb.airpal.sql.beans.TableRow;
@@ -9,8 +10,8 @@ import com.airbnb.airpal.sql.dao.JobDAO;
 import com.airbnb.airpal.sql.dao.JobOutputDAO;
 import com.airbnb.airpal.sql.dao.JobTableDAO;
 import com.airbnb.airpal.sql.dao.TableDAO;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.hubspot.rosetta.jdbi.RosettaResultSetMapperFactory;
@@ -27,43 +28,55 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static java.lang.String.format;
+
 @Slf4j
 public class JobHistoryStoreDAO
         implements JobHistoryStore
 {
     private final DBI dbi;
-    private final ObjectMapper objectMapper;
 
     @Inject
-    public JobHistoryStoreDAO(DBI dbi, ObjectMapper objectMapper)
+    public JobHistoryStoreDAO(DBI dbi)
     {
         this.dbi = dbi;
-        this.objectMapper = objectMapper;
     }
 
-    @Override
-    public List<Job> getRecentlyRun()
-    {
-        return getRecentlyRun(100);
-    }
+    private static long DEFAULT_MAX_RESULTS = 100;
 
-    @Override
-    public List<Job> getRecentlyRun(long maxResults)
+    private List<Job> getJobs(long limit, int dayInterval, String whereClause)
     {
         try (Handle handle = dbi.open()) {
             Query<Map<String, Object>> query = handle.createQuery(
                     "SELECT j.*, t.connector_id AS connectorId, t.schema_ AS \"schema\", t.table_ AS \"table\", t.columns, jo.type, jo.description, jo.location FROM " +
-                            "(SELECT * FROM jobs WHERE query_finished > DATE_SUB(NOW(), INTERVAL 1 day) ORDER BY query_finished DESC LIMIT :limit) j " +
+                            "(SELECT * FROM jobs " +
+                                "WHERE query_finished > DATE_SUB(NOW(), INTERVAL :day_interval day) " +
+                                "ORDER BY query_finished DESC LIMIT :limit) j " +
                             "LEFT OUTER JOIN job_tables jt ON j.id = jt.job_id " +
                             "LEFT OUTER JOIN tables t ON jt.table_id = t.id " +
                             "LEFT OUTER JOIN job_outputs jo ON j.id = jo.job_id " +
+                            whereClause + " " +
                             "ORDER BY query_finished DESC")
-                    .bind("limit", maxResults);
+                    .bind("limit", limit)
+                    .bind("day_interval", dayInterval);
 
             Map<Long, Job> idToJobMap = query.
                     map(RosettaResultSetMapperFactory.mapperFor(JobTableOutputJoinRow.class)).
                     fold(new HashMap<Long, Job>(), new JobTableOutputJoinRow.JobFolder());
             return new ArrayList<>(idToJobMap.values());
+        }
+    }
+
+    private List<Job> getJobs(long limit, int dayInterval)
+    {
+        return getJobs(limit, dayInterval, "");
+    }
+
+    @Override
+    public List<Job> getRecentlyRun(long maxResults)
+    {
+        try {
+            return getJobs(maxResults, 1);
         } catch (Exception e) {
             log.error("Caught exception during getRecentlyRun", e);
             return Collections.emptyList();
@@ -71,15 +84,21 @@ public class JobHistoryStoreDAO
     }
 
     @Override
-    public List<Job> getRecentlyRun(Table table1, Table... otherTables)
+    public List<Job> getRecentlyRun(long maxResults, Table table1, Table... otherTables)
     {
-        return Collections.emptyList();
+        return getRecentlyRun(maxResults, Lists.asList(table1, otherTables));
     }
 
     @Override
-    public List<Job> getRecentlyRun(long maxResults, Table table1, Table... otherTables)
+    public List<Job> getRecentlyRun(long maxResults, List<Table> tables)
     {
-        return Collections.emptyList();
+        try {
+            String tablesClause = format("WHERE %s", Util.getTableCondition(tables));
+            return getJobs(maxResults, 1, tablesClause);
+        } catch (Exception e) {
+            log.error("Caught exception during getRecentlyRun", e);
+            return Collections.emptyList();
+        }
     }
 
     @Override

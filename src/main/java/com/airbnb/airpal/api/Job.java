@@ -10,11 +10,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Sets;
+import com.hubspot.rosetta.StoredAsJson;
 import lombok.Data;
 import lombok.experimental.Wither;
 import org.joda.time.DateTime;
 
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -24,12 +24,15 @@ import java.util.UUID;
 public class Job
 {
     @JsonProperty
+    @Wither
     private final String user;
 
     @JsonProperty
+    @Wither
     private final String query;
 
     @JsonProperty
+    @Wither
     private final UUID uuid;
 
     @JsonProperty
@@ -38,6 +41,7 @@ public class Job
 
     @JsonProperty
     @Wither
+    @StoredAsJson
     private QueryStats queryStats;
 
     @JsonProperty
@@ -45,6 +49,7 @@ public class Job
     private JobState state;
 
     @JsonProperty
+    @StoredAsJson
     private List<Column> columns;
 
     @JsonProperty
@@ -58,6 +63,8 @@ public class Job
     @JsonProperty
     private QueryError error;
 
+    @JsonProperty
+    @Wither
     private DateTime queryFinished;
 
     @JsonCreator
@@ -110,43 +117,10 @@ public class Job
         );
     }
 
-    @JsonProperty
-    public String getQueryFinished() {
-        if (queryFinished != null) {
-            return queryFinished.toDateTimeISO().toString();
-        } else {
-            return null;
-        }
-    }
-
-    @JsonIgnore
-    public Timestamp getQueryFinishedTimeStamp() {
-        if (queryFinished != null)
-            return new Timestamp(queryFinished.getMillis());
-
-        return null;
-    }
-
     @JsonIgnore
     public DateTime getQueryFinishedDateTime()
     {
         return queryFinished;
-    }
-
-    /*
-    @JsonProperty
-    public DateTime getQueryStarted() {
-        return queryStarted.toDateTimeISO();
-    }
-    */
-    @JsonProperty
-    public String getQueryStarted() {
-        return queryStarted.toDateTimeISO().toString();
-    }
-
-    @JsonIgnore
-    public Timestamp getQueryStartedTimeStamp() {
-        return new Timestamp(queryStarted.getMillis());
     }
 
     @JsonIgnore
@@ -154,9 +128,4 @@ public class Job
     {
         return queryStarted;
     }
-
-    public void addTableUsage(final Table table) {
-        tablesUsed.add(table);
-    }
-
 }

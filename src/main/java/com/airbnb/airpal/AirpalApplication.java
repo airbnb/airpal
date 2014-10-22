@@ -1,6 +1,5 @@
 package com.airbnb.airpal;
 
-import com.airbnb.airpal.core.ManagedESClient;
 import com.airbnb.airpal.core.health.PrestoHealthCheck;
 import com.airbnb.airpal.modules.AirpalModule;
 import com.airbnb.airpal.modules.DropwizardModule;
@@ -8,12 +7,10 @@ import com.airbnb.airpal.resources.ExecuteResource;
 import com.airbnb.airpal.resources.HealthResource;
 import com.airbnb.airpal.resources.PingResource;
 import com.airbnb.airpal.resources.QueryResource;
-import com.airbnb.airpal.resources.RedirectRootResource;
 import com.airbnb.airpal.resources.SessionResource;
 import com.airbnb.airpal.resources.TablesResource;
 import com.airbnb.airpal.resources.sse.SSEEventSourceServlet;
 import com.google.common.collect.ImmutableList;
-import com.google.common.io.Resources;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
@@ -32,7 +29,6 @@ import javax.servlet.DispatcherType;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletRegistration;
 
-import java.io.IOException;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -70,9 +66,7 @@ public class AirpalApplication extends Application<AirpalConfiguration>
         System.setProperty(BUFFER_SIZE_SYSTEM_PROPERTY, String.valueOf(config.getBufferSize().toBytes()));
         Injector injector = Guice.createInjector(Stage.PRODUCTION,
                                                  new DropwizardModule(config, environment),
-                                                 new AirpalModule(config));
-
-        environment.lifecycle().manage(injector.getInstance(ManagedESClient.class));
+                                                 new AirpalModule(config, environment));
 
         environment.healthChecks().register("presto", injector.getInstance(PrestoHealthCheck.class));
 

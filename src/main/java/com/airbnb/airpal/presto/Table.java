@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
+import com.hubspot.rosetta.StoredAsJson;
 import lombok.Data;
 import lombok.ToString;
 
@@ -31,6 +32,7 @@ public class Table
     private final String connectorId;
     private final String schema;
     private final String table;
+    @StoredAsJson
     private final ImmutableList<String> columns;
 
     @JsonCreator

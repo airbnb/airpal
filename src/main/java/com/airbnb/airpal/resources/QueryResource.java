@@ -3,7 +3,6 @@ package com.airbnb.airpal.resources;
 import com.airbnb.airpal.api.Job;
 import com.airbnb.airpal.api.JobState;
 import com.airbnb.airpal.api.queries.CreateSavedQueryBuilder;
-import com.airbnb.airpal.api.queries.FeaturedQuery;
 import com.airbnb.airpal.api.queries.SavedQuery;
 import com.airbnb.airpal.api.queries.UserSavedQuery;
 import com.airbnb.airpal.core.AirpalUser;
@@ -105,44 +104,6 @@ public class QueryResource
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
         }
-        return Response.status(Response.Status.UNAUTHORIZED).build();
-    }
-
-    @GET
-    @Path("featured")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getFeatured(@QueryParam("table") List<PartitionedTable> tables)
-    {
-        if (tables == null || tables.size() < 1) {
-            return Response.ok(queryStore.getFeaturedQueries()).build();
-        }
-
-        return Response.ok(queryStore.getFeaturedQueries(tables)).build();
-    }
-
-    @POST
-    @Path("featured")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response saveFeatured(@FormParam("description") String description,
-                                 @FormParam("query") String query)
-    {
-        CreateSavedQueryBuilder createFeaturedQueryRequest = CreateSavedQueryBuilder.featured()
-                                                                                    .description(description)
-                                                                                    .query(query);
-
-        Subject subject = SecurityUtils.getSubject();
-
-        if (subject.getPrincipal() instanceof AirpalUser && false) {
-            AirpalUser user = (AirpalUser) subject.getPrincipal();
-            FeaturedQuery featuredQuery = (FeaturedQuery) createFeaturedQueryRequest.build();
-
-            if (queryStore.saveFeaturedQuery(featuredQuery)) {
-                return Response.ok().build();
-            } else {
-                return Response.status(Response.Status.NOT_FOUND).build();
-            }
-        }
-
         return Response.status(Response.Status.UNAUTHORIZED).build();
     }
 
