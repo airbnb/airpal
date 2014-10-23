@@ -18,7 +18,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import static org.elasticsearch.common.base.Preconditions.checkNotNull;
+import static com.google.inject.internal.util.$Preconditions.checkNotNull;
 
 @Data
 @AllArgsConstructor
