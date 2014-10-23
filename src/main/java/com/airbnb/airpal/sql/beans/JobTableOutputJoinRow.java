@@ -54,7 +54,11 @@ public class JobTableOutputJoinRow
     public static class JobFolder implements Folder3<Map<Long, Job>, JobTableOutputJoinRow>
     {
         @Override
-        public Map<Long, Job> fold(Map<Long, Job> accumulator, JobTableOutputJoinRow rs, FoldController control, StatementContext ctx)
+        public Map<Long, Job> fold(
+                Map<Long, Job> accumulator,
+                JobTableOutputJoinRow rs,
+                FoldController control,
+                StatementContext ctx)
                 throws SQLException
         {
             if (!accumulator.containsKey(rs.getId())) {
