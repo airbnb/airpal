@@ -42,14 +42,21 @@ public class JobHistoryStoreDAO
         this.dbi = dbi;
     }
 
-    private static long DEFAULT_MAX_RESULTS = 100;
-
     private List<Job> getJobs(long limit, int dayInterval, String whereClause)
     {
         try (Handle handle = dbi.open()) {
             Query<Map<String, Object>> query = handle.createQuery(
                     "SELECT " +
-                            "j.*, " +
+                            "j.id AS id, " +
+                            "j.query AS query, " +
+                            "j.user AS user, " +
+                            "j.uuid AS uuid, " +
+                            "j.queryStats as queryStats, " +
+                            "j.state AS state, " +
+                            "j.columns AS columns, " +
+                            "j.query_finished AS queryFinished, " +
+                            "j.query_started AS queryStarted, " +
+                            "j.error AS error, " +
                             "t.connector_id AS connectorId, " +
                             "t.schema_ AS \"schema\", " +
                             "t.table_ AS \"table\", " +
@@ -137,18 +144,4 @@ public class JobHistoryStoreDAO
         jobTableDAO.createJobTables(jobTableRows);
         jobOutputDAO.createJobOutput(job.getOutput(), jobId);
     }
-
-
-    //    @SqlQuery("SELECT * FROM jobs ORDER BY query_finished DESC LIMIT 100")
-//    public List<Job> getRecentlyRun();
-//
-//    @SqlQuery("SELECT * FROM jobs ORDER BY query_finished DESC LIMIT :max_results")
-//    public List<Job> getRecentlyRun(@Bind("max_results") long maxResults);
-//
-//    @SqlQuery("SELECT * FROM jobs ORDER BY query_finished DESC LIMIT :max_results")
-//    public List<Job> getRecentlyRun(Table table1, Table... otherTables);
-//
-//    public List<Job> getRecentlyRun(long maxResults, Table table1, Table... otherTables);
-//
-//    public void addRun(Job job);
 }
