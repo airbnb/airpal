@@ -48,8 +48,16 @@ public class JobHistoryStoreDAO
     {
         try (Handle handle = dbi.open()) {
             Query<Map<String, Object>> query = handle.createQuery(
-                    "SELECT j.*, t.connector_id AS connectorId, t.schema_ AS \"schema\", t.table_ AS \"table\", t.columns, jo.type, jo.description, jo.location FROM " +
-                            "(SELECT * FROM jobs " +
+                    "SELECT " +
+                            "j.*, " +
+                            "t.connector_id AS connectorId, " +
+                            "t.schema_ AS \"schema\", " +
+                            "t.table_ AS \"table\", " +
+                            "t.columns, " +
+                            "jo.type, " +
+                            "jo.description, " +
+                            "jo.location " +
+                            "FROM (SELECT * FROM jobs " +
                                 "WHERE query_finished > DATE_SUB(NOW(), INTERVAL :day_interval day) " +
                                 "ORDER BY query_finished DESC LIMIT :limit) j " +
                             "LEFT OUTER JOIN job_tables jt ON j.id = jt.job_id " +
