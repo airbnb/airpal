@@ -12,11 +12,15 @@ import com.airbnb.airpal.core.store.QueryStore;
 import com.airbnb.airpal.presto.PartitionedTable;
 import com.airbnb.airpal.presto.Table;
 import com.facebook.presto.client.Column;
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Ordering;
 import com.google.inject.Inject;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
+import org.joda.time.DateTime;
 
+import javax.annotation.Nullable;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -107,6 +111,18 @@ public class QueryResource
         return Response.status(Response.Status.UNAUTHORIZED).build();
     }
 
+    private static Function<Job, DateTime> JOB_ORDERING = new Function<Job, DateTime>() {
+        @Nullable
+        @Override
+        public DateTime apply(@Nullable Job input)
+        {
+            if (input == null) {
+                return null;
+            }
+            return input.getQueryFinished();
+        }
+    };
+
     @GET
     @Path("history")
     @Produces(MediaType.APPLICATION_JSON)
@@ -148,6 +164,12 @@ public class QueryResource
             }
         }
 
-        return Response.ok(filtered.build()).build();
+        List<Job> sortedResult = Ordering
+                .natural()
+                .nullsLast()
+                .onResultOf(JOB_ORDERING)
+                .reverse()
+                .immutableSortedCopy(filtered.build());
+        return Response.ok(sortedResult).build();
     }
 }
