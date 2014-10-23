@@ -38,10 +38,12 @@
         <mysql-connector-java.version>5.1.33</mysql-connector-java.version>
         <opencsv.version>2.3</opencsv.version>
         <presto.version>0.77</presto.version>
+        <RosettaJdbi.version>2.1-SNAPSHOT</RosettaJdbi.version>
         <shiro.version>1.2.3</shiro.version>
         <slf4j.version>1.7.5</slf4j.version>
 
         <junit.version>4.11</junit.version>
+        <mockito-all.version>1.10.8</mockito-all.version>
 
         <maven-antrun-plugin.version>1.7</maven-antrun-plugin.version>
         <maven-clean-plugin.version>2.5</maven-clean-plugin.version>
@@ -53,7 +55,6 @@
         <npm>npm</npm>
         <node>node</node>
         <gulp>gulp</gulp>
-        <jooq.version>3.4.4</jooq.version>
     </properties>
 
     <repositories>
@@ -171,7 +172,7 @@
         <dependency>
             <groupId>com.hubspot.rosetta</groupId>
             <artifactId>RosettaJdbi</artifactId>
-            <version>2.1-SNAPSHOT</version>
+            <version>${RosettaJdbi.version}</version>
         </dependency>
 
         <dependency>
@@ -214,10 +215,9 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
-            <version>1.10.8</version>
+            <version>${mockito-all.version}</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <build>
