@@ -11,11 +11,13 @@ import com.airbnb.airpal.presto.Table;
 import com.airbnb.airpal.presto.hive.HiveColumn;
 import com.airbnb.airpal.presto.metadata.ColumnCache;
 import com.facebook.presto.client.Column;
+import com.facebook.presto.client.ErrorLocation;
 import com.facebook.presto.client.FailureInfo;
 import com.facebook.presto.client.QueryError;
 import com.facebook.presto.client.QueryResults;
 import com.facebook.presto.client.StatementClient;
 import com.facebook.presto.execution.QueryStats;
+import com.facebook.presto.sql.parser.ParsingException;
 import com.facebook.presto.sql.parser.SqlParser;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
@@ -130,7 +132,14 @@ public class Execution implements Callable<Job>
 
         final Stopwatch stopwatch = Stopwatch.createStarted();
         final List<List<Object>> outputPreview = new ArrayList<>(maxRowsPreviewOutput);
-        final Set<Table> tables = authorizer.tablesUsedByQuery(query);
+        Set<Table> tables = Collections.emptySet();
+
+        try {
+            tables = authorizer.tablesUsedByQuery(query);
+        } catch (ParsingException e) {
+            job.setError(new QueryError(e.getMessage(), null, -1, new ErrorLocation(e.getLineNumber(), e.getColumnNumber()), null));
+            cancelAndThrow(null, stopwatch, new ExecutionFailureException(job, "Invalid query, could not parse", e));
+        }
 
         if (!authorizer.isAuthorizedRead(tables)) {
             cancelAndThrow(null, stopwatch, new ExecutionFailureException(job, "Cannot access tables", null));
