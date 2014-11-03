@@ -16,6 +16,7 @@ concat      = require('gulp-concat');
 // Keep track of all paths
 paths = {
   scripts: ['./js/**/*.js'],
+  plugins: ['./js/plugins/*.js'],
   stylesheets: ['./css/**/*.css'],
   fonts: ['./fonts/*']
 };
@@ -31,6 +32,19 @@ gulp.task('browserify', function() {
     .bundle()
     .on('error', gutil.log.bind(gutil, 'Browserify Error'))
     .pipe(source('application.js'))
+    .pipe(buffer())
+    .pipe(uglify())
+    .pipe(gulp.dest('./build/javascripts'));
+});
+
+// Create a "plugins" task
+gulp.task('plugins', function() {
+  browserify('./js/plugins/_plugins.js', {
+    fullPaths: false
+  })
+    .bundle()
+    .on('error', gutil.log.bind(gutil, 'Browserify Error'))
+    .pipe(source('plugins.js'))
     .pipe(buffer())
     .pipe(uglify())
     .pipe(gulp.dest('./build/javascripts'));
@@ -53,5 +67,6 @@ gulp.task('fonts', function() {
 // Create a "watch" task
 gulp.task('watch', function() {
   gulp.watch(paths.scripts, ['browserify']);
+  gulp.watch(paths.plugins, ['plugins']);
   gulp.watch(paths.stylesheets, ['css', 'fonts']);
 });
