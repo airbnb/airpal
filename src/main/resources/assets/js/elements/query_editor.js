@@ -3,19 +3,12 @@ var React = require('react'),
     ace = require('brace'),
     _ = require('lodash'),
     Placeholder = ace.acequire('ace/placeholder').PlaceHolder,
-    Range = ace.acequire('ace/range').Range,
-    QueryEditor;
+    Range = ace.acequire('ace/range').Range;
 
 require('brace/theme/monokai');
 require('brace/mode/sql');
 
-function rangeStartEndSame(start, end) {
-  return !!start && !!end &&
-    (start.row === end.row) &&
-    (start.column === end.column);
-}
-
-QueryEditor = React.createClass({
+var QueryEditor = React.createClass({
 
   getDefaultProps: function() {
     return {
@@ -24,10 +17,6 @@ QueryEditor = React.createClass({
       selectionBounce: 150,
       onSelection: function(isRange, text) {},
     }
-  },
-
-  getInitialState: function() {
-    return {};
   },
 
   componentDidMount: function() {
@@ -76,19 +65,22 @@ QueryEditor = React.createClass({
 
   handleSelectionChange: function(evt, selection) {
     var range = selection.getRange(),
-        rangeSelected = !rangeStartEndSame(range.start, range.end);
+        rangeSelected = !this._rangeStartEndSame(range.start, range.end);
 
     this.props.onSelection(rangeSelected, this._getQuery());
   },
 
   /* Internal Helpers ------------------------------------------------------- */
+  getValue: function() { return this._getValue(); },
   _getValue: function() { return this.editor.getValue(); },
 
+  setValue: function(value) { return this._setValue(value); },
   _setValue: function(value) { return this.editor.setValue(value); },
 
+  getQuery: function() { return this._getQuery(); },
   _getQuery: function() {
     var range = this.editor.selection.getRange(),
-        rangeSelected = !rangeStartEndSame(range.start, range.end);
+        rangeSelected = !this._rangeStartEndSame(range.start, range.end);
 
     if (rangeSelected) {
       return this.editor.session.getTextRange(range);
@@ -102,6 +94,12 @@ QueryEditor = React.createClass({
     $el.css({height: $el.height() + pixels});
     this.editor.resize(true);
   },
+
+  _rangeStartEndSame: function(start, end) {
+    return !!start && !!end &&
+      (start.row === end.row) &&
+      (start.column === end.column);
+  }
 });
 
 module.exports = QueryEditor;
