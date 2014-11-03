@@ -24,11 +24,10 @@ classes should alter those!
   overflow: hidden;
   -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
-  height: 24px;
+  height: 16px;
   line-height: 16px;
   margin: 0;
-  /*padding: 4px;*/
-  padding: 4px 0 4px 4px;
+  padding: 4px;
   border-right: 1px solid silver;
   border-left: 0px;
   border-top: 0px;
@@ -88,13 +87,10 @@ classes should alter those!
 }
 
 .slick-cell, .slick-headerrow-column {
-  border: 0 none;
-}
-
-.slick-cell, .slick-headerrow-column {
   position: absolute;
-  border-right: 1px dotted #dbdbdb;
-  border-bottom-color: #dbdbdb;
+  border: 1px solid transparent;
+  border-right: 1px dotted silver;
+  border-bottom-color: silver;
   overflow: hidden;
   -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
