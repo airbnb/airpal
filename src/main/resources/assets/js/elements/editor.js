@@ -10,41 +10,18 @@ var Editor = React.createClass({
     return {
       runText: this.props.runText,
       modalQuery: '',
-      querySaving: false,
-
-      statementError: {
-        visible: false,
-        message: 'Airpal does not currently support multiple <a href="#" data-toggle="tooltip" title="A statement is a SQL expression terminated by a semicolon (;)">statements</a> in a query. Please re-phrase your query and try again.'
-      },
-
-      saveError: {
-        visible: false,
-        message: ''
-      },
-
-      runError: {
-        visible: false,
-        message: ''
-      }
+      querySaving: false
     };
   },
 
   getDefaultProps: function() {
-    return {
-      runText: 'Query',
-      onQueryRun: function(query) {},
-      onQuerySave: function(savedQuery) {},
-    };
+    return { runText: 'Query' };
   },
 
+  // Remove the error messages so we can start clean
   componentDidMount: function() {
-
-    // Listen to the close event, to hide the
-    // current error message
     $('#saveQueryModal').on('hide.bs.modal', function($event) {
-      this.setState({
-        saveError: _.extend(this.state.saveError, { visible: false })
-      });
+      this.refs['error-message'].clearMessages('save-modal');
     }.bind(this));
   },
 
@@ -65,9 +42,6 @@ var Editor = React.createClass({
             </div>
 
             <div className="panel-body">
-              <ErrorMessage visible={this.state.statementError.visible} message={this.state.statementError.message} />
-              <ErrorMessage visible={this.state.runError.visible} message={this.state.runError.message} />
-
               <QueryEditor ref="editor" defaultQuery="SELECT COUNT(1) FROM users" onSelection={this.handleEditorSelection} />
             </div>
 
@@ -102,8 +76,7 @@ var Editor = React.createClass({
               </div>
 
               <div className="modal-body">
-                <ErrorMessage visible={this.state.saveError.visible} message={this.state.saveError.message} />
-
+                <ErrorMessage ref="error-message" position="save-modal" />
                 <SavedQueryForm ref="savedQueryForm" query={this.state.modalQuery} onSaveSubmit={this.handleSaveSubmit} context="Save" />
               </div>
 
@@ -153,9 +126,7 @@ var Editor = React.createClass({
     if( !this._hasMultipleStatements(this.refs.editor.getValue()) ) { return true; }
 
     // There are multiple statements, so show an error to the user
-    this.setState({
-      statementError: _.extend(this.state.statementError, { visible: true })
-    });
+    Mediator.emit('newError', 'Airpal does not currently support multiple <a href="#" data-toggle="tooltip" title="A statement is a SQL expression terminated by a semicolon (;)">statements</a> in a query. Please re-phrase your query and try again.');
 
     // Prevent the parent function from continuing
     return false;
@@ -197,14 +168,9 @@ var Editor = React.createClass({
         tmpTable: _.isEmpty(tmpTable) ? null : tmpTable
       }),
 
-      error: function(response, textStatus, error) {
-
-        // Update the visible state and the error message for
-        // running the query
-        this.setState({
-          runError: { visible: true, message: error }
-        });
-      }.bind(this),
+      error: function(xhr, status, message) {
+        Mediator.emit('newError', 'Could not execute the new query because of <strong>' + message + '</strong>');
+      },
 
       success: function(data) {
         if (_.isEmpty(data) || _.isEmpty(data.uuid)) { return; }
@@ -254,13 +220,8 @@ var Editor = React.createClass({
         $(modal).modal('hide');
       }.bind(this),
 
-      error: function(response, textStatus, error) {
-
-        // Update the visible state and the error message for
-        // saving the query
-        this.setState({
-          saveError: { visible: true, message: error }
-        });
+      error: function(xhr, status, message) {
+        Mediator.emit('newError', 'Could not save the query because of <strong>' + message + '</strong>', 'save-modal');
       }.bind(this)
 
     }).always(function() {

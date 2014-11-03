@@ -1,80 +1,71 @@
 /** @jsx React.DOM */
-
 var React = require('react'),
-    _ = require('lodash'),
-    defaultSelectizeOptions,
-    SelectizeInput;
+    _     = require('lodash');
 
-defaultSelectizeOptions = {
-  plugins: ['remove_button'],
-  create: false,
-  openOnFocus: true,
-  hideSelected: true,
-  preload: 'focus',
-  loadThrottle: 1000,
-};
-
-SelectizeInput = React.createClass({
-  getDefaultProps: function() {
-    return {
-      selectize: {},
-      onLoad: function(query, callback) {},
-      onItemAdd: function(value, $item) {},
-      onItemRemove: function(value, $item) {},
-      onOptionRender: function(item, escape) {},
-      onOptionActive: function($item) {},
-    };
+var SelectizeInput = React.createClass({
+  displayName: 'SelectizeInput',
+  propTypes: {
+    placeholder: React.PropTypes.string.isRequired,
+    selectizeOptions: React.PropTypes.func.isRequired
   },
+
   componentDidMount: function() {
-    var $el = $(this.getDOMNode());
-    $el.selectize(
-      _.extend(
-        {},
-        defaultSelectizeOptions,
-        {
-          render: {
-            option: this.props.onOptionRender
-          },
-          load: this.props.onLoad,
-          onItemAdd: this.props.onItemAdd,
-          onItemRemove: this.props.onItemRemove,
-        },
-        this.props.selectize)
+
+    // Define the input for this component
+    this.input = this.refs.selectize.getDOMNode();
+    this.$input = $(this.input);
+
+    // Activate the selectize plugin
+    this.$input.selectize(
+      _.extend(this._defaultSelectizeOptions(), this.props.selectizeOptions())
     );
 
-    this.selectize = $el.data('selectize');
-    this.selectize.on('optionActive', function($item) {
-      this.props.onOptionActive($item);
-    }.bind(this));
+    // Define the $selectize instance
+    this.$selectize = this.$input[0].selectize;
+
+    // Check or the editor is disabled
+    if(this.props.disabled) {
+      this._disable();
+    }
   },
+
   componentWillUnmount: function() {
-    this.selectize.destroy();
+    this.$selectize.destroy();
   },
-  render: function() {
-    return (<input type="text" ref="input" />);
+
+  render: function () {
+    return (
+      <input ref="selectize" type="text" placeholder={this.props.placeholder} />
+    );
   },
-  forceSearch: function(val) {
-    this.selectize.onSearchChange(val);
+
+  /* Internal Helpers ------------------------------------------------------- */
+  _defaultSelectizeOptions: function() {
+    return {
+      create:       false,
+      openOnFocus:  true,
+      preload:      'focus',
+      loadThrottle: 1000
+    };
   },
-  updatePlaceholder: function(text) {
-    var _selectize = this.selectize;
-    _selectize.$control_input.
-      attr('placeholder', text).
-      data('grow', true).
-      trigger('update');
+
+  // Enables the selectize plugin
+  enable: function() { return this._enable(); }, // Alias for internal function
+  _enable: function() {
+    this.$selectize.enable();
   },
-  disable: function() {
-    this.selectize.disable();
+
+  // Disables the selectize plugin
+  disable: function() { return this._disable(); }, // Alias for internal function
+  _disable: function() {
+    this.$selectize.disable();
   },
-  enable: function() {
-    this.selectize.enable();
-  },
-  getItems: function() {
-    return this.selectize.$control.find('.item');
-  },
-  setActiveItem: function($item, e) {
-    return this.selectize.setActiveItem($item, e);
-  },
+
+  // Hides the selectize plugin
+  close: function() { return this._close(); },
+  _close: function() {
+    this.$selectize.close();
+  }
 });
 
 module.exports = SelectizeInput;

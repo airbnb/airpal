@@ -4,24 +4,40 @@ var React = require('react');
 var ErrorMessage = React.createClass({
   displayName: 'ErrorMessage',
 
-  propTypes: {
-    visible: React.PropTypes.bool.isRequired,
-    message: React.PropTypes.string.isRequired
-  },
-
-  getDefaultProps: function() {
-    return { visible: false, message: '' }
-  },
-
   getInitialState: function() {
-    return { visible: this.props.visible };
+    return { position: 'main', message: '', visible: false };
   },
 
-  componentWillReceiveProps: function() {
+  componentWillMount: function() {
+    this.setState({
+      position: this.props.position || this.state.position
+    });
+  },
 
-    // Make sure the state is up to date when receiving
-    // new properties from the parent
-    this.setState({ visible: this.props.visible });
+  componentDidMount: function() {
+
+    // Make the error message visible when the newError event is triggered
+    Mediator.on('newError', function(message, position) {
+      position || (position = 'main')
+      if( this.state.position === position ) {
+        this.setState({ message: message, visible: true });
+      }
+    }.bind(this));
+
+    // Hide the error message and clear it when the removeError event is
+    // triggered (mostly done internally)
+    Mediator.on('removeError', function(position) {
+      if( this.state.position === position ) {
+        this.setState({ message: '', visible: false });
+      }
+    }.bind(this));
+
+  },
+
+  componentWillUnmount: function() {
+
+    // Remove the event listeners for the errors
+    Mediator.off('newError', 'removeError');
   },
 
   render: function () {
@@ -41,18 +57,18 @@ var ErrorMessage = React.createClass({
 
         <p>
           <strong>ERROR: </strong>
-          <span dangerouslySetInnerHTML={{__html: this.props.message}}></span>
+          <span dangerouslySetInnerHTML={{__html: this.state.message}}></span>
         </p>
       </div>
     );
   },
 
-  /* Events ----------------------------------------------------------------- */
-  handleCloseAction: function($event) {
-    $event.preventDefault();
+  /* Event Handlers */
+  handleCloseAction: function() { this.clearMessages(); },
 
-    // When the state is set to false, the alert should hide
-    this.setState({ visible: false });
+  clearMessages: function(position) {
+    position || (position = this.state.position)
+    Mediator.emit('removeError', position);
   }
 });
 
