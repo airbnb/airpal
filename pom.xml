@@ -29,19 +29,21 @@
 
         <aws-java-sdk.version>1.6.8</aws-java-sdk.version>
         <dropwizard.version>0.7.1</dropwizard.version>
-        <elasticsearch.version>0.90.5</elasticsearch.version>
+        <dropwizard-flyway.version>0.7.0-1</dropwizard-flyway.version>
         <guava.version>18.0</guava.version>
         <jackson.version>2.3.2</jackson.version>
         <jetty.version>9.0.7.v20131107</jetty.version>
         <logback.version>1.0.13</logback.version>
         <lombok.version>1.12.2</lombok.version>
-        <mysql-connector-java.version>5.1.27</mysql-connector-java.version>
+        <mysql-connector-java.version>5.1.33</mysql-connector-java.version>
         <opencsv.version>2.3</opencsv.version>
         <presto.version>0.77</presto.version>
+        <RosettaJdbi.version>2.1-SNAPSHOT</RosettaJdbi.version>
         <shiro.version>1.2.3</shiro.version>
         <slf4j.version>1.7.5</slf4j.version>
 
         <junit.version>4.11</junit.version>
+        <mockito-all.version>1.10.8</mockito-all.version>
 
         <maven-antrun-plugin.version>1.7</maven-antrun-plugin.version>
         <maven-clean-plugin.version>2.5</maven-clean-plugin.version>
@@ -56,6 +58,11 @@
     </properties>
 
     <repositories>
+        <repository>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -117,6 +124,12 @@
         <!--// Server Dependencies -->
 
         <dependency>
+            <groupId>io.dropwizard.modules</groupId>
+            <artifactId>dropwizard-flyway</artifactId>
+            <version>${dropwizard-flyway.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
@@ -157,15 +170,15 @@
         <!--// Presto Dependencies -->
 
         <dependency>
-            <groupId>net.sf.opencsv</groupId>
-            <artifactId>opencsv</artifactId>
-            <version>${opencsv.version}</version>
+            <groupId>com.hubspot.rosetta</groupId>
+            <artifactId>RosettaJdbi</artifactId>
+            <version>${RosettaJdbi.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>org.elasticsearch</groupId>
-            <artifactId>elasticsearch</artifactId>
-            <version>${elasticsearch.version}</version>
+            <groupId>net.sf.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>${opencsv.version}</version>
         </dependency>
 
         <dependency>
@@ -202,10 +215,9 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
-            <version>1.10.8</version>
+            <version>${mockito-all.version}</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <build>

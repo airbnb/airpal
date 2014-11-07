@@ -1,6 +1,7 @@
 package com.airbnb.airpal.api.queries;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.hubspot.rosetta.StoredAsJson;
 import lombok.*;
 import org.joda.time.DateTime;
 
@@ -14,6 +15,7 @@ public class UserSavedQuery implements SavedQuery
 {
     @NotNull
     @JsonProperty
+    @StoredAsJson
     private FeaturedQuery.QueryWithPlaceholders queryWithPlaceholders;
 
     @NotNull

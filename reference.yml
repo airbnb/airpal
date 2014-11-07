@@ -2,7 +2,7 @@
 logging:
 
   loggers:
-    org.apache.shiro: TRACE
+    org.apache.shiro: INFO
 
   # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
   level: INFO
@@ -41,3 +41,5 @@ shiroConfiguration:
 airpalHosts:
   - http://127.0.0.1:8082
 
+dataSourceFactory:
+  driverClass: com.mysql.jdbc.Driver

@@ -4,7 +4,6 @@ import com.airbnb.airpal.api.output.HiveTablePersistentOutput;
 import com.airbnb.airpal.api.output.PersistentJobOutput;
 import com.airbnb.airpal.api.output.S3CsvPersistentOutput;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.transfer.TransferManager;
 import com.google.common.base.Strings;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -36,6 +35,17 @@ public class PersistentJobOutputFactory
             return new HiveTablePersistentOutput(jobUUID, tmpTable);
         } else {
             return new S3CsvPersistentOutput(jobUUID, s3Client, corsAllowedHosts, s3Bucket);
+        }
+    }
+
+    public static PersistentJobOutput create(String type, String description, URI location)
+    {
+        if (location == null) {
+            return null;
+        } else if (location.isAbsolute()) {
+            return new S3CsvPersistentOutput(location, type, description);
+        } else {
+            return new HiveTablePersistentOutput(location, type, description);
         }
     }
 }

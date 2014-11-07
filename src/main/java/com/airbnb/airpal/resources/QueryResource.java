@@ -3,7 +3,6 @@ package com.airbnb.airpal.resources;
 import com.airbnb.airpal.api.Job;
 import com.airbnb.airpal.api.JobState;
 import com.airbnb.airpal.api.queries.CreateSavedQueryBuilder;
-import com.airbnb.airpal.api.queries.FeaturedQuery;
 import com.airbnb.airpal.api.queries.SavedQuery;
 import com.airbnb.airpal.api.queries.UserSavedQuery;
 import com.airbnb.airpal.core.AirpalUser;
@@ -13,11 +12,15 @@ import com.airbnb.airpal.core.store.QueryStore;
 import com.airbnb.airpal.presto.PartitionedTable;
 import com.airbnb.airpal.presto.Table;
 import com.facebook.presto.client.Column;
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Ordering;
 import com.google.inject.Inject;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
+import org.joda.time.DateTime;
 
+import javax.annotation.Nullable;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -108,43 +111,17 @@ public class QueryResource
         return Response.status(Response.Status.UNAUTHORIZED).build();
     }
 
-    @GET
-    @Path("featured")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getFeatured(@QueryParam("table") List<PartitionedTable> tables)
-    {
-        if (tables == null || tables.size() < 1) {
-            return Response.ok(queryStore.getFeaturedQueries()).build();
-        }
-
-        return Response.ok(queryStore.getFeaturedQueries(tables)).build();
-    }
-
-    @POST
-    @Path("featured")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response saveFeatured(@FormParam("description") String description,
-                                 @FormParam("query") String query)
-    {
-        CreateSavedQueryBuilder createFeaturedQueryRequest = CreateSavedQueryBuilder.featured()
-                                                                                    .description(description)
-                                                                                    .query(query);
-
-        Subject subject = SecurityUtils.getSubject();
-
-        if (subject.getPrincipal() instanceof AirpalUser && false) {
-            AirpalUser user = (AirpalUser) subject.getPrincipal();
-            FeaturedQuery featuredQuery = (FeaturedQuery) createFeaturedQueryRequest.build();
-
-            if (queryStore.saveFeaturedQuery(featuredQuery)) {
-                return Response.ok().build();
-            } else {
-                return Response.status(Response.Status.NOT_FOUND).build();
+    private static Function<Job, DateTime> JOB_ORDERING = new Function<Job, DateTime>() {
+        @Nullable
+        @Override
+        public DateTime apply(@Nullable Job input)
+        {
+            if (input == null) {
+                return null;
             }
+            return input.getQueryFinished();
         }
-
-        return Response.status(Response.Status.UNAUTHORIZED).build();
-    }
+    };
 
     @GET
     @Path("history")
@@ -187,6 +164,12 @@ public class QueryResource
             }
         }
 
-        return Response.ok(filtered.build()).build();
+        List<Job> sortedResult = Ordering
+                .natural()
+                .nullsLast()
+                .onResultOf(JOB_ORDERING)
+                .reverse()
+                .immutableSortedCopy(filtered.build());
+        return Response.ok(sortedResult).build();
     }
 }
