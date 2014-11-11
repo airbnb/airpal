@@ -6,9 +6,12 @@ import com.airbnb.airpal.modules.DropwizardModule;
 import com.airbnb.airpal.resources.ExecuteResource;
 import com.airbnb.airpal.resources.HealthResource;
 import com.airbnb.airpal.resources.PingResource;
+import com.airbnb.airpal.resources.QueriesResource;
 import com.airbnb.airpal.resources.QueryResource;
 import com.airbnb.airpal.resources.SessionResource;
 import com.airbnb.airpal.resources.TablesResource;
+import com.airbnb.airpal.resources.UserResource;
+import com.airbnb.airpal.resources.UsersResource;
 import com.airbnb.airpal.resources.sse.SSEEventSourceServlet;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Guice;
@@ -72,6 +75,9 @@ public class AirpalApplication extends Application<AirpalConfiguration>
 
         environment.jersey().register(injector.getInstance(ExecuteResource.class));
         environment.jersey().register(injector.getInstance(QueryResource.class));
+        environment.jersey().register(injector.getInstance(QueriesResource.class));
+        environment.jersey().register(injector.getInstance(UserResource.class));
+        environment.jersey().register(injector.getInstance(UsersResource.class));
         environment.jersey().register(injector.getInstance(TablesResource.class));
         environment.jersey().register(injector.getInstance(HealthResource.class));
         environment.jersey().register(injector.getInstance(PingResource.class));

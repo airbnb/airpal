@@ -1,12 +1,12 @@
 package com.airbnb.airpal.presto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Function;
 import com.google.common.base.Splitter;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import lombok.experimental.Wither;
+
+import javax.annotation.Nullable;
 
 import java.util.List;
 
@@ -121,6 +121,16 @@ public class PartitionedTable extends Table
             return new PartitionedTable("hive", parts.get(0), parts.get(1));
         } else {
             throw new IllegalArgumentException("Table identifier parts not found.");
+        }
+    }
+
+    public static class PartitionedTableToTable implements Function<PartitionedTable, Table>
+    {
+        @Nullable
+        @Override
+        public Table apply(PartitionedTable input)
+        {
+            return input;
         }
     }
 }
