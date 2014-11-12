@@ -1,7 +1,5 @@
 package com.airbnb.airpal;
 
-import com.airbnb.dropwizard.shiro.ShiroConfiguration;
-import com.airbnb.dropwizard.shiro.WithShiroConfiguration;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.airlift.units.DataSize;
@@ -12,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.secnod.dropwizard.shiro.ShiroConfiguration;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -20,7 +19,6 @@ import java.net.URI;
 import java.util.List;
 
 public class AirpalConfiguration extends Configuration
-        implements WithShiroConfiguration
 {
     @Getter
     @Setter
@@ -97,12 +95,6 @@ public class AirpalConfiguration extends Configuration
     @Setter
     @JsonProperty
     @NotNull
-    private ShiroConfiguration shiroConfiguration;
-
-    @Getter
-    @Setter
-    @JsonProperty
-    @NotNull
     private List<URI> airpalHosts;
 
     @Getter
@@ -115,6 +107,13 @@ public class AirpalConfiguration extends Configuration
     @JsonProperty
     @NotNull
     private DataSourceFactory dataSourceFactory = new DataSourceFactory();
+
+    @Getter
+    @Setter
+    @Valid
+    @JsonProperty
+    @NotNull
+    private ShiroConfiguration shiro;
 
     public static class ElasticSearchConfiguration
     {

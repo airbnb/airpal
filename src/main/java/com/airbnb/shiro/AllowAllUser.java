@@ -18,4 +18,10 @@ public class AllowAllUser
     private final String defaultSchema;
     private final Duration queryTimeout;
     private final String accessLevel;
+
+    @Override
+    public boolean isPermitted(String permission)
+    {
+        return true;
+    }
 }

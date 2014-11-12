@@ -51,9 +51,8 @@ public class AllowAllFilter
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception
     {
         log.info("onAccessDenied called");
-        boolean loggedIn = executeLogin(request, response);
 
-        return loggedIn;
+        return executeLogin(request, response);
     }
 
     private boolean userIsLoggedIn()

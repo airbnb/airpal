@@ -4,6 +4,7 @@ import com.airbnb.airpal.api.Job;
 import com.airbnb.airpal.api.event.JobEvent;
 import com.airbnb.airpal.api.event.JobFinishedEvent;
 import com.airbnb.airpal.api.event.JobUpdateEvent;
+import com.airbnb.airpal.core.AirpalUser;
 import com.airbnb.airpal.core.AuthorizationUtil;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
@@ -62,7 +63,7 @@ public class SSEEventSourceServlet extends EventSourceServlet
         private final ObjectMapper objectMapper;
         private final RateLimiter updateLimiter = RateLimiter.create(15.0);
         private final Set<SSEEventSource> subscribers = Collections.newSetFromMap(new ConcurrentHashMap<SSEEventSource, Boolean>());
-        private final Map<SSEEventSource, Subject> eventSourceSubjectMap = new ConcurrentHashMap<>();
+        private final Map<SSEEventSource, AirpalUser> eventSourceSubjectMap = new ConcurrentHashMap<>();
         private final ExecutorService executorService;
         private final Timer timer;
 
@@ -126,7 +127,7 @@ public class SSEEventSourceServlet extends EventSourceServlet
     private static class AuthorizedEventBroadcast implements Runnable
     {
         private final SSEEventSource eventSource;
-        private final Subject subject;
+        private final AirpalUser subject;
         private final String message;
         private final Job job;
         private final Timer timer;

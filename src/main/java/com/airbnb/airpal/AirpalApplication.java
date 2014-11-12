@@ -1,5 +1,6 @@
 package com.airbnb.airpal;
 
+import com.airbnb.airpal.core.AirpalUserFactory;
 import com.airbnb.airpal.core.health.PrestoHealthCheck;
 import com.airbnb.airpal.modules.AirpalModule;
 import com.airbnb.airpal.modules.DropwizardModule;
@@ -13,7 +14,6 @@ import com.airbnb.airpal.resources.TablesResource;
 import com.airbnb.airpal.resources.UserResource;
 import com.airbnb.airpal.resources.UsersResource;
 import com.airbnb.airpal.resources.sse.SSEEventSourceServlet;
-import com.google.common.collect.ImmutableList;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
@@ -25,15 +25,11 @@ import io.dropwizard.flyway.FlywayFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
-import org.apache.shiro.web.env.EnvironmentLoaderListener;
-import org.apache.shiro.web.servlet.ShiroFilter;
+import org.joda.time.Duration;
+import org.secnod.dropwizard.shiro.ShiroBundle;
+import org.secnod.dropwizard.shiro.ShiroConfiguration;
 
-import javax.servlet.DispatcherType;
-import javax.servlet.ServletContextListener;
 import javax.servlet.ServletRegistration;
-
-import java.util.EnumSet;
-import java.util.List;
 
 import static com.sun.jersey.core.util.ReaderWriter.BUFFER_SIZE_SYSTEM_PROPERTY;
 
@@ -56,10 +52,18 @@ public class AirpalApplication extends Application<AirpalConfiguration>
                 return super.getFlywayFactory(configuration);
             }
         };
+        final ShiroBundle<AirpalConfiguration> shiroBundle = new ShiroBundle<AirpalConfiguration>() {
+            @Override
+            protected ShiroConfiguration narrow(AirpalConfiguration configuration)
+            {
+                return configuration.getShiro();
+            }
+        };
 
         bootstrap.addBundle(assetBundle);
         bootstrap.addBundle(viewBundle);
         bootstrap.addBundle(flywayBundle);
+        bootstrap.addBundle(shiroBundle);
     }
 
     @Override
@@ -83,35 +87,13 @@ public class AirpalApplication extends Application<AirpalConfiguration>
         environment.jersey().register(injector.getInstance(PingResource.class));
         environment.jersey().register(injector.getInstance(SessionResource.class));
 
-        // Setup Authentication
-        registerShiro(config, environment, injector.getInstance(EnvironmentLoaderListener.class));
+        environment.jersey().register(new UserInjectableProvider(new AirpalUserFactory(config.getPrestoSchema(), Duration.standardMinutes(15), "default")));
 
         // Setup SSE (Server Sent Events)
         ServletRegistration.Dynamic sseServlet = environment.servlets()
                 .addServlet("updates", injector.getInstance(SSEEventSourceServlet.class));
         sseServlet.setAsyncSupported(true);
         sseServlet.addMapping("/api/updates/subscribe");
-    }
-
-    private void registerShiro(AirpalConfiguration configuration, Environment environment, ServletContextListener listener)
-    {
-        environment
-                .servlets()
-                .addServletListeners(listener);
-        List<String> securedUrlsList = configuration.getShiroConfiguration().getSecuredUrls();
-        List<String> dispatchTypesList = configuration.getShiroConfiguration().getDispatchTypes();
-        ImmutableList.Builder<DispatcherType> dispatcherTypeBuilder = ImmutableList.builder();
-        String[] securedUrls = securedUrlsList.toArray(new String[securedUrlsList.size()]);
-
-        for (String dispatchType : dispatchTypesList) {
-            dispatcherTypeBuilder.add(DispatcherType.valueOf(dispatchType.toUpperCase()));
-        }
-
-        environment.servlets()
-                .addFilter("shiro", ShiroFilter.class)
-                .addMappingForUrlPatterns(EnumSet.copyOf(dispatcherTypeBuilder.build()),
-                        false,
-                        securedUrls);
     }
 
     public static void main(final String[] args) throws Exception {
