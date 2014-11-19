@@ -11,7 +11,11 @@ public interface JobHistoryStore
 
     public List<Job> getRecentlyRun(long maxResults, Table table1, Table... otherTables);
 
-    public List<Job> getRecentlyRun(long maxResults, List<Table> tables);
+    public List<Job> getRecentlyRun(long maxResults, Iterable<Table> tables);
+
+    public List<Job> getRecentlyRunForUser(String user, long maxResults);
+
+    public List<Job> getRecentlyRunForUser(String user, long maxResults, Iterable<Table> tables);
 
     public void addRun(Job job);
 }

@@ -105,10 +105,34 @@ public class JobHistoryStoreDAO
     }
 
     @Override
-    public List<Job> getRecentlyRun(long maxResults, List<Table> tables)
+    public List<Job> getRecentlyRun(long maxResults, Iterable<Table> tables)
     {
         try {
             String tablesClause = format("WHERE %s", Util.getTableCondition(tables));
+            return getJobs(maxResults, 1, tablesClause);
+        } catch (Exception e) {
+            log.error("Caught exception during getRecentlyRun", e);
+            return Collections.emptyList();
+        }
+    }
+
+    @Override
+    public List<Job> getRecentlyRunForUser(String user, long maxResults)
+    {
+        try {
+            String tablesClause = format("WHERE user = %s", user);
+            return getJobs(maxResults, 1, tablesClause);
+        } catch (Exception e) {
+            log.error("Caught exception during getRecentlyRun", e);
+            return Collections.emptyList();
+        }
+    }
+
+    @Override
+    public List<Job> getRecentlyRunForUser(String user, long maxResults, Iterable<Table> tables)
+    {
+        try {
+            String tablesClause = format("WHERE user = %s AND (%s)", user, Util.getTableCondition(tables));
             return getJobs(maxResults, 1, tablesClause);
         } catch (Exception e) {
             log.error("Caught exception during getRecentlyRun", e);

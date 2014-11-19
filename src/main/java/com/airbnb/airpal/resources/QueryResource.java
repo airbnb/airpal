@@ -111,7 +111,7 @@ public class QueryResource
         return Response.status(Response.Status.UNAUTHORIZED).build();
     }
 
-    private static Function<Job, DateTime> JOB_ORDERING = new Function<Job, DateTime>() {
+    public static Function<Job, DateTime> JOB_ORDERING = new Function<Job, DateTime>() {
         @Nullable
         @Override
         public DateTime apply(@Nullable Job input)
