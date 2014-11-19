@@ -5,6 +5,7 @@ import com.airbnb.airpal.api.event.JobEvent;
 import com.airbnb.airpal.api.event.JobFinishedEvent;
 import com.airbnb.airpal.api.event.JobUpdateEvent;
 import com.airbnb.airpal.core.AirpalUser;
+import com.airbnb.airpal.core.AirpalUserFactory;
 import com.airbnb.airpal.core.AuthorizationUtil;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
@@ -38,14 +39,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class SSEEventSourceServlet extends EventSourceServlet
 {
     private final JobUpdateToSSERelay jobUpdateToSSERelay;
+    private final AirpalUserFactory userFactory;
 
     @Inject
     public SSEEventSourceServlet(ObjectMapper objectMapper,
             EventBus eventBus,
             @Named("sse") ExecutorService executorService,
-            MetricRegistry registry)
+            MetricRegistry registry,
+            AirpalUserFactory userFactory)
     {
         this.jobUpdateToSSERelay = new JobUpdateToSSERelay(objectMapper, executorService, registry);
+        this.userFactory = userFactory;
         eventBus.register(jobUpdateToSSERelay);
     }
 
@@ -54,7 +58,7 @@ public class SSEEventSourceServlet extends EventSourceServlet
     {
         SSEEventSource eventSource = new SSEEventSource(jobUpdateToSSERelay);
         Subject subject = SecurityUtils.getSubject();
-        jobUpdateToSSERelay.addListener(eventSource, subject);
+        jobUpdateToSSERelay.addListener(eventSource, userFactory.getUser(subject));
         return eventSource;
     }
 
@@ -74,9 +78,9 @@ public class SSEEventSourceServlet extends EventSourceServlet
             this.timer = registry.timer(name(AuthorizedEventBroadcast.class, "authorization"));
         }
 
-        public void addListener(SSEEventSource sseEventSource, Subject subject)
+        public void addListener(SSEEventSource sseEventSource, AirpalUser subject)
         {
-            Subject eventSubject = checkNotNull(subject, "subject was null");
+            AirpalUser eventSubject = checkNotNull(subject, "subject was null");
             SSEEventSource eventSource = checkNotNull(sseEventSource, "sseEventSource was null");
 
             subscribers.add(eventSource);

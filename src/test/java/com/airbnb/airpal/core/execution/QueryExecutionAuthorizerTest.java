@@ -219,4 +219,21 @@ public class QueryExecutionAuthorizerTest
 
         assertEquals(tablesExpected, tablesUsed);
     }
+
+    static String TEST_CROSS_JOIN_SUBSELECT = "SELECT * " +
+            "FROM cassandra.pii.users u " +
+            "CROSS JOIN (SELECT * FROM hive.pii.users) u2 " +
+            "WHERE NOT u2.id IS NULL;";
+    @Test
+    public void testTableReferencesCrossJoinSubselect()
+            throws Exception
+    {
+        Set<Table> tablesUsed = tablesUsedByQuery(TEST_CROSS_JOIN_SUBSELECT, defaultConnector, defaultSchema);
+        Set<Table> tablesExpected = ImmutableSet.of(
+                new Table("cassandra", "pii", "users"),
+                new Table("hive", "pii", "users")
+        );
+
+        assertEquals(tablesExpected, tablesUsed);
+    }
 }

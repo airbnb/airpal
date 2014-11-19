@@ -25,7 +25,6 @@ import io.dropwizard.flyway.FlywayFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
-import org.joda.time.Duration;
 import org.secnod.dropwizard.shiro.ShiroBundle;
 import org.secnod.dropwizard.shiro.ShiroConfiguration;
 
@@ -87,7 +86,7 @@ public class AirpalApplication extends Application<AirpalConfiguration>
         environment.jersey().register(injector.getInstance(PingResource.class));
         environment.jersey().register(injector.getInstance(SessionResource.class));
 
-        environment.jersey().register(new UserInjectableProvider(new AirpalUserFactory(config.getPrestoSchema(), Duration.standardMinutes(15), "default")));
+        environment.jersey().register(new UserInjectableProvider(injector.getInstance(AirpalUserFactory.class)));
 
         // Setup SSE (Server Sent Events)
         ServletRegistration.Dynamic sseServlet = environment.servlets()

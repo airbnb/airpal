@@ -1,5 +1,6 @@
 package com.airbnb.airpal.core.execution;
 
+import com.airbnb.airpal.core.AirpalUser;
 import com.airbnb.airpal.core.AuthorizationUtil;
 import com.airbnb.airpal.presto.Table;
 import com.facebook.presto.sql.parser.SqlParser;
@@ -7,7 +8,6 @@ import com.facebook.presto.sql.tree.Statement;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import org.apache.shiro.subject.Subject;
 
 import java.util.List;
 import java.util.Set;
@@ -20,25 +20,25 @@ public class QueryExecutionAuthorizer
 {
     private static final SqlParser SQL_PARSER = new SqlParser();
 
-    private final Subject subject;
+    private final AirpalUser user;
     private final String defaultConnector;
     private final String defaultSchema;
 
-    public QueryExecutionAuthorizer(Subject subject, String defaultConnector, String defaultSchema)
+    public QueryExecutionAuthorizer(AirpalUser user, String defaultConnector, String defaultSchema)
     {
-        this.subject = checkNotNull(subject);
+        this.user = checkNotNull(user);
         this.defaultConnector = checkNotNull(defaultConnector);
         this.defaultSchema = checkNotNull(defaultSchema);
     }
 
     public boolean isAuthorizedWrite(String connectorId, String schema, String table)
     {
-        return AuthorizationUtil.isAuthorizedWrite(subject, connectorId, schema, table);
+        return AuthorizationUtil.isAuthorizedWrite(user, connectorId, schema, table);
     }
 
     public boolean isAuthorizedRead(Set<Table> tables)
     {
-        return Iterables.all(tables, new AuthorizedTablesPredicate(subject));
+        return Iterables.all(tables, new AuthorizedTablesPredicate(user));
     }
 
     private static Splitter STATEMENT_SPLITTER = Splitter.on(";").omitEmptyStrings();

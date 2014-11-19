@@ -7,8 +7,7 @@ import com.airbnb.airpal.core.execution.ExecutionClient;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.inject.Inject;
 import lombok.Data;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
+import org.secnod.shiro.jaxrs.Auth;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -35,14 +34,11 @@ public class ExecuteResource {
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response executeQuery(ExecutionRequest request) throws IOException
+    public Response executeQuery(@Auth AirpalUser user, ExecutionRequest request) throws IOException
     {
-        Subject subject = SecurityUtils.getSubject();
-        if (subject.getPrincipal() instanceof AirpalUser) {
-            AirpalUser user = (AirpalUser) subject.getPrincipal();
+        if (user != null) {
             final UUID queryUuid = executionClient.runQuery(request,
-                    user.getUserName(),
-                    subject,
+                    user,
                     user.getDefaultSchema(),
                     user.getQueryTimeout());
 
@@ -57,16 +53,13 @@ public class ExecuteResource {
     @GET
     @Path("permissions")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPermissions()
+    public Response getPermissions(@Auth AirpalUser user)
     {
-        Subject subject = SecurityUtils.getSubject();
-        AirpalUser user = subject.getPrincipals().oneByType(AirpalUser.class);
-
         if (user == null) {
             return Response.status(Response.Status.FORBIDDEN).build();
         } else {
             return Response.ok(new ExecutionPermissions(
-                    AuthorizationUtil.isAuthorizedWrite(subject, "hive", "airpal", "any"),
+                    AuthorizationUtil.isAuthorizedWrite(user, "hive", "airpal", "any"),
                     true,
                     user.getUserName(),
                     user.getAccessLevel()

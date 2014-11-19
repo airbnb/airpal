@@ -2,6 +2,7 @@ package com.airbnb.airpal.modules;
 
 import com.airbnb.airlift.http.client.OldJettyHttpClient;
 import com.airbnb.airpal.AirpalConfiguration;
+import com.airbnb.airpal.core.AirpalUserFactory;
 import com.airbnb.airpal.core.PersistentJobOutputFactory;
 import com.airbnb.airpal.core.execution.ExecutionClient;
 import com.airbnb.airpal.core.health.PrestoHealthCheck;
@@ -288,5 +289,12 @@ public class AirpalModule extends AbstractModule
     public QueryStore provideQueryStore(DBI dbi)
     {
         return dbi.onDemand(QueryStoreDAO.class);
+    }
+
+    @Provides
+    @Singleton
+    public AirpalUserFactory provideAirpalUserFactory()
+    {
+        return new AirpalUserFactory(config.getPrestoSchema(), org.joda.time.Duration.standardMinutes(15), "default");
     }
 }

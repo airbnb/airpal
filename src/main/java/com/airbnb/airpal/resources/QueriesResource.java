@@ -2,6 +2,7 @@ package com.airbnb.airpal.resources;
 
 import com.airbnb.airpal.api.Job;
 import com.airbnb.airpal.api.JobState;
+import com.airbnb.airpal.core.AirpalUser;
 import com.airbnb.airpal.core.AuthorizationUtil;
 import com.airbnb.airpal.core.store.JobHistoryStore;
 import com.airbnb.airpal.presto.PartitionedTable;
@@ -12,8 +13,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 import com.google.inject.Inject;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
+import org.secnod.shiro.jaxrs.Auth;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -41,10 +41,10 @@ public class QueriesResource
 
     @GET
     public Response getQueries(
+            @Auth AirpalUser user,
             @QueryParam("results") int numResults,
             @QueryParam("table") List<PartitionedTable> tables)
     {
-        Subject subject = SecurityUtils.getSubject();
         Iterable<Job> recentlyRun;
         int results = Optional.of(numResults).or(200);
 
@@ -63,7 +63,7 @@ public class QueriesResource
                 continue;
             }
             for (Table table : job.getTablesUsed()) {
-                if (AuthorizationUtil.isAuthorizedRead(subject, table)) {
+                if (AuthorizationUtil.isAuthorizedRead(user, table)) {
                     filtered.add(new Job(
                             job.getUser(),
                             job.getQuery(),
