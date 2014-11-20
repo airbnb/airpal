@@ -1,5 +1,6 @@
 package com.airbnb.airpal.resources;
 
+import com.airbnb.airpal.core.AirpalUser;
 import com.airbnb.airpal.core.hive.HiveTableUpdatedCache;
 import com.airbnb.airpal.core.store.UsageStore;
 import com.airbnb.airpal.presto.PartitionedTable;
@@ -16,9 +17,8 @@ import com.google.inject.name.Named;
 import io.dropwizard.util.Duration;
 import lombok.Data;
 import lombok.NonNull;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 import org.joda.time.DateTime;
+import org.secnod.shiro.jaxrs.Auth;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -66,9 +66,10 @@ public class TablesResource
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getTableUpdates(@QueryParam("catalog") Optional<String> catalogOptional)
+    public Response getTableUpdates(
+            @Auth AirpalUser user,
+            @QueryParam("catalog") Optional<String> catalogOptional)
     {
-        final Subject subject = SecurityUtils.getSubject();
         final String catalog = catalogOptional.or(defaultCatalog);
         final Map<String, List<String>> schemaMap = schemaCache.getSchemaMap(catalog);
         final ImmutableList.Builder<Table> builder = ImmutableList.builder();
@@ -76,7 +77,7 @@ public class TablesResource
         for (Map.Entry<String, List<String>> entry : schemaMap.entrySet()) {
             String schema = entry.getKey();
             for (String table : entry.getValue()) {
-                if (isAuthorizedRead(subject, catalog, schema, table)) {
+                if (isAuthorizedRead(user, catalog, schema, table)) {
                     builder.add(new Table(catalog, schema, table));
                 }
             }
@@ -94,13 +95,12 @@ public class TablesResource
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{schema}/{tableName}/columns")
     public Response getTableColumns(
+            @Auth AirpalUser user,
             @PathParam("schema") String schema,
             @PathParam("tableName") String tableName)
             throws ExecutionException
     {
-        Subject subject = SecurityUtils.getSubject();
-
-        if (isAuthorizedRead(subject, defaultCatalog, schema, tableName)) {
+        if (isAuthorizedRead(user, defaultCatalog, schema, tableName)) {
             return Response.ok(columnCache.getColumns(schema, tableName)).build();
         }
         else {
@@ -112,13 +112,12 @@ public class TablesResource
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{schema}/{tableName}/partitions")
     public Response getTablePartitions(
+            @Auth AirpalUser user,
             @PathParam("schema") String schema,
             @PathParam("tableName") String tableName)
             throws ExecutionException
     {
-        Subject subject = SecurityUtils.getSubject();
-
-        if (isAuthorizedRead(subject, defaultCatalog, schema, tableName)) {
+        if (isAuthorizedRead(user, defaultCatalog, schema, tableName)) {
             return Response.ok(getPartitionsWithMetaData(new PartitionedTable("hive", schema, tableName))).build();
         }
         else {
@@ -129,13 +128,13 @@ public class TablesResource
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{schema}/{tableName}/preview")
-    public Response getTablePreview(@PathParam("schema") String schema,
+    public Response getTablePreview(
+            @Auth AirpalUser user,
+            @PathParam("schema") String schema,
             @PathParam("tableName") String tableName)
             throws ExecutionException
     {
-        Subject subject = SecurityUtils.getSubject();
-
-        if (isAuthorizedRead(subject, defaultCatalog, schema, tableName)) {
+        if (isAuthorizedRead(user, defaultCatalog, schema, tableName)) {
             return Response.ok(previewTableCache.getPreview(schema, tableName)).build();
         }
         else {

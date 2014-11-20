@@ -30,6 +30,7 @@
         <aws-java-sdk.version>1.6.8</aws-java-sdk.version>
         <dropwizard.version>0.7.1</dropwizard.version>
         <dropwizard-flyway.version>0.7.0-1</dropwizard-flyway.version>
+        <dropwizard-shiro.version>0.1.0</dropwizard-shiro.version>
         <guava.version>18.0</guava.version>
         <jackson.version>2.3.2</jackson.version>
         <jetty.version>9.0.7.v20131107</jetty.version>
@@ -197,6 +198,11 @@
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-guice</artifactId>
             <version>${shiro.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.secnod.dropwizard</groupId>
+            <artifactId>dropwizard-shiro</artifactId>
+            <version>${dropwizard-shiro.version}</version>
         </dependency>
 
         <dependency>

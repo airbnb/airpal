@@ -27,16 +27,8 @@ elasticSearchProperties:
 metaStoreConfiguration:
   driverName: com.mysql.jdbc.Driver
 
-shiroConfiguration:
-  securedUrls:
-    - /api/*
-    - /app
-    - /login
-  dispatchTypes:
-    - ERROR
-    - FORWARD
-    - INCLUDE
-    - REQUEST
+shiro:
+  iniConfigs: ["classpath:shiro_static_users.ini"]
 
 airpalHosts:
   - http://127.0.0.1:8082

@@ -16,9 +16,8 @@ import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Ordering;
 import com.google.inject.Inject;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 import org.joda.time.DateTime;
+import org.secnod.shiro.jaxrs.Auth;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.DELETE;
@@ -45,7 +44,7 @@ public class QueryResource
 
     @Inject
     public QueryResource(JobHistoryStore jobHistoryStore,
-                         QueryStore queryStore)
+            QueryStore queryStore)
     {
         this.jobHistoryStore = jobHistoryStore;
         this.queryStore = queryStore;
@@ -54,12 +53,11 @@ public class QueryResource
     @GET
     @Path("saved")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getSaved(@QueryParam("table") List<PartitionedTable> tables)
+    public Response getSaved(
+            @Auth AirpalUser user,
+            @QueryParam("table") List<PartitionedTable> tables)
     {
-        Subject subject = SecurityUtils.getSubject();
-
-        if (subject.getPrincipal() instanceof AirpalUser) {
-            AirpalUser user = (AirpalUser) subject.getPrincipal();
+        if (user != null) {
             return Response.ok(queryStore.getSavedQueries(user)).build();
         }
 
@@ -69,24 +67,24 @@ public class QueryResource
     @POST
     @Path("saved")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response saveQuery(@FormParam("description") String description,
-                              @FormParam("name") String name,
-                              @FormParam("query") String query)
+    public Response saveQuery(
+            @Auth AirpalUser user,
+            @FormParam("description") String description,
+            @FormParam("name") String name,
+            @FormParam("query") String query)
     {
         CreateSavedQueryBuilder createFeaturedQueryRequest = CreateSavedQueryBuilder.featured()
-                                                                                    .description(description)
-                                                                                    .name(name)
-                                                                                    .query(query);
-        Subject subject = SecurityUtils.getSubject();
-
-        if (subject.getPrincipal() instanceof AirpalUser) {
-            AirpalUser user = (AirpalUser) subject.getPrincipal();
+                .description(description)
+                .name(name)
+                .query(query);
+        if (user != null) {
             SavedQuery savedQuery = createFeaturedQueryRequest.user(user.getUserName())
-                                                              .build();
+                    .build();
 
             if (queryStore.saveQuery((UserSavedQuery) savedQuery)) {
                 return Response.ok(savedQuery.getUuid()).build();
-            } else {
+            }
+            else {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
         }
@@ -97,21 +95,23 @@ public class QueryResource
     @DELETE
     @Path("saved/{uuid}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteQuery(@PathParam("uuid") UUID uuid)
+    public Response deleteQuery(
+            @Auth AirpalUser user,
+            @PathParam("uuid") UUID uuid)
     {
-        Subject subject = SecurityUtils.getSubject();
-        if (subject.getPrincipal() instanceof AirpalUser) {
-            AirpalUser user = (AirpalUser) subject.getPrincipal();
+        if (user != null) {
             if (queryStore.deleteSavedQuery(user, uuid)) {
                 return Response.status(Response.Status.NO_CONTENT).build();
-            } else {
+            }
+            else {
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
         }
         return Response.status(Response.Status.UNAUTHORIZED).build();
     }
 
-    public static Function<Job, DateTime> JOB_ORDERING = new Function<Job, DateTime>() {
+    public static Function<Job, DateTime> JOB_ORDERING = new Function<Job, DateTime>()
+    {
         @Nullable
         @Override
         public DateTime apply(@Nullable Job input)
@@ -126,14 +126,16 @@ public class QueryResource
     @GET
     @Path("history")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getHistory(@QueryParam("table") List<Table> tables)
+    public Response getHistory(
+            @Auth AirpalUser user,
+            @QueryParam("table") List<Table> tables)
     {
-        Subject subject = SecurityUtils.getSubject();
         Iterable<Job> recentlyRun;
 
         if (tables.size() < 1) {
             recentlyRun = jobHistoryStore.getRecentlyRun(200);
-        } else {
+        }
+        else {
             Table[] tablesArray = tables.toArray(new Table[tables.size()]);
             Table[] restTables = Arrays.copyOfRange(tablesArray, 1, tablesArray.length);
 
@@ -147,7 +149,7 @@ public class QueryResource
                 continue;
             }
             for (Table table : job.getTablesUsed()) {
-                if (AuthorizationUtil.isAuthorizedRead(subject, table)) {
+                if (AuthorizationUtil.isAuthorizedRead(user, table)) {
                     filtered.add(new Job(
                             job.getUser(),
                             job.getQuery(),

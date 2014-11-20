@@ -78,7 +78,19 @@ public class LocalJobHistoryStore implements JobHistoryStore {
     }
 
     @Override
-    public List<Job> getRecentlyRun(long maxResults, List<Table> tables)
+    public List<Job> getRecentlyRunForUser(String user, long maxResults)
+    {
+        return null;
+    }
+
+    @Override
+    public List<Job> getRecentlyRunForUser(String user, long maxResults, Iterable<Table> tables)
+    {
+        return null;
+    }
+
+    @Override
+    public List<Job> getRecentlyRun(long maxResults, Iterable<Table> tables)
     {
         final ImmutableList.Builder<Job> builder = ImmutableList.builder();
         long added = 0;

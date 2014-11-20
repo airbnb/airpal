@@ -3,8 +3,7 @@ package com.airbnb.airpal.resources;
 import com.airbnb.airpal.core.AirpalUser;
 import com.airbnb.airpal.core.AuthorizationUtil;
 import lombok.Value;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
+import org.secnod.shiro.jaxrs.Auth;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -17,11 +16,8 @@ import javax.ws.rs.core.Response;
 public class UserResource
 {
     @GET
-    public Response getUserInfo()
+    public Response getUserInfo(@Auth AirpalUser user)
     {
-        Subject subject = SecurityUtils.getSubject();
-        AirpalUser user = subject.getPrincipals().oneByType(AirpalUser.class);
-
         if (user == null) {
             return Response.status(Response.Status.FORBIDDEN).build();
         } else {
@@ -29,7 +25,7 @@ public class UserResource
                     new UserInfo(
                             user.getUserName(),
                             new ExecutionPermissions(
-                                    AuthorizationUtil.isAuthorizedWrite(subject, "hive", "airpal", "any"),
+                                    AuthorizationUtil.isAuthorizedWrite(user, "hive", "airpal", "any"),
                                     true,
                                     user.getAccessLevel())
             )).build();

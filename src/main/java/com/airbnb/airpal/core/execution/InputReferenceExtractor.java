@@ -6,6 +6,8 @@ import com.facebook.presto.sql.tree.CreateView;
 import com.facebook.presto.sql.tree.DefaultTraversalVisitor;
 import com.facebook.presto.sql.tree.DropTable;
 import com.facebook.presto.sql.tree.DropView;
+import com.facebook.presto.sql.tree.Join;
+import com.facebook.presto.sql.tree.JoinOn;
 import com.facebook.presto.sql.tree.Node;
 import com.facebook.presto.sql.tree.QualifiedName;
 import com.facebook.presto.sql.tree.RenameTable;
@@ -18,6 +20,8 @@ import lombok.Value;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static java.lang.String.format;
 
 @Value
 @EqualsAndHashCode(callSuper = false)
@@ -122,6 +126,22 @@ public class InputReferenceExtractor
     @Override
     protected CatalogSchemaContext visitNode(Node node, CatalogSchemaContext context)
     {
+        System.out.println(format("Inspecting Node: %s :: Context: %s", node, context));
+        return context;
+    }
+
+    @Override
+    protected CatalogSchemaContext visitJoin(Join node, CatalogSchemaContext context)
+    {
+        process(node.getLeft(), context);
+        process(node.getRight(), context);
+
+        if (node.getCriteria().isPresent()) {
+            if (node.getCriteria().get() instanceof JoinOn) {
+                process(((JoinOn) node.getCriteria().get()).getExpression(), context);
+            }
+        }
+
         return context;
     }
 

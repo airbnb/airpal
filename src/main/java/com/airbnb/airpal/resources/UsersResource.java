@@ -15,8 +15,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 import com.google.inject.Inject;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
+import org.secnod.shiro.jaxrs.Auth;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -45,17 +44,16 @@ public class UsersResource
 
     @GET
     @Path("permissions")
-    public Response getUserPermissions(@PathParam("id") String userId)
+    public Response getUserPermissions(
+            @Auth AirpalUser user,
+            @PathParam("id") String userId)
     {
-        Subject subject = SecurityUtils.getSubject();
-        AirpalUser user = subject.getPrincipals().oneByType(AirpalUser.class);
-
         if (user == null) {
             return Response.status(Response.Status.FORBIDDEN).build();
         } else {
             return Response.ok(
                     new ExecutionPermissions(
-                            AuthorizationUtil.isAuthorizedWrite(subject, "hive", "airpal", "any"),
+                            AuthorizationUtil.isAuthorizedWrite(user, "hive", "airpal", "any"),
                             true,
                             user.getAccessLevel())
             ).build();
@@ -65,11 +63,11 @@ public class UsersResource
     @GET
     @Path("queries")
     public Response getUserQueries(
+            @Auth AirpalUser user,
             @PathParam("id") String userId,
             @QueryParam("results") int numResults,
             @QueryParam("table") List<PartitionedTable> tables)
     {
-        Subject subject = SecurityUtils.getSubject();
         Iterable<Job> recentlyRun;
         int results = Optional.of(numResults).or(200);
 
@@ -89,7 +87,7 @@ public class UsersResource
                 continue;
             }
             for (Table table : job.getTablesUsed()) {
-                if (AuthorizationUtil.isAuthorizedRead(subject, table)) {
+                if (AuthorizationUtil.isAuthorizedRead(user, table)) {
                     filtered.add(new Job(
                             job.getUser(),
                             job.getQuery(),

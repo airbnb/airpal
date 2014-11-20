@@ -5,13 +5,14 @@ import com.airbnb.airpal.api.Job;
 import com.airbnb.airpal.api.JobState;
 import com.airbnb.airpal.api.event.JobFinishedEvent;
 import com.airbnb.airpal.api.output.HiveTablePersistentOutput;
+import com.airbnb.airpal.core.AirpalUser;
 import com.airbnb.airpal.core.PersistentJobOutputFactory;
 import com.airbnb.airpal.core.store.JobHistoryStore;
 import com.airbnb.airpal.core.store.UsageStore;
-import com.airbnb.airpal.presto.metadata.ColumnCache;
 import com.airbnb.airpal.presto.QueryInfoClient;
-import com.airbnb.airpal.presto.metadata.SchemaCache;
 import com.airbnb.airpal.presto.Table;
+import com.airbnb.airpal.presto.metadata.ColumnCache;
+import com.airbnb.airpal.presto.metadata.SchemaCache;
 import com.facebook.presto.client.Column;
 import com.facebook.presto.client.QueryError;
 import com.google.common.eventbus.EventBus;
@@ -22,7 +23,7 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.inject.Inject;
 import lombok.Getter;
-import org.apache.shiro.subject.Subject;
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 
@@ -75,23 +76,21 @@ public class ExecutionClient
     }
 
     public UUID runQuery(final ExecutionRequest request,
-            final String user,
-            final Subject subject,
+            final AirpalUser user,
             final String schema,
             final Duration timeout)
     {
-        return runQuery(request.getQuery(), request.getTmpTable(), user, subject, schema, timeout);
+        return runQuery(request.getQuery(), request.getTmpTable(), user, schema, timeout);
     }
 
     public UUID runQuery(final String query,
             final String tmpTable,
-            final String userName,
-            final Subject subject,
+            final AirpalUser user,
             final String schema,
             final Duration timeout)
     {
         final UUID uuid = UUID.randomUUID();
-        final Job job = new Job(userName,
+        final Job job = new Job(user.getUserName(),
                                 query,
                                 uuid,
                                 persistentJobOutputFactory.create(tmpTable, uuid),
@@ -106,7 +105,7 @@ public class ExecutionClient
                 eventBus,
                 queryRunnerFactory.create(schema),
                 queryInfoClient,
-                new QueryExecutionAuthorizer(subject, "hive", "default"),
+                new QueryExecutionAuthorizer(user, "hive", "default"),
                 timeout,
                 columnCache);
 
@@ -124,7 +123,7 @@ public class ExecutionClient
             }
 
             @Override
-            public void onFailure(Throwable t)
+            public void onFailure(@NotNull Throwable t)
             {
                 if (t instanceof ExecutionFailureException) {
                     ExecutionFailureException e = (ExecutionFailureException) t;

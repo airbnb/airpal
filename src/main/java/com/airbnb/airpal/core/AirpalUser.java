@@ -2,13 +2,12 @@ package com.airbnb.airpal.core;
 
 import org.joda.time.Duration;
 
-import java.util.Set;
-
 public interface AirpalUser
 {
     public String getUserName();
     public String getDefaultSchema();
-    public Set<String> getGroups();
     public Duration getQueryTimeout();
     public String getAccessLevel();
+
+    public boolean isPermitted(String permission);
 }
