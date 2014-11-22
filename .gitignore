@@ -18,5 +18,6 @@ target/
 dependency-reduced-pom.xml
 
 # Node.js artifacts
-node_modules/
 bower_components/
+node_modules
+npm-debug.log
