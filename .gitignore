@@ -21,3 +21,7 @@ dependency-reduced-pom.xml
 node_modules/
 bower_components/
 src/main/resources/npm-debug.log
+
+# Ignore Node files
+node_modules
+npm-debug.log
