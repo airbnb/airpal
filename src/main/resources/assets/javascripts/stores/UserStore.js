@@ -2,7 +2,7 @@
  * UserStore
  */
 
-var AppDispatcher = require('../AppDispatcher');
+var UserDispatcher = require('../dispatchers/UserDispatcher');
 var UserConstants = require('../constants/UserConstants');
 
 /* Store helpers */
@@ -66,7 +66,7 @@ var UserStore = assign({}, EventEmitter.prototype, {
 
 });
 
-UserStore.dispatchToken = AppDispatcher.register(function(payload) {
+UserStore.dispatchToken = UserDispatcher.register(function(payload) {
   var action = payload.action;
 
   switch(action.type) {
