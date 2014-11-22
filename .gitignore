@@ -3,6 +3,8 @@
 .DS_Store
 *.iml
 target/
-node_modules/
-bower_components/
 dependency-reduced-pom.xml
+
+# Ignore Node files
+node_modules
+npm-debug.log
