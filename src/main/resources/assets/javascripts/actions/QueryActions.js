@@ -4,13 +4,10 @@
 
 var AppDispatcher = require('../AppDispatcher');
 var QueryConstants = require('../constants/QueryConstants');
-var QueryApiUtils = require('../utils/QueryApiUtils');
-
-var _ = require('lodash');
 
 module.exports = {
 
-  // - ViewActions 00------------------------------------------------------- //
+  // - ViewActions --------------------------------------------------------- //
   createQuery: function(data) {
     AppDispatcher.handleViewAction({
       type: QueryConstants.CREATE_QUERY,
