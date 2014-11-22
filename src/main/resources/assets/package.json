@@ -55,7 +55,7 @@
     "watchify": "~1.0.2"
   },
   "dependencies": {
-    "jquery": "~2.1.0",
+    "jquery": "~1.9.0",
     "react": "^0.12.1"
   }
 }
