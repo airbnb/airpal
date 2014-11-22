@@ -28,6 +28,17 @@ module.exports = {
     });
   },
 
+  getUserQueries: function(name) {
+    $.ajax({
+      type: 'GET',
+      url: './api/users/' + name + '/queries',
+
+      success: function(queries) {
+        QueryActions.receivedQueries(queries);
+      }
+    });
+  },
+
   createQuery: function(data) {
     $.ajax({
       type: 'POST',
