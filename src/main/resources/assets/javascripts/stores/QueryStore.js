@@ -94,6 +94,12 @@ var QueryStore = assign({}, EventEmitter.prototype, {
     return _.find(_queries, { id: id });
   },
 
+  // Get the queries of a specific user
+  // @param {name} the name of the user
+  getForUser: function(name) {
+    return _.find(_queries, { owner: name });
+  },
+
   // Get all current queries from the collection
   // @return {array} the whole collection (sorted)
   all: function() {
