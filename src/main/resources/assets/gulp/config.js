@@ -21,6 +21,10 @@ module.exports = {
       entries: src + '/app.js',
       dest: dest,
       outputName: 'app.js'
+    }, {
+      entries: src + '/plugins/plugin.js',
+      dest: dest,
+      outputName: 'plugin.js'
     }]
   }
 };

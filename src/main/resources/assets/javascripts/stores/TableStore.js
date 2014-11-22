@@ -17,22 +17,53 @@ var _tables = [];
 // @param {object} the table object
 function _addTable(table) {
   if( TableStore.getByName(table.name) !== undefined ) return;
-  _tables.push(table);
+
+  // Unmark the whole collection
+  _unMarkActiveTables();
+
+  // Add the table to the collection
+  _tables.push(_.extend(table, { active: true }));
 }
 
 // Removes the table from the collection
 // @param {string} the table name
 function _removeTable(name) {
   if( TableStore.getByName(name) === undefined ) return;
-  _tables = _.reject(_tables, function(table) {
-    table.name === name
-  });
+
+  // Remove the table from the collection
+  _tables = _.reject(_tables, { name: name });
+
+  // Check or we can make an other table active
+  if( _tables.length > 0 ) {
+    table = _.first(_tables);
+    _markActive(table.name);
+  }
+}
+
+// Marks all tables as inactive
+function _unMarkActiveTables() {
+  table = TableStore.getActiveTable();
+  if( !table ) return;
+
+  // Change the active state of the table
+  table.active = false;
+}
+
+// Marks a table as active
+function _markActive(name) {
+
+  // Unmark the whole collection first
+  _unMarkActiveTables()
+
+  // Mark the table as active
+  table = TableStore.getByName(name);
+  table.active = true;
 }
 
 var TableStore = assign({}, EventEmitter.prototype, {
 
-  emitChange: function(eventName) {
-    this.emit(eventName);
+  emitChange: function(eventName, options) {
+    this.emit(eventName, options);
   },
 
   /**
@@ -57,6 +88,7 @@ var TableStore = assign({}, EventEmitter.prototype, {
   // @param name {string} the table name
   // @return {object/undefined} the table object
   getByName: function(name) {
+    if( _.isEmpty(_tables) ) return undefined;
     return _.find(_tables, { name: name });
   },
 
@@ -64,7 +96,15 @@ var TableStore = assign({}, EventEmitter.prototype, {
   // @param name {string} the table name
   // @return {object/undefined} the table object
   get: function(name) {
+    if( _.isEmpty(_tables) ) return undefined;
     return this.getByName(name);
+  },
+
+  // Get the active table
+  // @return {object/undefined} the active table
+  getActiveTable: function() {
+    if( _.isEmpty(_tables) ) return undefined;
+    return _.find(_tables, { active: true });
   },
 
   // Get all tables
@@ -86,9 +126,14 @@ TableStore.dispatchToken = TableDispatcher.register(function(payload) {
       break;
 
     case TableConstants.REMOVE_TABLE:
-      _removeTable(action.id);
+      _removeTable(action.name);
       TableStore.emitChange('remove');
       TableStore.emitChange('change');
+      break;
+
+    case TableConstants.SELECT_TABLE:
+      _markActive(action.name);
+      TableStore.emitChange('select');
       break;
 
     default:

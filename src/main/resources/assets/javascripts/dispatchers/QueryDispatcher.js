@@ -6,7 +6,7 @@ var AppConstants = require('../constants/AppConstants');
 var Dispatcher = require('flux').Dispatcher;
 var assign = require('object-assign');
 
-var AppDispatcher = assign(new Dispatcher(), {
+var QueryDispatcher = assign(new Dispatcher(), {
 
   /**
    * @param {object} action The details of the action, including the action's
@@ -34,4 +34,4 @@ var AppDispatcher = assign(new Dispatcher(), {
 
 });
 
-module.exports = AppDispatcher;
+module.exports = QueryDispatcher;

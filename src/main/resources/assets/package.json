@@ -58,7 +58,9 @@
     "flux": "^2.0.1",
     "jquery": "~1.9.0",
     "keymirror": "^0.1.0",
+    "microplugin": "0.0.3",
     "object-assign": "^2.0.0",
-    "react": "^0.12.1"
+    "react": "^0.12.1",
+    "sifter": "^0.3.4"
   }
 }
