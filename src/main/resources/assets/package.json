@@ -1,0 +1,32 @@
+{
+  "name": "airpal",
+  "version": "0.0.1",
+  "description": "Airpal allows you to query on big data",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/airbnb/airpal"
+  },
+  "keywords": [
+    "big",
+    "data",
+    "java",
+    "ReactJS",
+    "gulp",
+    "querying",
+    "big",
+    "data",
+    "airbnb",
+    "airbnb",
+    "nerds"
+  ],
+  "author": "Airbnb",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/airbnb/airpal/issues"
+  },
+  "homepage": "https://github.com/airbnb/airpal"
+}
