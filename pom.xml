@@ -303,7 +303,7 @@
                                       dir="${project.basedir}/src/main/resources/assets/"
                                       failonerror="true">
                                     <env key="node" path="${node}" />
-                                    <arg value="browserify" />
+                                    <arg value="build" />
                                 </exec>
                             </target>
                         </configuration>
