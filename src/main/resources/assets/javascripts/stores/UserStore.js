@@ -28,8 +28,8 @@ var _user = _.extend({}, defaultUser);
  * Adds the user to the user object
  * @param {object} raw user object
  */
-function _addUser(rawUserInfo) {
-  _user = rawUserInfo;
+function _addUser(user) {
+  _user = user;
 }
 
 var UserStore = assign({}, EventEmitter.prototype, {
@@ -71,9 +71,10 @@ UserStore.dispatchToken = AppDispatcher.register(function(payload) {
 
   switch(action.type) {
 
-    case UserConstants.RECEIVE_USER_INFO:
-      _addUser(action.rawUserInfo);
+    case UserConstants.RECEIVED_USER_INFO:
+      _addUser(action.user);
       UserStore.emitChange('add');
+      UserStore.emitChange('change');
       break;
 
     default:

@@ -7,10 +7,10 @@ var UserConstants = require('../constants/UserConstants');
 
 module.exports = {
 
-  get: function(rawUserInfo) {
+  receivedCurrentUser: function(user) {
     AppDispatcher.handleServerAction({
-      type: UserConstants.RECEIVE_USER_INFO,
-      rawUserInfo: rawUserInfo
+      type: UserConstants.RECEIVED_USER_INFO,
+      user: user
     });
   }
 
