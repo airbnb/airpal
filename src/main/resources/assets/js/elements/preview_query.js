@@ -2,7 +2,6 @@
 
 var React = require('react'),
     _ = require('lodash'),
-    ScrollableTable = require('./scrollable_table'),
     EventEmitter = require('events').EventEmitter,
     PreviewQuery;
 

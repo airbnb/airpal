@@ -1,261 +1,78 @@
 /** @jsx React.DOM */
+var React                     = require('react'),
 
-var React = require('react/addons'),
-    PartitionedTableSelector = require('../elements/partitioned_table_selector'),
-    Editor = require('../elements/editor'),
-    Tabs = require('../elements/tabs'),
-    QueryHistory = require('../elements/query_history'),
-    PreviewQuery = require('../elements/preview_query'),
-    SavedQueries = require('../elements/saved_queries'),
-    EventEmitter = require('events').EventEmitter,
-    _ = require('lodash'),
-    cx = React.addons.classSet,
-    keymaster = require('keymaster'),
-    IndexPage;
+    // Elements
+    Editor                    = require('../elements/editor'),
+    Header                    = require('../elements/header'),
+    Selectors                 = require('../elements/selectors'),
+    Queries                   = require('../elements/queries'),
+    ErrorMessage              = require('../elements/error_message'),
 
-function getIn(obj, nestedKey, defaultVal) {
-  var dVal = defaultVal || null,
-      keys = nestedKey.split('.').reverse(),
-      lastVal = obj,
-      key;
+    // Third party libs
+    _                         = require('lodash'),
+    EventEmitter              = require('events').EventEmitter,
+    keymaster                 = require('keymaster');
 
-  while (!_.isUndefined(key = keys.pop())) {
-    if (lastVal && lastVal[key]) {
-      lastVal = lastVal[key];
-    } else {
-      return dVal;
-    }
-  }
+// Define the application wide event emitter
+window.Mediator = new EventEmitter();
 
-  return lastVal;
-}
+// Create the IndexPage element for the application
+var IndexPage = React.createClass({
+  displayName: 'IndexPage',
 
-var mediator = new EventEmitter();
+  componentDidMount: function() {
 
-IndexPage = React.createClass({
-  getDefaultProps: function() {
-    return {};
-  },
-  getInitialState: function() {
-    return {
-      activeSchema: 'default',
-      activeTable: null,
-      selectedTab: 'history',
-      activeQuery: null,
-      currentModal: null,
-      currentJob: {},
-      savedQueries: [],
-      permissionLevel: '',
-    };
-  },
-  componentWillMount: function() {
-    $.ajax({
-      url: '/api/query/saved',
-      type: 'GET',
-      error: function() {},
-      success: function(featuredQueries) {
-        if (_.isEmpty(featuredQueries)) {
-          return;
-        }
-        this.setState({
-          savedQueries: featuredQueries
-        });
-      }.bind(this),
-    });
-    $.ajax({
-      url: '/api/execute/permissions',
-      type: 'GET',
-      success: function(data) {
-        this.setState({
-          canCreateTable: data.canCreateTable,
-          userName: data.userName,
-          accessLevel: data.accessLevel,
-        });
-      }.bind(this),
-    });
+    // Get the user
+    this._getUserData();
 
+    // Set the keymaster event listeners
     keymaster('backspace', this.handleBackspace);
     keymaster('⌘+r, ctrl+r', this.handleRun);
   },
+
   componentWillUnmount: function() {
+
+    // Unbind the keymaster event listeners
     keymaster.unbind('backspace', this.handleBackspace);
     keymaster.unbind('⌘-r, ctrl-r', this.handleRun);
   },
+
   render: function() {
-    var queryLines;
+    return (
+      <div className="container">
+        <Header ref="header" />
 
-    if (getIn(this.state, 'currentJob.query') != null) {
-      queryLines = _.map(this.state.currentJob.query.split('\n'), function(line, i) {
-        return (<span key={'query-line-' + i} className="line">{line}</span>);
-      });
-    }
-    return (<div>
-      <header className="row-space-1 row-space-top-2">
-        <div className="col-4 pull-right">
-          <a href="#"
-             className="btn pull-right"
-             id="start-tour">Take Tour</a>
-          <dl className="col-4">
-            <dt>User Name</dt>
-            <dd>{this.state.userName}</dd>
-          </dl>
-          <dl className="col-4">
-            <dt>Access Level &nbsp;
-              <a href="https://airbnb.hackpad.com/Airpal-9FiIU3O2BJ1#:h=Access-Levels"
-                 target="_blank">
-                <i className="icon icon-question"></i>
-              </a>
-            </dt>
-            <dd>{this.state.accessLevel}</dd>
-          </dl>
-        </div>
-        <h1 className="text-special">Airpal</h1>
-      </header>
-      <PartitionedTableSelector
-          onActiveTable={this.handleActiveTable}
-          activeTable={this.state.activeTable}
-          activeSchema={this.state.activeSchema} />
-      <Editor
-        ref="editor"
-        onQueryRun={this.handleQueryRun}
-        onQuerySave={this.handleQuerySave} />
-      <div className="row-12 row-space-top-2 row-space-5">
-        <Tabs
-          selected={this.state.selectedTab}
-          onTabChange={this.handleTabChange}>
-          <QueryHistory
-                  tabTitle='History'
-                  onQuerySelected={this.handleQuerySelected}
-                  onTableSelected={this.handleTableSelected}
-                  onErrorSelected={this.handleErrorSelected}
-                  emitter={mediator} />
-          <SavedQueries
-                  tabTitle='Saved'
-                  queries={this.state.savedQueries}
-                  onQuerySelected={this.handleQuerySelected}
-                  onQueryDeleted={this.handleSavedQueryDeleted}
-                  onQueryRun={this.handleSavedQueryRun} />
-        </Tabs>
-      </div>
+        <ErrorMessage ref="error-messages" position="main" />
 
-      <div className="modal"
-           aria-hidden={this.state.currentModal !== 'error'}
-           ref="errorModal">
-        <div className="modal-table">
-          <div className="modal-cell">
-            <div className="modal-content">
-              <div className="panel-header">
-                <a href="#" className="panel-close" onClick={this.handleCloseModal}></a>
-                Error Message
-              </div>
-              <div className="panel-body">
-                <pre className="o2-code" id="error-query">
-                  {queryLines}
-                </pre>
-                <p id="error-message">
-                  {getIn(this.state.currentJob, 'error.message')}
-                </p>
-              </div>
-              <div className="panel-footer">
-                <button className="btn" onClick={this.handleCloseModal}>
-                  Close modal
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+        <Selectors ref="selectors" />
 
-      <div className="modal" role="dialog" aria-hidden="true" ref="disconnectedModal">
-        <div className="modal-table">
-          <div className="modal-cell">
-            <div className="modal-content">
-              <div className="panel-header">
-                <a href="#" className="panel-close" data-behavior="modal-close"></a>
-                Disconnected from Airpal!
-              </div>
-              <div className="panel-body">
-                <div className="server-500 hide">
-                  <p>Airpal is not responding correctly. We're trying to reconnect, but you might have to refresh.</p>
-                </div>
-                <div className="server-401 hide">
-                  <p>You have become logged out of Airpal. Please <a href="/login">click here to log back in.</a></p>
-                </div>
-                <div className="server-offline hide">
-                  <p>You are currently offline, and won't be able to use Airpal. Please reconnect to use Airpal.</p>
-                </div>
-              </div>
-              <div className="panel-footer">
-                <button className="btn" data-behavior="modal-close">
-                  Close modal
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <Editor ref="editor" />
+
+        <Queries ref="queries" />
       </div>
-    </div>);
+    );
   },
-  handleQuerySelected: function(query) {
-    this.refs.editor.setValue(query);
-  },
-  handleTableSelected: function(table) {
-  },
-  handleErrorSelected: function(job) {
-    this.setState({
-      currentModal: 'error',
-      currentJob: job,
+
+  /* Internal helpers ------------------------------------------------------- */
+  _getUserData: function() {
+
+    // TODO: Grab the user ID from the DOM(?)
+    var id = 1;
+
+    // Get the information about the user
+    $.ajax({
+      type: 'GET',
+      url: './api/users/' + id,
+
+      success: function(user) {
+        Mediator.emit('newUser', user);
+      },
+
+      error: function(xhr, status, message) {
+        Mediator.emit('newError', 'Could not get the user because of <strong>' + message + '<strong>');
+      }
     });
-  },
-  handleActiveTable: function(schema, table, partition) {
-    this.setState({
-      activeSchema: schema,
-      activeTable: table,
-    });
-  },
-  handleTabChange: function(panel) {
-    this.setState({
-      selectedTab: panel.props.tabTitle,
-    });
-  },
-  handleCloseModal: function(e) {
-    e.preventDefault();
-    this.setState({
-      currentModal: null,
-    });
-  },
-  handleQueryRun: function(query) {
-  },
-  handleSavedQueryRun: function(query) {
-    this.handleQuerySelected(query.queryWithPlaceholders.query);
-    this.refs.editor.handleRunClick();
-    this.setState({
-      selectedTab: 'history',
-    });
-  },
-  handleQuerySave: function(savedQuery) {
-    console.log('handleQuerySave', savedQuery, 'savedQueries', this.state.savedQueries);
-    this.setState({
-      savedQueries: [savedQuery].concat(this.state.savedQueries),
-    });
-  },
-  handleSavedQueryDeleted: function(uuid) {
-    this.setState({
-      savedQueries: _.reject(this.state.savedQueries, function(q) {
-        return q.uuid === uuid;
-      }),
-    });
-  },
-  handleBackspace: function(event, handler) {
-    if (handler.scope === 'all') {
-      event.preventDefault();
-    }
-  },
-  handleRun: function(event, handler) {
-    console.log('handleRun', event, handler);
-    event.preventDefault();
-    this.refs.editor.handleRunClick();
-  },
+  }
 });
 
 module.exports = IndexPage;
