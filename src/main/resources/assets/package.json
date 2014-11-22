@@ -31,6 +31,14 @@
       "reactify"
     ]
   },
+  "browserify-shim": {
+    "plugin": {
+      "exports": "plugin",
+      "depends": [
+        "jquery:$"
+      ]
+    }
+  },
   "devDependencies": {
     "browser-sync": "~1.3.6",
     "browserify": "~5.10.1",
