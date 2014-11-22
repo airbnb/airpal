@@ -2,7 +2,7 @@
  * QueryStore
  */
 
-var AppDispatcher = require('../AppDispatcher');
+var QueryDispatcher = require('../dispatchers/QueryDispatcher');
 var QueryConstants = require('../constants/QueryConstants');
 
 /* Store helpers */
@@ -108,7 +108,7 @@ var QueryStore = assign({}, EventEmitter.prototype, {
 
 });
 
-QueryStore.dispatchToken = AppDispatcher.register(function(payload) {
+QueryStore.dispatchToken = QueryDispatcher.register(function(payload) {
   var action = payload.action;
 
   switch(action.type) {

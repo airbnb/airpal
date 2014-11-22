@@ -1,5 +1,5 @@
 /*
- * UserConstants
+ * QueryConstants
  */
 
 var keyMirror = require('keymirror');

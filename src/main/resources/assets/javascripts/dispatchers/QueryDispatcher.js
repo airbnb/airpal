@@ -1,8 +1,8 @@
 /*
- * AppDispatcher
+ * QueryDispatcher
  */
 
-var AppConstants = require('./constants/AppConstants');
+var AppConstants = require('../constants/AppConstants');
 var Dispatcher = require('flux').Dispatcher;
 var assign = require('object-assign');
 

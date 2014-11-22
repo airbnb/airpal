@@ -1,9 +1,5 @@
 /** @jsx React.DOM */
 var React = require('react');
-var AppDispatcher = require('../AppDispatcher');
-
-/* Constants */
-var UserConstants = require('../constants/UserConstants')
 
 /* Stores */
 var UserStore = require('../stores/UserStore');
