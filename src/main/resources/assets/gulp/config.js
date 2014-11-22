@@ -3,9 +3,7 @@ var src = './javascripts';
 
 module.exports = {
   browserSync: {
-    server: {
-      baseDir: './'
-    },
+    proxy: "localhost:8081",
     files: [
       dest + "/**",
       "!" + dest + "/**.map"
@@ -20,7 +18,7 @@ module.exports = {
     // A separate bundle will be generated for each
     // bundle config in the list below
     bundleConfigs: [{
-      entries: src + '/javascript/app.js',
+      entries: src + '/app.js',
       dest: dest,
       outputName: 'app.js'
     }]
