@@ -5,11 +5,13 @@
 var StoreDefaults = require('./StoreDefaults');
 var TableDispatcher = require('../dispatchers/TableDispatcher');
 var TableConstants = require('../constants/TableConstants');
+var TableApiUtils = require('../utils/TableApiUtils');
 
 /* Store helpers */
 var EventEmitter = require('events').EventEmitter;
 var assign = require('object-assign');
 var _ = require('lodash');
+var FQN = require('../utils/fqn');
 
 /* Tables */
 var _tables = [];
@@ -22,8 +24,28 @@ function _addTable(table) {
   // Unmark the whole collection
   _unMarkActiveTables();
 
+  // Enrich the table with some extra data (active status and url)
+  table = _.extend(table, {
+    active: true,
+    url: './api/table/' + FQN.schema(table.name) + '/' + FQN.table(table.name)
+  });
+
   // Add the table to the collection
-  _tables.push(_.extend(table, { active: true }));
+  _tables.push(table);
+
+  // Fetch the data from the new table
+  TableApiUtils.getTableData(table);
+}
+
+// Updates a table with the new data
+function _updateTable(table, columns, data) {
+
+  // Get the right table first
+  var table = TableStore.getByName(table.name);
+  if( table === undefined ) return;
+
+  // Add the changed data to the table
+  table = _.extend(table, { columns: columns, data: data });
 }
 
 // Removes the table from the collection
@@ -113,6 +135,11 @@ TableStore.dispatchToken = TableDispatcher.register(function(payload) {
     case TableConstants.SELECT_TABLE:
       _markActive(action.name);
       TableStore.emitChange('select');
+      break;
+
+    case TableConstants.RECEIVED_TABLE_DATA:
+      _updateTable(action.table, action.columns, action.data);
+      TableStore.emitChange('change');
       break;
 
     default:

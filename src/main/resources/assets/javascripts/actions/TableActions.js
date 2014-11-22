@@ -27,6 +27,16 @@ module.exports = {
       type: TableConstants.SELECT_TABLE,
       name: name
     });
+  },
+
+  // - ServerActions ------------------------------------------------------- //
+  receivedTableData: function(table, columns, data) {
+    TableDispatcher.handleServerAction({
+      type: TableConstants.RECEIVED_TABLE_DATA,
+      table: table,
+      columns: columns,
+      data: data
+    });
   }
 
 };
