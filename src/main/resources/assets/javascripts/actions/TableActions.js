@@ -1,5 +1,5 @@
 /*
- * QueryActions
+ * TableActions
  */
 
 var TableDispatcher = require('../dispatchers/TableDispatcher');
@@ -15,10 +15,17 @@ module.exports = {
     });
   },
 
-  removeTable: function(id) {
+  removeTable: function(name) {
     TableDispatcher.handleViewAction({
-      type: TableConstants.REMOVE_TABLE
-      id: id
+      type: TableConstants.REMOVE_TABLE,
+      name: name
+    });
+  },
+
+  selectTable: function(name) {
+    TableDispatcher.handleViewAction({
+      type: TableConstants.SELECT_TABLE,
+      name: name
     });
   }
 
