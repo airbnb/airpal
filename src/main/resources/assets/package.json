@@ -49,6 +49,7 @@
     "hbsfy": "~2.0.0",
     "lodash": "^2.4.1",
     "pretty-hrtime": "~0.2.1",
+    "react-bootstrap": "^0.13.0",
     "reactify": "^0.17.1",
     "require-dir": "^0.1.0",
     "vinyl-source-stream": "~0.1.1",
@@ -58,9 +59,7 @@
     "flux": "^2.0.1",
     "jquery": "~1.9.0",
     "keymirror": "^0.1.0",
-    "microplugin": "0.0.3",
     "object-assign": "^2.0.0",
-    "react": "^0.12.1",
-    "sifter": "^0.3.4"
+    "react": "^0.12.1"
   }
 }

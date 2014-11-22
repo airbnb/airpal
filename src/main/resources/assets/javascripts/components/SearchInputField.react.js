@@ -62,12 +62,6 @@ var SearchInputField = React.createClass({
   disable: function() { return this._disable(); }, // Alias for internal function
   _disable: function() {
     this.$selectize.disable();
-  },
-
-  // Hides the selectize plugin
-  close: function() { return this._close(); },
-  _close: function() {
-    this.$selectize.close();
   }
 });
 

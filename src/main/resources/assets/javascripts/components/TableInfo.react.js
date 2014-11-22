@@ -1,43 +1,41 @@
 /** @jsx React.DOM */
 var React = require('react');
 
-/* Stores */
-var TableStore = require('../stores/TableStore');
-
-// State actions
-function getStateFromStore() {
-  return {
-    tables: TableStore.all(),
-    activeTable: TableStore.getActiveTable()
-  };
-}
+/* Component */
+var TabbedArea  = require('react-bootstrap').TabbedArea,
+    TabPane     = require('react-bootstrap').TabPane,
+    Columns     = require('./Columns.react'),
+    DataPreview = require('./DataPreview.react'),
+    MetaDataPreview = require('./MetaDataPreview.react');
 
 var TableInfo = React.createClass({
   displayName: 'TableInfo',
-
-  getInitialState: function() {
-    return getStateFromStore();
-  },
-
-  componentDidMount: function() {
-    TableStore.addStoreListener('select', this._onChange);
-    TableStore.addStoreListener('change', this._onChange);
-  },
-
-  componentWillUnmount: function() {
-    TableStore.removeStoreListener('select');
-    TableStore.removeStoreListener('change');
-  },
-
   render: function () {
     return (
-      <div>TableInfo</div>
-    );
-  },
+      <section className="row tables-selector-row">
+        <div className="col-sm-12">
+          <TabbedArea defaultActiveKey={1}>
 
-  /* Store events */
-  _onChange: function() {
-    this.setState(getStateFromStore());
+            <TabPane eventKey={1} tab="Columns">
+              <div className="row columns-row">
+                <div className="col-sm-12 column-selector">
+                  <Columns />
+                </div>
+              </div>
+            </TabPane>
+
+            <TabPane eventKey={2} tab="Data Preview">
+              <DataPreview />
+            </TabPane>
+
+            <TabPane eventKey={3} tab="Meta data">
+              <MetaDataPreview />
+            </TabPane>
+
+          </TabbedArea>
+        </div>
+      </section>
+    );
   }
 });
 
