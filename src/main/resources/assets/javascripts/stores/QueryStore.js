@@ -2,6 +2,7 @@
  * QueryStore
  */
 
+var StoreDefaults = require('./StoreDefaults');
 var QueryDispatcher = require('../dispatchers/QueryDispatcher');
 var QueryConstants = require('../constants/QueryConstants');
 
@@ -63,29 +64,7 @@ function _removeQuery(id) {
 }
 
 /* Query store */
-var QueryStore = assign({}, EventEmitter.prototype, {
-
-  emitChange: function(eventName) {
-    this.emit(eventName);
-  },
-
-  /**
-   * Creates an event listener for a specific event
-   * @param {string} event name to listen to
-   * @param {function} event callback
-   */
-  addStoreListener: function(eventName, callback) {
-    this.on(eventName, callback);
-  },
-
-  /**
-   * Removes a specfik event listener
-   * @param {string} event name to remove
-   * @param {function} event callback
-   */
-  removeStoreListener: function(eventName, callback) {
-    this.removeListener(eventName, callback);
-  },
+var QueryStore = assign(StoreDefaults, EventEmitter.prototype, {
 
   // Get a specific query from the collection
   // @param {integer} the event id

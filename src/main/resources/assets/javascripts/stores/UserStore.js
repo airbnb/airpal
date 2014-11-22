@@ -2,6 +2,7 @@
  * UserStore
  */
 
+var StoreDefaults = require('./StoreDefaults');
 var UserDispatcher = require('../dispatchers/UserDispatcher');
 var UserConstants = require('../constants/UserConstants');
 
@@ -32,29 +33,7 @@ function _addUser(user) {
   _user = user;
 }
 
-var UserStore = assign({}, EventEmitter.prototype, {
-
-  emitChange: function(eventName) {
-    this.emit(eventName);
-  },
-
-  /**
-   * Creates an event listener for a specific event
-   * @param {string} event name to listen to
-   * @param {function} event callback
-   */
-  addStoreListener: function(eventName, callback) {
-    this.on(eventName, callback);
-  },
-
-  /**
-   * Removes a specfik event listener
-   * @param {string} event name to remove
-   * @param {function} event callback
-   */
-  removeStoreListener: function(eventName, callback) {
-    this.removeListener(eventName, callback);
-  },
+var UserStore = assign(StoreDefaults, EventEmitter.prototype, {
 
   /**
    * Get the current user

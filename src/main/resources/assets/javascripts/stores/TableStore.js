@@ -2,6 +2,7 @@
  * TableStore
  */
 
+var StoreDefaults = require('./StoreDefaults');
 var TableDispatcher = require('../dispatchers/TableDispatcher');
 var TableConstants = require('../constants/TableConstants');
 
@@ -60,29 +61,7 @@ function _markActive(name) {
   table.active = true;
 }
 
-var TableStore = assign({}, EventEmitter.prototype, {
-
-  emitChange: function(eventName, options) {
-    this.emit(eventName, options);
-  },
-
-  /**
-   * Creates an event listener for a specific event
-   * @param eventName {string} event name to listen to
-   * @param callback {function} event callback
-   */
-  addStoreListener: function(eventName, callback) {
-    this.on(eventName, callback);
-  },
-
-  /**
-   * Removes a specfik event listener
-   * @param eventName {string} event name to remove
-   * @param callback {function} event callback
-   */
-  removeStoreListener: function(eventName, callback) {
-    this.removeListener(eventName, callback);
-  },
+var TableStore = assign(StoreDefaults, EventEmitter.prototype, {
 
   // Get the table by name
   // @param name {string} the table name
