@@ -2,11 +2,14 @@
 var React = require('react');
 var AppDispatcher = require('../AppDispatcher');
 
+/* Constants */
+var UserConstants = require('../constants/UserConstants')
+
 /* Stores */
 var UserStore = require('../stores/UserStore');
 
-/* Constants */
-var UserConstants = require('../constants/UserConstants')
+/* Utils */
+var UserApiUtils = require('../utils/UserApiUtils');
 
 // State actions
 function getStateFromStore() {
@@ -24,22 +27,7 @@ var Header = React.createClass({
   },
 
   componentWillMount: function() {
-
-    // Get the user from the API
-    $.ajax({
-      type: 'GET',
-      url: './api/user',
-
-      success: function(user) {
-
-        // Notify the application we've got a new user
-        AppDispatcher.handleServerAction({
-          type: UserConstants.RECEIVE_USER_INFO,
-          rawUserInfo: user
-        });
-      }
-    })
-
+    UserApiUtils.getCurrentUser();
   },
 
   componentDidMount: function() {
