@@ -38,7 +38,7 @@ function _addTable(table) {
 }
 
 // Updates a table with the new data
-function _updateTable(table, columns, data) {
+function _updateTableData(table, columns, data) {
 
   // Get the right table first
   var table = TableStore.getByName(table.name);
@@ -138,7 +138,7 @@ TableStore.dispatchToken = TableDispatcher.register(function(payload) {
       break;
 
     case TableConstants.RECEIVED_TABLE_DATA:
-      _updateTable(action.table, action.columns, action.data);
+      _updateTableData(action.table, action.columns, action.data);
       TableStore.emitChange('change');
       break;
 
