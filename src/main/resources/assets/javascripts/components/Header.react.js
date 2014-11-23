@@ -44,7 +44,7 @@ var Header = React.createClass({
 
         <div className="col-sm-5">
 
-          <div className="row">
+          <div className="row user-info">
             <div className="col-sm-4">
               <dl>
                 <dt>User Name</dt>

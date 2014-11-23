@@ -53,9 +53,7 @@ var DataPreview = React.createClass({
     return (
       <div className="row" className="data-preview data-preview-wrapper">
         <table className="table table-striped">
-          <thead>
-            <tr>{this._renderHeaderRows()}</tr>
-          </thead>
+          <thead>{this._renderHeaderRows()}</thead>
           <tbody>{this._renderBodyRows()}</tbody>
         </table>
       </div>
@@ -66,10 +64,10 @@ var DataPreview = React.createClass({
     if( !this.state.table || !this.state.table.columns ) return;
 
     var headRows = _.map(this.state.table.columns, function(column, idx) {
-      return (<th>{column.name}</th>);
+      return (<th key={idx}>{column.name}</th>);
     });
 
-    return headRows;
+    return ( <tr key="1">{headRows}</tr> );
   },
 
   _renderBodyRows: function() {
@@ -80,10 +78,10 @@ var DataPreview = React.createClass({
 
       // Map all the data in the item
       elements = _.map(item, function(value, key) {
-        return(<td>{value}</td>);
+        return(<td key={key}>{value}</td>);
       });
 
-      // Return the complete row
+      // Return all the elements
       return ( <tr key={idx}>{elements}</tr> );
     });
   },
