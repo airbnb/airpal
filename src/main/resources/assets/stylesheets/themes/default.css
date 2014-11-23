@@ -1,5 +1,30 @@
-/* Custom selectize header
-   ========================================================================== */
+/**
+ * CONTENTS
+ *
+ * SETTINGS
+ * Global...............Globally-available variables and config.
+ *
+ * COMPONENTS
+ * selectize-header.....The customized selectize header
+ * tab-pane.............The customized tab pane
+ */
+
+/*------------------------------------*\
+    #COMPONENTS
+\*------------------------------------*/
+
+/**
+ * User info
+ */
+
+.user-info {
+  padding-top: 20px;
+}
+
+/**
+ * Selectize header
+ */
+
 .selectize-header {
   padding: 5px 8px 5px 8px;
   font-weight: bold;
@@ -36,3 +61,13 @@
 
 .selectize-dropdown { overflow: hidden; }
 .selectize-dropdown-content p { margin-bottom: 0; }
+
+/**
+ * Tab pane
+ */
+
+.tab-pane {
+  padding: 10px 5px;
+  max-height: 250px;
+  overflow-y: scroll;
+}
