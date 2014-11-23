@@ -42,6 +42,13 @@ gulp.task('browserify', function(callback) {
       bundleLogger.start(bundleConfig.outputName);
 
       return bundler
+
+        // Make sure to minify before bundling
+        .plugin('minifyify', {
+          map: 'app.min.map',
+          output: bundleConfig.dest + '/app.min.map'
+        })
+
         .bundle()
 
         // Report compile errors
