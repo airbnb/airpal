@@ -48,6 +48,7 @@
     "gulp-util": "^3.0.0",
     "hbsfy": "~2.0.0",
     "lodash": "^2.4.1",
+    "minifyify": "^4.4.0",
     "pretty-hrtime": "~0.2.1",
     "react-bootstrap": "^0.13.0",
     "reactify": "^0.17.1",
