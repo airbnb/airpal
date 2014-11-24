@@ -151,7 +151,10 @@ public class JobHistoryStoreDAO
         // Create the job
         long jobId = jobDAO.createJob(job);
         // Find all presto tables already represented
-        Set<TableRow> tablesInDb = new HashSet<>(tableDAO.getTables(new ArrayList<>(job.getTablesUsed())));
+        Set<TableRow> tablesInDb = Collections.emptySet();
+        if (job.getTablesUsed().size() > 0) {
+            tablesInDb = new HashSet<>(tableDAO.getTables(new ArrayList<>(job.getTablesUsed())));
+        }
         // Figure out which tables are not represented
         Sets.SetView<Table> tablesToAdd = Sets.difference(
                 job.getTablesUsed(),
@@ -159,13 +162,19 @@ public class JobHistoryStoreDAO
         // Add tables not already represented
         tableDAO.createTables(tablesToAdd);
 
-        Set<TableRow> tablesWithIds = new HashSet<>(tableDAO.getTables(new ArrayList<>(job.getTablesUsed())));
+        Set<TableRow> tablesWithIds = Collections.emptySet();
+        if (job.getTablesUsed().size() > 0) {
+            tablesWithIds = new HashSet<>(tableDAO.getTables(new ArrayList<>(job.getTablesUsed())));
+        }
+
         List<JobTableRow> jobTableRows = new ArrayList<>(job.getTablesUsed().size());
         for (TableRow tableRow : tablesWithIds) {
             jobTableRows.add(new JobTableRow(-1, jobId, tableRow.getId()));
         }
         // Add associations between Job and Table
         jobTableDAO.createJobTables(jobTableRows);
-        jobOutputDAO.createJobOutput(job.getOutput(), jobId);
+        if (job.getOutput().getLocation() != null) {
+            jobOutputDAO.createJobOutput(job.getOutput(), jobId);
+        }
     }
 }

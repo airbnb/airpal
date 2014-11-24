@@ -38,6 +38,7 @@ public class JobTableOutputJoinRow
     private List<Column> columns;
     private DateTime queryFinished;
     private DateTime queryStarted;
+    @StoredAsJson
     private QueryError error;
     private String connectorId;
     private String schema;
