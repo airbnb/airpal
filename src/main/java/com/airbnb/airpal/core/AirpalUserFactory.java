@@ -26,7 +26,7 @@ public class AirpalUserFactory
         } else if (principal instanceof String) {
             return new AirpalUserImpl((String) principal, defaultSchema, defaultQueryTimeout, defaultAccessLevel, subject);
         } else if (principal instanceof ToAirpalUser) {
-            return ((ToAirpalUser)principal).toAirpalUser();
+            return ((ToAirpalUser)principal).toAirpalUser(subject);
         } else {
             throw new IllegalArgumentException(format("Could not marshall %s to AirpalUser", principal));
         }
