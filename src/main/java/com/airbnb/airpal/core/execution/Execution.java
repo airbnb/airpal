@@ -27,9 +27,11 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.eventbus.EventBus;
 import com.google.common.util.concurrent.RateLimiter;
+import io.airlift.units.DataSize;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.joda.time.DateTime;
 import org.joda.time.Duration;
 
 import javax.annotation.Nullable;
@@ -142,6 +144,7 @@ public class Execution implements Callable<Job>
         }
 
         if (!authorizer.isAuthorizedRead(tables)) {
+            job.setQueryStats(createNoOpQueryStats());
             cancelAndThrow(null, stopwatch, new ExecutionFailureException(job, "Cannot access tables", null));
         }
 
@@ -341,5 +344,42 @@ public class Execution implements Callable<Job>
         if (postUpdate) {
             eventBus.post(new JobUpdateEvent(job, outputPreview));
         }
+    }
+
+    public static QueryStats createNoOpQueryStats()
+    {
+        DateTime now = DateTime.now();
+        io.airlift.units.Duration zeroDuration = new io.airlift.units.Duration(0, TimeUnit.SECONDS);
+        DataSize zeroData = new DataSize(0, DataSize.Unit.BYTE);
+
+        return new QueryStats(
+                now,
+                null,
+                now,
+                now,
+                zeroDuration,
+                zeroDuration,
+                zeroDuration,
+                zeroDuration,
+                zeroDuration,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                zeroData,
+                zeroDuration,
+                zeroDuration,
+                zeroDuration,
+                zeroDuration,
+                zeroData,
+                0,
+                zeroData,
+                0,
+                zeroData,
+                0
+        );
     }
 }

@@ -37,7 +37,8 @@ public class ExecuteResource {
     public Response executeQuery(@Auth AirpalUser user, ExecutionRequest request) throws IOException
     {
         if (user != null) {
-            final UUID queryUuid = executionClient.runQuery(request,
+            final UUID queryUuid = executionClient.runQuery(
+                    request,
                     user,
                     user.getDefaultSchema(),
                     user.getQueryTimeout());

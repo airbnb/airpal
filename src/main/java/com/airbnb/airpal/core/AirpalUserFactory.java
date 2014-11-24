@@ -21,12 +21,12 @@ public class AirpalUserFactory
     public AirpalUser getUser(Subject subject)
     {
         Object principal = subject.getPrincipal();
-        if (principal instanceof AirpalUser) {
-            return (AirpalUser) principal;
+        if (principal instanceof ToAirpalUser) {
+            return ((ToAirpalUser)principal).toAirpalUser(subject);
         } else if (principal instanceof String) {
             return new AirpalUserImpl((String) principal, defaultSchema, defaultQueryTimeout, defaultAccessLevel, subject);
-        } else if (principal instanceof ToAirpalUser) {
-            return ((ToAirpalUser)principal).toAirpalUser(subject);
+        } else if (principal instanceof AirpalUser) {
+            return (AirpalUser) principal;
         } else {
             throw new IllegalArgumentException(format("Could not marshall %s to AirpalUser", principal));
         }
