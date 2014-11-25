@@ -83,12 +83,6 @@ public class AirpalConfiguration extends Configuration
     @Setter
     @JsonProperty
     @NotNull
-    private ElasticSearchConfiguration elasticSearchProperties;
-
-    @Getter
-    @Setter
-    @JsonProperty
-    @NotNull
     private HiveMetastoreConfiguration metaStoreConfiguration;
 
     @Getter
