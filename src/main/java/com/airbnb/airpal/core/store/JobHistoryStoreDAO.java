@@ -65,7 +65,7 @@ public class JobHistoryStoreDAO
                             "jo.description, " +
                             "jo.location " +
                             "FROM (SELECT * FROM jobs " +
-                                "WHERE query_finished > DATE_SUB(NOW(), INTERVAL :day_interval day) " +
+                                "WHERE query_finished > DATE_SUB(UTC_TIMESTAMP(), INTERVAL :day_interval day) " +
                                 "ORDER BY query_finished DESC LIMIT :limit) j " +
                             "LEFT OUTER JOIN job_tables jt ON j.id = jt.job_id " +
                             "LEFT OUTER JOIN tables t ON jt.table_id = t.id " +
