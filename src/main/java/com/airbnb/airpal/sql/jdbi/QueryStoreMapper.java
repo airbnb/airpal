@@ -4,6 +4,7 @@ import com.airbnb.airpal.api.queries.FeaturedQuery;
 import com.airbnb.airpal.api.queries.SavedQuery;
 import com.airbnb.airpal.api.queries.UserSavedQuery;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
@@ -12,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
+@Slf4j
 public class QueryStoreMapper implements ResultSetMapper<SavedQuery>
 {
     private final ObjectMapper objectMapper;
@@ -36,7 +38,7 @@ public class QueryStoreMapper implements ResultSetMapper<SavedQuery>
                     false);
         }
         catch (IOException e) {
-            e.printStackTrace();
+            log.error("Caught exception mapping SavedQuery", e);
         }
 
         return null;

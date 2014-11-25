@@ -1,6 +1,6 @@
 CREATE TABLE jobs (
   id SERIAL,
-  query MEDIUM TEXT NOT NULL,
+  query MEDIUMTEXT NOT NULL,
   user VARCHAR(127) NOT NULL,
   uuid VARCHAR(127) NOT NULL,
   queryStats TEXT,

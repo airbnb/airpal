@@ -61,6 +61,7 @@ public class Job
     private DateTime queryStarted = new DateTime();
 
     @JsonProperty
+    @StoredAsJson
     private QueryError error;
 
     @JsonProperty
