@@ -69,7 +69,10 @@ public class UsersResource
             @QueryParam("table") List<PartitionedTable> tables)
     {
         Iterable<Job> recentlyRun;
-        int results = Optional.of(numResults).or(200);
+        int results = Optional.of(numResults).or(0);
+        if (results <= 0) {
+            results = 100;
+        }
 
         if (tables.size() < 1) {
             recentlyRun = jobHistoryStore.getRecentlyRunForUser(userId, results);

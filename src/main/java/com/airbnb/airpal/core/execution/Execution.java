@@ -69,6 +69,12 @@ public class Execution implements Callable<Job>
     private final ColumnCache columnCache;
     private final RateLimiter updateLimiter = RateLimiter.create(2.0);
     private final int maxRowsPreviewOutput = 1_000;
+    private boolean isCancelled = false;
+
+    public void cancel()
+    {
+        isCancelled = true;
+    }
 
     @RequiredArgsConstructor
     private static class StringContainsSubstringPredicate implements Predicate<String>
@@ -97,7 +103,7 @@ public class Execution implements Callable<Job>
                 "noMoreSplits"
         );
 
-        while (true) {
+        while (!isCancelled) {
             attempts++;
             try {
                 return doExecute();
@@ -118,6 +124,8 @@ public class Execution implements Callable<Job>
                 log.info("Retrying request after error {}", error.toString());
             }
         }
+
+        return job;
     }
 
     private Job doExecute()
@@ -139,6 +147,7 @@ public class Execution implements Callable<Job>
         try {
             tables = authorizer.tablesUsedByQuery(query);
         } catch (ParsingException e) {
+            job.setQueryStats(createNoOpQueryStats());
             job.setError(new QueryError(e.getMessage(), null, -1, new ErrorLocation(e.getLineNumber(), e.getColumnNumber()), null));
             cancelAndThrow(null, stopwatch, new ExecutionFailureException(job, "Invalid query, could not parse", e));
         }
@@ -155,6 +164,14 @@ public class Execution implements Callable<Job>
                 JobState jobState = null;
                 QueryError queryError = null;
                 QueryStats queryStats = null;
+
+                if (isCancelled) {
+                    cancelAndThrow(client,
+                            stopwatch,
+                            new ExecutionFailureException(job,
+                                    "Query was cancelled",
+                                    null));
+                }
 
                 if (stopwatch.elapsed(TimeUnit.MILLISECONDS) > timeout.getMillis()) {
                     cancelAndThrow(client,
