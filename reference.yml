@@ -3,6 +3,7 @@ logging:
 
   loggers:
     org.apache.shiro: INFO
+    org.skife.jdbi: TRACE
 
   # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
   level: INFO
@@ -17,12 +18,6 @@ server:
   adminConnectors:
     - type: http
       port: 8082
-
-elasticSearchProperties:
-  hosts:
-    - 127.0.0.1:9300
-  clusterName: elasticsearch_andykram
-  multicastEnabled: false
 
 metaStoreConfiguration:
   driverName: com.mysql.jdbc.Driver

@@ -36,7 +36,7 @@
         <jetty.version>9.0.7.v20131107</jetty.version>
         <logback.version>1.0.13</logback.version>
         <lombok.version>1.12.2</lombok.version>
-        <mysql-connector-java.version>5.1.33</mysql-connector-java.version>
+        <mysql-connector-java.version>5.1.34</mysql-connector-java.version>
         <opencsv.version>2.3</opencsv.version>
         <presto.version>0.77</presto.version>
         <RosettaJdbi.version>2.1-SNAPSHOT</RosettaJdbi.version>
