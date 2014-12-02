@@ -42,7 +42,7 @@ public class SQLUsageStore implements UsageStore
                             "FROM jobs j " +
                             "LEFT OUTER JOIN job_tables jt ON j.id = jt.job_id " +
                             "LEFT OUTER JOIN tables t ON jt.table_id = t.id " +
-                            "WHERE query_finished > DATE_SUB(NOW(), INTERVAL :day_interval day) " +
+                            "WHERE query_finished > DATE_SUB(UTC_TIMESTAMP(), INTERVAL :day_interval day) " +
                             "AND (" + Util.getTableCondition(Lists.newArrayList(tables)) + ") " +
                             "GROUP BY connector_id, schema_, table_ " +
                             "ORDER BY query_finished DESC")
