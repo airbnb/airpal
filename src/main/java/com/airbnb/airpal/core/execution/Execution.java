@@ -18,7 +18,6 @@ import com.facebook.presto.client.QueryResults;
 import com.facebook.presto.client.StatementClient;
 import com.facebook.presto.execution.QueryStats;
 import com.facebook.presto.sql.parser.ParsingException;
-import com.facebook.presto.sql.parser.SqlParser;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Stopwatch;
@@ -52,8 +51,6 @@ import static java.lang.String.format;
 @RequiredArgsConstructor
 public class Execution implements Callable<Job>
 {
-    private static final SqlParser SQL_PARSER = new SqlParser();
-
     @Getter
     private final Job job;
     @Getter
