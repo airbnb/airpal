@@ -57,6 +57,7 @@
     "watchify": "~1.0.2"
   },
   "dependencies": {
+    "codemirror": "^4.8.0",
     "flux": "^2.0.1",
     "jquery": "~1.9.0",
     "keymirror": "^0.1.0",

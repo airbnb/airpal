@@ -17,7 +17,7 @@ function getStateFromStore() {
   };
 }
 
-var Columns = React.createClass({
+var ColumnsPreview = React.createClass({
   displayName: 'Columns',
 
   getInitialState: function() {
@@ -59,7 +59,7 @@ var Columns = React.createClass({
     }.bind(this));
 
     // Render the template
-    return (<div className="row">{columns}</div>);
+    return (<div>{columns}</div>);
   },
 
   _renderEmptyMessage: function() {
@@ -80,4 +80,4 @@ var Columns = React.createClass({
   }
 });
 
-module.exports = Columns;
+module.exports = ColumnsPreview;
