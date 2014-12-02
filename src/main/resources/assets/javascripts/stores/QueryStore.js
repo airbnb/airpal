@@ -5,6 +5,7 @@
 var StoreDefaults = require('./StoreDefaults');
 var QueryDispatcher = require('../dispatchers/QueryDispatcher');
 var QueryConstants = require('../constants/QueryConstants');
+var QueryApiUtils = require('../utils/QueryApiUtils')
 
 /* Store helpers */
 var EventEmitter = require('events').EventEmitter;
@@ -128,4 +129,4 @@ QueryStore.dispatchToken = QueryDispatcher.register(function(payload) {
 
 });
 
-module.exports = UserStore;
+module.exports = QueryStore;

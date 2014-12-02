@@ -1,22 +1,35 @@
 /** @jsx React.DOM */
 var React = require('react');
 
-/* Helpers */
-var CodeMirror = require('codemirror');
-require('codemirror/mode/sql/sql');
+/* Views */
+var QuerySaveModal = require('./QuerySaveModal.react');
 
-var Modal         = require('react-bootstrap').Modal,
-    ModalTrigger  = require('react-bootstrap').ModalTrigger;
+/* Helpers */
+var CodeMirror = require('codemirror'),
+    OverlayMixin  = require('react-bootstrap').OverlayMixin;
+
+require('codemirror/mode/sql/sql');
 
 var QueryEditor = React.createClass({
   displayName: 'QueryEditor',
+  mixins: [OverlayMixin],
 
   componentDidMount: function() {
-    CodeMirror.fromTextArea(this.refs.queryEditor.getDOMNode(), {
+    this.editor = CodeMirror.fromTextArea(this.refs.queryEditor.getDOMNode(), {
       lineNumbers: true,
       tabSize: 2,
       mode: 'text/x-mysql',
       theme: 'blackboard'
+    });
+  },
+
+  getInitialState: function() {
+    return { isModalOpen: false };
+  },
+
+  handleToggle: function () {
+    this.setState({
+      isModalOpen: !this.state.isModalOpen
     });
   },
 
@@ -45,12 +58,10 @@ var QueryEditor = React.createClass({
               <input ref="customName" type="text" name="custom-name" className="form-control" placeholder="Select a custom table name" />
             </div>
 
-            <div className="col-sm-6">
+            <div className="col-sm-6 text-right">
               <div className="btn-toolbar pull-right">
                 <div className="btn-group">
-                  <ModalTrigger>
-                    <button className="btn btn-primary">Save Query</button>
-                  </ModalTrigger>
+                  <button className="btn btn-primary" onClick={this.handleToggle}>Save Query</button>
                 </div>
 
                 <div className="btn-group">
@@ -63,6 +74,13 @@ var QueryEditor = React.createClass({
         </div>
       </div>
     );
+  },
+
+  renderOverlay: function() {
+    if( !this.state.isModalOpen ) return(<span />);
+
+    // Render the modal when it's needed
+    return (<QuerySaveModal onRequestHide={this.handleToggle} query={this.editor.getValue()} />);
   }
 });
 
