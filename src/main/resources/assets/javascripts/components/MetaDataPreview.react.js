@@ -50,10 +50,8 @@ var MetaDataPreview = React.createClass({
 
   _renderMetaData: function () {
     return (
-      <div className="row">
-        <div className="col-sm-12 column-selector">
-          <p><strong>Table name: </strong> {this.state.table.name}</p>
-        </div>
+      <div className="col-sm-12 column-selector">
+        <p><strong>Table name: </strong> {this.state.table.name}</p>
       </div>
     );
   },
