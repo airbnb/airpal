@@ -18,7 +18,6 @@ import com.facebook.presto.client.QueryResults;
 import com.facebook.presto.client.StatementClient;
 import com.facebook.presto.execution.QueryStats;
 import com.facebook.presto.sql.parser.ParsingException;
-import com.facebook.presto.sql.parser.SqlParser;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Stopwatch;
@@ -52,8 +51,6 @@ import static java.lang.String.format;
 @RequiredArgsConstructor
 public class Execution implements Callable<Job>
 {
-    private static final SqlParser SQL_PARSER = new SqlParser();
-
     @Getter
     private final Job job;
     @Getter
@@ -69,6 +66,12 @@ public class Execution implements Callable<Job>
     private final ColumnCache columnCache;
     private final RateLimiter updateLimiter = RateLimiter.create(2.0);
     private final int maxRowsPreviewOutput = 1_000;
+    private boolean isCancelled = false;
+
+    public void cancel()
+    {
+        isCancelled = true;
+    }
 
     @RequiredArgsConstructor
     private static class StringContainsSubstringPredicate implements Predicate<String>
@@ -97,7 +100,7 @@ public class Execution implements Callable<Job>
                 "noMoreSplits"
         );
 
-        while (true) {
+        while (!isCancelled) {
             attempts++;
             try {
                 return doExecute();
@@ -118,6 +121,8 @@ public class Execution implements Callable<Job>
                 log.info("Retrying request after error {}", error.toString());
             }
         }
+
+        return job;
     }
 
     private Job doExecute()
@@ -139,6 +144,7 @@ public class Execution implements Callable<Job>
         try {
             tables = authorizer.tablesUsedByQuery(query);
         } catch (ParsingException e) {
+            job.setQueryStats(createNoOpQueryStats());
             job.setError(new QueryError(e.getMessage(), null, -1, new ErrorLocation(e.getLineNumber(), e.getColumnNumber()), null));
             cancelAndThrow(null, stopwatch, new ExecutionFailureException(job, "Invalid query, could not parse", e));
         }
@@ -155,6 +161,14 @@ public class Execution implements Callable<Job>
                 JobState jobState = null;
                 QueryError queryError = null;
                 QueryStats queryStats = null;
+
+                if (isCancelled) {
+                    cancelAndThrow(client,
+                            stopwatch,
+                            new ExecutionFailureException(job,
+                                    "Query was cancelled",
+                                    null));
+                }
 
                 if (stopwatch.elapsed(TimeUnit.MILLISECONDS) > timeout.getMillis()) {
                     cancelAndThrow(client,

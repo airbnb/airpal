@@ -33,6 +33,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 
 import static com.airbnb.airpal.presto.QueryRunner.QueryRunnerFactory;
@@ -54,6 +55,7 @@ public class ExecutionClient
     private final ColumnCache columnCache;
     private final QueryInfoClient queryInfoClient;
     private final QueryRunnerFactory queryRunnerFactory;
+    private final Map<UUID, Execution> executionMap = new ConcurrentHashMap<>();
 
     @Inject
     public ExecutionClient(QueryRunnerFactory queryRunnerFactory,
@@ -105,12 +107,13 @@ public class ExecutionClient
                 eventBus,
                 queryRunnerFactory.create(schema),
                 queryInfoClient,
-                new QueryExecutionAuthorizer(user, "hive", "default"),
+                new QueryExecutionAuthorizer(user, "hive", user.getDefaultSchema()),
                 timeout,
                 columnCache);
 
-        ListenableFuture<Job> result = executor.submit(execution);
+        executionMap.put(uuid, execution);
 
+        ListenableFuture<Job> result = executor.submit(execution);
         Futures.addCallback(result, new FutureCallback<Job>()
         {
             @Override
@@ -161,6 +164,21 @@ public class ExecutionClient
         }
 
         eventBus.post(new JobFinishedEvent(job));
+        executionMap.remove(job.getUuid());
+    }
+
+    public boolean cancelQuery(
+            AirpalUser user,
+            UUID uuid)
+    {
+        Execution execution = executionMap.get(uuid);
+
+        if ((execution != null) && (execution.getJob().getUser().equals(user.getUserName()))) {
+            execution.cancel();
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public static class ExecutionFailureException extends RuntimeException

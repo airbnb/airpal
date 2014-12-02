@@ -4,6 +4,7 @@ import com.airbnb.airpal.api.Job;
 import com.airbnb.airpal.api.JobState;
 import com.airbnb.airpal.core.AirpalUser;
 import com.airbnb.airpal.core.AuthorizationUtil;
+import com.airbnb.airpal.core.execution.ExecutionClient;
 import com.airbnb.airpal.core.store.JobHistoryStore;
 import com.airbnb.airpal.presto.PartitionedTable;
 import com.airbnb.airpal.presto.Table;
@@ -15,8 +16,10 @@ import com.google.common.collect.Ordering;
 import com.google.inject.Inject;
 import org.secnod.shiro.jaxrs.Auth;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -24,6 +27,7 @@ import javax.ws.rs.core.Response;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import static com.airbnb.airpal.resources.QueryResource.JOB_ORDERING;
 
@@ -32,11 +36,15 @@ import static com.airbnb.airpal.resources.QueryResource.JOB_ORDERING;
 public class QueriesResource
 {
     private final JobHistoryStore jobHistoryStore;
+    private final ExecutionClient executionClient;
 
     @Inject
-    public QueriesResource(JobHistoryStore jobHistoryStore)
+    public QueriesResource(
+            JobHistoryStore jobHistoryStore,
+            ExecutionClient executionClient)
     {
         this.jobHistoryStore = jobHistoryStore;
+        this.executionClient = executionClient;
     }
 
     @GET
@@ -87,5 +95,19 @@ public class QueriesResource
                 .reverse()
                 .immutableSortedCopy(filtered.build());
         return Response.ok(sortedResult).build();
+    }
+
+    @DELETE
+    @Path("/{uuid}")
+    public Response cancelQuery(
+            @Auth AirpalUser user,
+            @PathParam("uuid") UUID uuid)
+    {
+        boolean success = executionClient.cancelQuery(user, uuid);
+        if (success) {
+            return Response.ok().build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
     }
 }

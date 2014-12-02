@@ -10,6 +10,7 @@ import com.airbnb.airpal.sql.dao.JobDAO;
 import com.airbnb.airpal.sql.dao.JobOutputDAO;
 import com.airbnb.airpal.sql.dao.JobTableDAO;
 import com.airbnb.airpal.sql.dao.TableDAO;
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -42,8 +43,10 @@ public class JobHistoryStoreDAO
         this.dbi = dbi;
     }
 
-    private List<Job> getJobs(long limit, int dayInterval, String whereClause)
+    private List<Job> getJobs(long limit, int dayInterval, String outerWhereClauseArg, String innerWhereClauseArg)
     {
+        String outerWhereClause = Strings.isNullOrEmpty(outerWhereClauseArg) ? "true" : outerWhereClauseArg;
+        String innerWhereClause = Strings.isNullOrEmpty(innerWhereClauseArg) ? "true" : innerWhereClauseArg;
         try (Handle handle = dbi.open()) {
             Query<Map<String, Object>> query = handle.createQuery(
                     "SELECT " +
@@ -66,11 +69,12 @@ public class JobHistoryStoreDAO
                             "jo.location " +
                             "FROM (SELECT * FROM jobs " +
                                 "WHERE query_finished > DATE_SUB(UTC_TIMESTAMP(), INTERVAL :day_interval day) " +
+                                "AND " + innerWhereClause + " " +
                                 "ORDER BY query_finished DESC LIMIT :limit) j " +
                             "LEFT OUTER JOIN job_tables jt ON j.id = jt.job_id " +
                             "LEFT OUTER JOIN tables t ON jt.table_id = t.id " +
                             "LEFT OUTER JOIN job_outputs jo ON j.id = jo.job_id " +
-                            whereClause + " " +
+                            "WHERE " + outerWhereClause + " " +
                             "ORDER BY query_finished DESC")
                     .bind("limit", limit)
                     .bind("day_interval", dayInterval);
@@ -84,7 +88,7 @@ public class JobHistoryStoreDAO
 
     private List<Job> getJobs(long limit, int dayInterval)
     {
-        return getJobs(limit, dayInterval, "");
+        return getJobs(limit, dayInterval, null, null);
     }
 
     @Override
@@ -108,8 +112,8 @@ public class JobHistoryStoreDAO
     public List<Job> getRecentlyRun(long maxResults, Iterable<Table> tables)
     {
         try {
-            String tablesClause = format("WHERE %s", Util.getTableCondition(tables));
-            return getJobs(maxResults, 1, tablesClause);
+            String tablesClause = Util.getTableCondition(tables);
+            return getJobs(maxResults, 1, tablesClause, null);
         } catch (Exception e) {
             log.error("Caught exception during getRecentlyRun", e);
             return Collections.emptyList();
@@ -120,8 +124,8 @@ public class JobHistoryStoreDAO
     public List<Job> getRecentlyRunForUser(String user, long maxResults)
     {
         try {
-            String tablesClause = format("WHERE user = %s", user);
-            return getJobs(maxResults, 1, tablesClause);
+            String usersClause = format("user = '%s'", user);
+            return getJobs(maxResults, 1, null, usersClause);
         } catch (Exception e) {
             log.error("Caught exception during getRecentlyRun", e);
             return Collections.emptyList();
@@ -132,8 +136,9 @@ public class JobHistoryStoreDAO
     public List<Job> getRecentlyRunForUser(String user, long maxResults, Iterable<Table> tables)
     {
         try {
-            String tablesClause = format("WHERE user = %s AND (%s)", user, Util.getTableCondition(tables));
-            return getJobs(maxResults, 1, tablesClause);
+            String usersClause = format("user = '%s'", user);
+            String tablesClause = Util.getTableCondition(tables);
+            return getJobs(maxResults, 1, tablesClause, usersClause);
         } catch (Exception e) {
             log.error("Caught exception during getRecentlyRun", e);
             return Collections.emptyList();

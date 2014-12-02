@@ -236,4 +236,19 @@ public class QueryExecutionAuthorizerTest
 
         assertEquals(tablesExpected, tablesUsed);
     }
+
+    @Test
+    public void testAlternateDefaultConnectorSchemaReferences()
+            throws Exception
+    {
+        String alternateDefaultConnector = "cassandra";
+        String alternateDefaultSchema = "default2";
+        Set<Table> tablesUsed = tablesUsedByQuery(TEST_SELECT_ALIAS, alternateDefaultConnector, alternateDefaultSchema);
+        Set<Table> tablesExpected = ImmutableSet.of(
+                new Table(alternateDefaultConnector, alternateDefaultSchema, "users"),
+                new Table(alternateDefaultConnector, alternateDefaultSchema, "users_pii")
+        );
+
+        assertEquals(tablesExpected, tablesUsed);
+    }
 }
