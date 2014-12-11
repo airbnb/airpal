@@ -47,6 +47,7 @@
     "gulp-notify": "^1.4.2",
     "gulp-util": "^3.0.0",
     "hbsfy": "~2.0.0",
+    "jest-cli": "^0.2.0",
     "lodash": "^2.4.1",
     "minifyify": "^4.4.0",
     "pretty-hrtime": "~0.2.1",
@@ -62,6 +63,30 @@
     "jquery": "~1.9.0",
     "keymirror": "^0.1.0",
     "object-assign": "^2.0.0",
-    "react": "^0.12.1"
+    "react": "^0.12.1",
+    "react-tools": "^0.12.1"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "jest": {
+    "testDirectoryName": "specs",
+    "testPathIgnorePatterns": [
+      "node_modules",
+      "specs/support"
+    ],
+    "scriptPreprocessor": "specs/support/preprocessor.js",
+    "unmockedModulePathPatterns": [
+      "node_modules/react",
+
+      "lodash",
+      "object-assign",
+      "keymirror",
+
+      "javascripts/actions",
+      "javascripts/constants",
+      "javascripts/dispatchers",
+      "javascripts/stores"
+    ]
   }
 }

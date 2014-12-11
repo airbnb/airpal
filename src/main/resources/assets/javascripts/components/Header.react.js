@@ -39,7 +39,7 @@ var Header = React.createClass({
       <header className="row header-row">
 
         <div className="col-sm-7">
-          <h1>Airpal</h1>
+          <h1>AirPal</h1>
         </div>
 
         <div className="col-sm-5">
@@ -48,19 +48,24 @@ var Header = React.createClass({
             <div className="col-sm-4">
               <dl>
                 <dt>User Name</dt>
-                <dd>{this.state.user.name}</dd>
+                <dd className="user-name">{this.state.user.name}</dd>
               </dl>
             </div>
 
             <div className="col-sm-4">
               <p>
                 <strong>Access Level &nbsp;</strong>
+
                 <a href="https://airbnb.hackpad.com/Airpal-9FiIU3O2BJ1#:h=Access-Levels" target="_blank"
                   data-toggle="tooltip" data-placement="bottom" title="For more info about the access rights, see the HackPad">
                   <span className="glyphicon glyphicon-info-sign"></span>
                 </a>
+
                 <br />
-                {this.state.user.executionPermissions.accessLevel}
+
+                <span className="user-permissions">
+                  {this.state.user.executionPermissions.accessLevel}
+                </span>
               </p>
             </div>
 
