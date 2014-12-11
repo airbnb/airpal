@@ -15,7 +15,7 @@ var _ = require('lodash');
  * User object
  */
 var defaultUser = {
-  name: '',
+  name: 'unknown',
   executionPermissions: {
     accessLevel: 'default',
     canCreateCsv: false,

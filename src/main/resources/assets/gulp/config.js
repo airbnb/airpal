@@ -26,5 +26,20 @@ module.exports = {
       dest: dest,
       outputName: 'plugin.js'
     }]
+  },
+
+  jest: {
+    scriptPreprocessor: './specs/support/preprocessor.js',
+    unmockedModulePathPatterns: [
+      'node_modules/react'
+    ],
+    testDirectoryName: 'specs',
+    testPathIgnorePatterns: [
+      'node_modules',
+      'specs/support'
+    ],
+    moduleFileExtensions: [
+      'js', 'json', 'react'
+    ]
   }
 };
