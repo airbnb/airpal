@@ -39,6 +39,7 @@
     }
   },
   "devDependencies": {
+    "brace": "^0.4.0",
     "browser-sync": "~1.3.6",
     "browserify": "~5.10.1",
     "browserify-shim": "~3.7.0",
@@ -78,11 +79,9 @@
     "scriptPreprocessor": "specs/support/preprocessor.js",
     "unmockedModulePathPatterns": [
       "node_modules/react",
-
       "lodash",
       "object-assign",
       "keymirror",
-
       "javascripts/actions",
       "javascripts/constants",
       "javascripts/dispatchers",
