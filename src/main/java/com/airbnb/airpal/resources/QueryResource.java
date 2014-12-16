@@ -82,7 +82,7 @@ public class QueryResource
                     .build();
 
             if (queryStore.saveQuery((UserSavedQuery) savedQuery)) {
-                return Response.ok(savedQuery.getUuid()).build();
+                return Response.ok(savedQuery).build();
             }
             else {
                 return Response.status(Response.Status.NOT_FOUND).build();
