@@ -56,6 +56,8 @@
 .editor-resize-handle {
   color: #ffffff;
   margin-left: 5px;
+
+  cursor: pointer;
 }
 
 /**

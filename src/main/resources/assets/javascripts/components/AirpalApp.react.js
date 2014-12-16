@@ -5,7 +5,8 @@ var React = require('react');
 var Header      = require('./Header.react'),
     TableSearch = require('./TableSearch.react'),
     TableInfo   = require('./TableInfo.react'),
-    QueryEditor = require('./QueryEditor.react');
+    QueryEditor = require('./QueryEditor.react'),
+    QueryInformation = require('./QueryInformation.react');
 
 var AirpalApp = React.createClass({
   displayName: 'AirpalApp',
@@ -17,6 +18,7 @@ var AirpalApp = React.createClass({
         <TableSearch />
         <TableInfo />
         <QueryEditor />
+        <QueryInformation />
       </div>
     );
   }
