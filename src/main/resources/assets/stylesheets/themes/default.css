@@ -8,6 +8,7 @@
  * Bootstrap............Modifications on bootstrap
  *
  * COMPONENTS
+ * editor...............The editor that is used to query
  * selectize-header.....The customized selectize header
  * tab-pane.............The customized tab pane
  * user-info............The user information section
@@ -29,6 +30,32 @@
 /*------------------------------------*\
     #COMPONENTS
 \*------------------------------------*/
+
+/**
+ * Editor
+ */
+.editor-container {
+  position: relative;
+  z-index: 1;
+}
+
+/* pre */.editor {
+  display: block;
+  float: left;
+  width: 100%;
+  height: 350px;
+}
+
+.editor-resize-handles {
+  position: absolute;
+  bottom: 15px;
+  right: 30px;
+}
+
+.editor-resize-handle {
+  color: #ffffff;
+  margin-left: 5px;
+}
 
 /**
  * Selectize header
