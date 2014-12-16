@@ -13,6 +13,9 @@ var ace = require('brace'),
     Placeholder = ace.acequire('ace/placeholder').Placeholder,
     Range = ace.acequire('ace/range').Range;
 
+/* Stores */
+var QueryStore = require('../stores/QueryStore');
+
 require('brace/theme/monokai');
 require('brace/mode/sql');
 
@@ -34,6 +37,12 @@ var QueryEditor = React.createClass({
       this.handleChangeSelection, 150, { maxWait: 150 }
     ));
 
+    // Make sure we listen to the add event
+    QueryStore.addStoreListener('add', this._hideModal);
+  },
+
+  componentWillUnmount: function() {
+    QueryStore.removeStoreListener('add', this._hideModal);
   },
 
   getInitialState: function() {
@@ -177,6 +186,11 @@ var QueryEditor = React.createClass({
     return !!start && !!end &&
       (start.row === end.row) &&
       (start.column === end.column);
+  },
+
+  // Hides the modal when a change is triggered
+  _hideModal: function() {
+    this.setState({ isModalOpen: false });
   }
 });
 
