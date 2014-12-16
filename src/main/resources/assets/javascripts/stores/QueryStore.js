@@ -25,8 +25,8 @@ function _addQuery(query) {
 
   // Check our we've already got this query, if so
   // we should update him
-  if( QueryStore.get(query.id) ) {
-    _updateQuery(query.id, query);
+  if( QueryStore.get(query.uuid) ) {
+    _updateQuery(query.uuid, query);
     return;
   }
 
@@ -37,17 +37,17 @@ function _addQuery(query) {
 // Updates a specific query from the collection
 // @param {integer} the id of the updated query
 // @param {object} the updated query object
-function _updateQuery(id, updatedQuery) {
-  if( QueryStore.get(id) === undefined ) return;
+function _updateQuery(uuid, updatedQuery) {
+  if( QueryStore.get(uuid) === undefined ) return;
 
   // Get the old query from the local store
-  var _oldQuery = QueryStore.get(id);
+  var _oldQuery = QueryStore.get(uuid);
 
   // Update the query and create a "new" query
   var newQuery = _.extend(_oldQuery, updatedQuery);
 
   // Remove the old value from the _queries object
-  _removeQuery(id);
+  _removeQuery(uuid);
 
   // Push the query to the other queries
   _queries.push(newQuery);
@@ -55,12 +55,12 @@ function _updateQuery(id, updatedQuery) {
 
 // Destroys a specific query from the collection
 // @param {integer} the query to remove
-function _removeQuery(id) {
-  if( QueryStore.get(id) === undefined ) return;
+function _removeQuery(uuid) {
+  if( QueryStore.get(uuid) === undefined ) return;
 
   // Remove the query from the collection
   _queries = _.reject(_queries, function(query) {
-    query.id === id
+    query.uuid === uuid
   });
 }
 
@@ -68,10 +68,10 @@ function _removeQuery(id) {
 var QueryStore = assign(StoreDefaults, EventEmitter.prototype, {
 
   // Get a specific query from the collection
-  // @param {integer} the event id
+  // @param {integer} the event uuid
   // @return {object/undefined} the
-  get: function(id) {
-    return _.find(_queries, { id: id });
+  get: function(uuid) {
+    return _.find(_queries, { uuid: uuid });
   },
 
   // Get the queries of a specific user
@@ -83,7 +83,7 @@ var QueryStore = assign(StoreDefaults, EventEmitter.prototype, {
   // Get all current queries from the collection
   // @return {array} the whole collection (sorted)
   all: function() {
-    return _.sortBy(_queries, 'id');
+    return _.sortBy(_queries, 'uuid');
   }
 
 });
@@ -95,30 +95,31 @@ QueryStore.dispatchToken = QueryDispatcher.register(function(payload) {
 
     case QueryConstants.CREATE_QUERY:
       QueryApiUtils.createQuery(action.data);
+      QueryStore.emitChange('create');
       break;
 
-    case QueryConstants.RECEIVED_QUERY:
-      _addQuery(action.data);
+    case QueryConstants.RECEIVED_SINGLE_QUERY:
+      _addQuery(action.query);
       QueryStore.emitChange('add');
       QueryStore.emitChange('change');
       break;
 
     case QueryConstants.UPDATE_QUERY:
-      QueryApiUtils.updateQuery(action.id, action.data);
+      QueryApiUtils.updateQuery(action.uuid, action.query);
       break;
 
     case QueryConstants.RECEIVED_UPDATED_QUERY:
-      _updateQuery(action.id, action.data);
+      _updateQuery(action.uuid, action.query);
       QueryStore.emitChange('update');
       QueryStore.emitChange('change');
       break;
 
     case QueryConstants.DESTROY_QUERY:
-      QueryApiUtils.destroyQuery(action.id);
+      QueryApiUtils.destroyQuery(action.uuid);
       break;
 
     case QueryConstants.RECEIVED_DESTROY_QUERY:
-      _removeQuery(action.id);
+      _removeQuery(action.uuid);
       QueryStore.emitChange('destroy');
       QueryStore.emitChange('change');
       break;
