@@ -14,11 +14,11 @@ var QuerySaveModal = React.createClass({
   displayName: 'QuerySaveModal',
 
   componentDidMount: function() {
-    QueryStore.addStoreListener('add', this._onChange);
+    QueryStore.addStoreListener('create', this._disableSubmitButton);
   },
 
   componentWillUnmount: function() {
-    QueryStore.removeStoreListener('add', this._onChange);
+    QueryStore.removeStoreListener('create', this._disableSubmitButton);
   },
 
   render: function () {
@@ -47,12 +47,12 @@ var QuerySaveModal = React.createClass({
         </div>
 
         <div className="modal-footer">
-            <div ref="saveQueryIndicator" className="hidden">
-              <span className="glyphicon glyphicon-repeat"></span> Saving query...
+            <div ref="saveQueryIndicator" className="indicator hidden">
+              <span className="glyphicon glyphicon-repeat indicator-spinner"></span> Saving query...
             </div>
 
             <button type="button" className="btn btn-default" onClick={this.props.onRequestHide}>Cancel</button>
-            <button type="button" className="btn btn-primary" onClick={this.handleSaveRequest}>Save Query</button>
+            <button ref="submitButton" type="button" className="btn btn-primary" onClick={this.handleSaveRequest}>Save Query</button>
         </div>
       </Modal>
     );
@@ -78,8 +78,11 @@ var QuerySaveModal = React.createClass({
     });
   },
 
-  _onChange: function() {
-    console.log('on change');
+  // - Internal helpers --------------------------------------------------- //
+  // Makes sure the submit button is disabled
+  _disableSubmitButton: function() {
+    var button = this.refs.submitButton.getDOMNode();
+    button.setAttribute('disabled', true);
   }
 });
 
