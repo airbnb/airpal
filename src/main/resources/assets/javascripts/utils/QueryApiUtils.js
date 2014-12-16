@@ -2,7 +2,11 @@
  * QueryApiUtils
  */
 
-var QueryActions = require('../actions/UserActions');
+/* Actions */
+var QueryActions = require('../actions/QueryActions');
+
+/* Helpers */
+var _ = require('lodash');
 
 module.exports = {
 
@@ -42,10 +46,14 @@ module.exports = {
   createQuery: function(data) {
     $.ajax({
       type: 'POST',
-      url: './api/queries',
+      url: './api/query/saved',
       data: data,
 
-      success: function(query) {
+      success: function(uuid) {
+        // TODO: currently the API only returns the uuid, but I also want the
+        // name and the description. So we're merging the uuid into the data
+        // object
+        var query = _.extend(data, { uuid: uuid });
         QueryActions.receivedQuery(query);
       }
     });
