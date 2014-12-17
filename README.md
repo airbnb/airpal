@@ -36,7 +36,7 @@ java -Ddw.prestoCoordinator=http://presto-coordinator-url.com \
 1. Build Airpal
 
     We'll be using [Maven](http://maven.apache.org/) to build the back-end Java code,
-    and [browserify](http://browserify.org/) (via [node.js](http://nodejs.org/)) to build
+    and [browserify](http://browserify.org/) (via [Node.js](http://nodejs.org/)) to build
     the front-end Javascript code.
     
     Ensure you have `node` and `npm` installed. As mentioned above, node `0.10.0` or higher is
