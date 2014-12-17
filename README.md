@@ -6,7 +6,7 @@
 * MySQL database
 * [Presto](http://prestodb.io) cluster
 * S3 bucket (to store CSVs)
-* Node.js 0.10.0 or higher (for the front-end build)
+* Node.js >= 0.10.x (for the front-end build)
 * Maven 3.1 or higher
 
 
