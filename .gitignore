@@ -1,8 +1,22 @@
+# Gradle artifacts
+build/
+.gradle/
+gradle/
 *.jar
-*.hprof
+
+# Mac files
 .DS_Store
+
+*.hprof
+
+# IntelliJ files
 *.iml
+.idea/
+
+# Maven artifacts
 target/
+dependency-reduced-pom.xml
+
+# Node.js artifacts
 node_modules/
 bower_components/
-dependency-reduced-pom.xml
