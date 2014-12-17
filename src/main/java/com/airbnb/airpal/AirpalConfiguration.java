@@ -1,6 +1,5 @@
 package com.airbnb.airpal;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.airlift.units.DataSize;
 import io.dropwizard.Configuration;
@@ -108,34 +107,6 @@ public class AirpalConfiguration extends Configuration
     @JsonProperty
     @NotNull
     private ShiroConfiguration shiro;
-
-    public static class ElasticSearchConfiguration
-    {
-        @Getter
-        @JsonProperty
-        @NotNull
-        private final List<String> hosts;
-
-        @Getter
-        @JsonProperty
-        @NotNull
-        private final String clusterName;
-
-        @Getter
-        @JsonProperty
-        @NotNull
-        private final Boolean multicastEnabled;
-
-        @JsonCreator
-        public ElasticSearchConfiguration(@JsonProperty("hosts") List<String> hosts,
-                                          @JsonProperty("clusterName") String clusterName,
-                                          @JsonProperty("multicastEnabled") Boolean multicastEnabled)
-        {
-            this.hosts = hosts;
-            this.clusterName = clusterName;
-            this.multicastEnabled = multicastEnabled;
-        }
-    }
 
     @AllArgsConstructor
     @NoArgsConstructor
