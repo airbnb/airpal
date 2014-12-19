@@ -6,8 +6,7 @@
 * MySQL database
 * [Presto](http://prestodb.io) cluster
 * S3 bucket (to store CSVs)
-* Node.js >= 0.10.x (for the front-end build)
-* Maven 3.1 or higher
+* Gradle 2.2 or higher
 
 
 ## Steps to launch
@@ -35,24 +34,24 @@ java -Ddw.prestoCoordinator=http://presto-coordinator-url.com \
 
 1. Build Airpal
 
-    We'll be using [Maven](http://maven.apache.org/) to build the back-end Java code,
+    We'll be using [Gradle](https://www.gradle.org/) to build the back-end Java code,
     and [browserify](http://browserify.org/) (via [Node.js](http://nodejs.org/)) to build
     the front-end Javascript code.
-    
-    Ensure you have `node` and `npm` installed. As mentioned above, node `0.10.0` or higher is
-    required.
 
-    If `node` and `npm` are available in your path you can simply run the following command to build:
+    If you have `node` and `npm` installed locally, and wish to use
+    them, simply run:
 
     ```
-    mvn clean package
+    ./gradlew clean shadowJar -Dairpal.useLocalNode
     ```
 
-    Otherwise, you will have to manually specify where these commands live, like so:
+    Otherwise, `node` and `npm` will be automatically downloaded for you
+    by running:
 
     ```
-    mvn -Dnode=/some/path/to/node -Dnpm=/some/path/to/npm clean package
+    ./gradlew clean shadowJar
     ```
+
 2. Create a MySQL database for airpal. We recommend you call it `airpal` and will assume that for future steps.
 
 3. Migrate your database
