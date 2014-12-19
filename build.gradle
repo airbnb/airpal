@@ -1,8 +1,21 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+plugins {
+    id 'pl.allegro.tech.build.axion-release' version '0.9.9'
+    id 'com.moowork.node' version '0.8'
+    id 'com.github.johnrengelman.shadow' version '1.2.0'
+}
+
 apply plugin: 'java'
-apply plugin: 'maven'
+apply plugin: 'idea'
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'com.moowork.node'
 
 group = 'com.airbnb.airpal'
-version = '1.0.2-SNAPSHOT'
 
 description = """airpal"""
 
@@ -10,10 +23,23 @@ sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
 
-
 repositories {
-     maven { url "http://oss.sonatype.org/content/repositories/snapshots" }
-     maven { url "http://repo.maven.apache.org/maven2" }
+    mavenCentral()
+    maven { url "http://oss.sonatype.org/content/repositories/snapshots" }
+}
+
+project.version = scmVersion.version
+
+configurations {
+    provided
+}
+
+idea.module.scopes.COMPILE.plus += [configurations.provided]
+
+sourceSets {
+    main {
+        compileClasspath += [configurations.provided]
+    }
 }
 
 dependencies {
@@ -41,11 +67,45 @@ dependencies {
     compile group: 'org.apache.shiro', name: 'shiro-guice', version:'1.2.3'
     compile group: 'org.secnod.dropwizard', name: 'dropwizard-shiro', version:'0.1.0'
     compile group: 'mysql', name: 'mysql-connector-java', version:'5.1.34'
+
+    provided group: 'org.projectlombok', name: 'lombok', version:'1.12.2'
+
     testCompile group: 'junit', name: 'junit', version:'4.11'
     testCompile group: 'org.mockito', name: 'mockito-all', version:'1.10.8'
-    compile(group: 'org.projectlombok', name: 'lombok', version:'1.12.2') {
-       /* This dependency was originally in the Maven provided scope, but the project was not of type war.
-       This behavior is not yet supported by Gradle, so this dependency has been converted to a compile dependency.
-       Please review and delete this closure when resolved. */
+}
+
+node {
+    version    = '0.10.33'
+    npmVersion = '2.1.6'
+
+    download   = System.properties['airpal.useLocalNode'] == null
+}
+
+task installAssets(type: NpmTask) {
+    args = ['install']
+
+    execOverrides {
+        it.workingDir = file('src/main/resources/assets/').absolutePath
     }
 }
+
+task buildAssets(type: NodeTask) {
+    script = file('src/main/resources/assets/node_modules/gulp/bin/gulp.js')
+    args = ['browserify']
+
+    execOverrides {
+        it.workingDir = file('src/main/resources/assets/').absolutePath
+    }
+}
+
+shadowJar {
+    transform(com.github.jengelman.gradle.plugins.shadow.transformers.ServiceFileTransformer)
+    exclude 'META-INF/*.DSA'
+    exclude 'META-INF/*.RSA'
+    exclude 'META-INF/LICENSE'
+
+    zip64 true
+}
+
+buildAssets.dependsOn installAssets
+compileJava.dependsOn buildAssets

@@ -8,7 +8,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.io.CountingInputStream;
-import com.google.common.net.HostAndPort;
 import com.google.common.primitives.Ints;
 import com.google.common.util.concurrent.AbstractFuture;
 import io.airlift.http.client.AsyncHttpClient;
@@ -27,7 +26,6 @@ import io.airlift.units.Duration;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.HttpRequest;
 import org.eclipse.jetty.client.api.ContentProvider;
-import org.eclipse.jetty.client.api.ProxyConfiguration;
 import org.eclipse.jetty.client.api.Response;
 import org.eclipse.jetty.client.api.Result;
 import org.eclipse.jetty.client.util.BytesContentProvider;
@@ -158,10 +156,6 @@ public class OldJettyHttpClient
             httpClient.setConnectTimeout(config.getConnectTimeout().toMillis());
         }
 
-        HostAndPort socksProxy = config.getSocksProxy();
-        if (socksProxy != null) {
-            httpClient.setProxyConfiguration(new ProxyConfiguration(socksProxy.getHostText(), socksProxy.getPortOrDefault(1080)));
-        }
         return httpClient;
     }
 
