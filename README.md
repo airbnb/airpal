@@ -1,10 +1,14 @@
 # airpal
 
+* [Requirements](#requirements)
+* [Launching](#steps-to-launch)
+* [Presto Compatibility Chart](#compatibility-chart)
+
 ## Requirements
 
 * Java 7 or higher
 * MySQL database
-* [Presto](http://prestodb.io) cluster
+* [Presto](http://prestodb.io) 0.77 or higher
 * S3 bucket (to store CSVs)
 * Gradle 2.2 or higher
 
@@ -68,3 +72,9 @@ java -Ddw.prestoCoordinator=http://presto-coordinator-url.com \
          -Duser.timezone=UTC \
          -cp target/airpal-*.jar server reference.yml
     ```
+
+## Compatibility Chart
+
+Airpal Version | Presto Versions Tested
+---------------|-----------------------
+0.1            | 0.77, 0.87
