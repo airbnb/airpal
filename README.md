@@ -33,7 +33,7 @@ java -Ddw.prestoCoordinator=http://presto-coordinator-url.com \
      -Ddw.dataSourceFactory.user=airpal \
      -Ddw.dataSourceFactory.password=$YOUR_PASSWORD \
      -Duser.timezone=UTC \
-     -cp target/airpal-*.jar db migrate reference.yml
+     -cp build/libs/airpal-*-all.jar db migrate reference.yml
 ```
 
 1. Build Airpal
@@ -62,7 +62,7 @@ java -Ddw.prestoCoordinator=http://presto-coordinator-url.com \
 
     ```
     java -Duser.timezone=UTC \
-         -cp target/airpal-*.jar db migrate reference.yml
+         -cp build/libs/airpal-*-all.jar db migrate reference.yml
     ```
 
 4. Run Airpal
@@ -70,7 +70,7 @@ java -Ddw.prestoCoordinator=http://presto-coordinator-url.com \
     ```
     java -server \
          -Duser.timezone=UTC \
-         -cp target/airpal-*.jar server reference.yml
+         -cp build/libs/airpal-*-all.jar server reference.yml
     ```
 
 ## Compatibility Chart
