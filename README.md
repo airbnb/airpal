@@ -1,8 +1,19 @@
 # airpal
 
+* [Features](#features)
 * [Requirements](#requirements)
 * [Launching](#steps-to-launch)
 * [Presto Compatibility Chart](#compatibility-chart)
+
+## Features
+
+* Optional [Access Control](docs/USER_ACCOUNTS.md)
+* Syntax highlighting
+* Results exported to a CSV for download or a hive table
+* Query history for self and others
+* Ability to save queries
+* Table finder to search for appropriate tables
+* Table explorer to visualize schema of table
 
 ## Requirements
 
@@ -72,6 +83,11 @@ java -Ddw.prestoCoordinator=http://presto-coordinator-url.com \
          -Duser.timezone=UTC \
          -cp build/libs/airpal-*-all.jar server reference.yml
     ```
+
+5. Visit Airpal
+    Assuming you used the default settings in `reference.yml` you can
+    now open http://localhost:8081 to use Airpal. Note that you might
+    have to change the host, depending on where you deployed it.
 
 ## Compatibility Chart
 
