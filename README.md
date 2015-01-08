@@ -1,13 +1,14 @@
-# airpal
+# Airpal
 
-airpal is a web-based, query execution tool, leveraging Facebook's
-[PrestoDB](http://prestodb.io) query engine. airpal gives you the
-ability to run Presto queries and get the results as a CSV (so you can
-download it or share it with friends), or have the results exported to a
-new hive table. airpal gives users the ability to explore
-available data by fuzzy matching on table names and then visualizing the
-schema of any table. Even better, you can see other queries that use the
-table, so you know what types of queries are ran against it.
+Airpal is a web-based, query execution tool which leverages Facebook's [PrestoDB](http://prestodb.io)
+to make authoring queries and retrieving results simple for users.
+Airpal provides the ability to find tables, see metadata, browse sample rows,
+write and edit queries, then submit queries all in a web interface. Once
+queries are running, users can track query progress and when finished,
+get the results back through the browser as a CSV (download it or share it
+with friends). The results of a query can be used to generate new Hive table
+for subsequent analysis and Airpal maintains a searchable history of all
+queries run within the tool.
 
 * [Features](#features)
 * [Requirements](#requirements)
@@ -18,11 +19,11 @@ table, so you know what types of queries are ran against it.
 
 * Optional [Access Control](docs/USER_ACCOUNTS.md)
 * Syntax highlighting
-* Results exported to a CSV for download or a hive table
+* Results exported to a CSV for download or a Hive table
 * Query history for self and others
 * Saved queries
 * Table finder to search for appropriate tables
-* Table explorer to visualize schema of table
+* Table explorer to visualize schema of table and first 1000 rows
 
 ## Requirements
 
@@ -35,7 +36,7 @@ table, so you know what types of queries are ran against it.
 
 ## Steps to launch
 
-*Note* that below, we'll be using a less verbose syntax to execute airpal. This assumes
+*Note* that below, we'll be using a less verbose syntax to execute Airpal. This assumes
 that all of the configuration settings are specified in your `.yml` configuration file,
 and that it's called `reference.yml`.
 If modifying `reference.yml` is undesirable, or you want to override certain settings on the command line,
@@ -56,7 +57,7 @@ java -Ddw.prestoCoordinator=http://presto-coordinator-url.com \
      -cp build/libs/airpal-*-all.jar db migrate reference.yml
 ```
 
-1. Build airpal
+1. Build Airpal
 
     We'll be using [Gradle](https://www.gradle.org/) to build the back-end Java code,
     and [browserify](http://browserify.org/) (via [Node.js](http://nodejs.org/)) to build
@@ -76,7 +77,7 @@ java -Ddw.prestoCoordinator=http://presto-coordinator-url.com \
     ./gradlew clean shadowJar
     ```
 
-2. Create a MySQL database for airpal. We recommend you call it `airpal` and will assume that for future steps.
+2. Create a MySQL database for Airpal. We recommend you call it `airpal` and will assume that for future steps.
 
 3. Migrate your database
 
@@ -85,7 +86,7 @@ java -Ddw.prestoCoordinator=http://presto-coordinator-url.com \
          -cp build/libs/airpal-*-all.jar db migrate reference.yml
     ```
 
-4. Run airpal
+4. Run Airpal
 
     ```
     java -server \
@@ -93,13 +94,13 @@ java -Ddw.prestoCoordinator=http://presto-coordinator-url.com \
          -cp build/libs/airpal-*-all.jar server reference.yml
     ```
 
-5. Visit airpal
+5. Visit Airpal
     Assuming you used the default settings in `reference.yml` you can
-    now open http://localhost:8081 to use airpal. Note that you might
+    now open http://localhost:8081 to use Airpal. Note that you might
     have to change the host, depending on where you deployed it.
 
 ## Compatibility Chart
 
-airpal Version | Presto Versions Tested
+Airpal Version | Presto Versions Tested
 ---------------|-----------------------
 0.1            | 0.77, 0.87
