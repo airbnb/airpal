@@ -95,7 +95,7 @@ task installAssets(type: NpmTask) {
 
 task buildAssets(type: NodeTask) {
     script = file('src/main/resources/assets/node_modules/gulp/bin/gulp.js')
-    args = ['browserify']
+    args = ['build']
 
     execOverrides {
         it.workingDir = file('src/main/resources/assets/').absolutePath
