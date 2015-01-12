@@ -2,21 +2,21 @@
  * QueryActions
  */
 
-var QueryDispatcher = require('../dispatchers/QueryDispatcher');
+var AppDispatcher = require('../dispatchers/AppDispatcher');
 var QueryConstants = require('../constants/QueryConstants');
 
 module.exports = {
 
   // - ViewActions --------------------------------------------------------- //
   createQuery: function(data) {
-    QueryDispatcher.handleViewAction({
+    AppDispatcher.handleViewAction({
       type: QueryConstants.CREATE_QUERY,
       data: data
     });
   },
 
   updateQuery: function(id, data) {
-    QueryDispatcher.handleViewAction({
+    AppDispatcher.handleViewAction({
       type: QueryConstants.UPDATE_QUERY,
       id: id,
       data: data
@@ -24,7 +24,7 @@ module.exports = {
   },
 
   destroyQuery: function(id) {
-    QueryDispatcher.handleViewAction({
+    AppDispatcher.handleViewAction({
       type: QueryConstants.DESTROY_QUERY,
       id: id
     });
@@ -34,7 +34,7 @@ module.exports = {
 
   // Triggered when a new query is received
   receivedQuery: function(query) {
-    QueryDispatcher.handleServerAction({
+    AppDispatcher.handleServerAction({
       type: QueryConstants.RECEIVED_SINGLE_QUERY,
       query: query
     });
@@ -42,7 +42,7 @@ module.exports = {
 
   // Triggered when a whole bunch of queries is received
   receivedQueries: function(queries) {
-    QueryDispatcher.handleServerAction({
+    AppDispatcher.handleServerAction({
       type: QueryConstants.RECEIVED_MULTIPLE_QUERIES,
       queries: queries
     });
@@ -50,7 +50,7 @@ module.exports = {
 
   // Triggered when a query is updated
   receivedUpdatedQuery: function(id, query) {
-    QueryDispatcher.handleServerAction({
+    AppDispatcher.handleServerAction({
       type: QueryConstants.RECEIVED_UPDATED_QUERY,
       id: id,
       query: query
@@ -59,9 +59,16 @@ module.exports = {
 
   // Triggered when a query is destroyed
   receivedDestroyedQuery: function(id) {
-    QueryDispatcher.handleServerAction({
+    AppDispatcher.handleServerAction({
       type: QueryConstants.RECEIVED_DESTROYED_QUERY,
       id: id
+    });
+  },
+
+  fetchUserQueries: function(name) {
+    AppDispatcher.handleServerAction({
+      type: QueryConstants.FETCH_USER_QUERIES,
+      name: name
     });
   }
 
