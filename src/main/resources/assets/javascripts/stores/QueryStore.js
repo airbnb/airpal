@@ -2,10 +2,16 @@
  * QueryStore
  */
 
-var StoreDefaults = require('./StoreDefaults');
-var QueryDispatcher = require('../dispatchers/QueryDispatcher');
-var QueryConstants = require('../constants/QueryConstants');
-var QueryApiUtils = require('../utils/QueryApiUtils')
+var StoreDefaults   = require('./StoreDefaults');
+var AppDispatcher   = require('../dispatchers/AppDispatcher');
+var QueryConstants  = require('../constants/QueryConstants');
+var QueryApiUtils   = require('../utils/QueryApiUtils');
+
+/* Other stores */
+var UserStore = require('./UserStore');
+
+/* Other constants */
+var UserConstants   = require('../constants/UserConstants');
 
 /* Store helpers */
 var EventEmitter = require('events').EventEmitter;
@@ -65,19 +71,28 @@ function _removeQuery(uuid) {
 }
 
 /* Query store */
-var QueryStore = assign(StoreDefaults, EventEmitter.prototype, {
+var QueryStore = assign({}, StoreDefaults, EventEmitter.prototype, {
 
   // Get a specific query from the collection
   // @param {integer} the event uuid
-  // @return {object/undefined} the
+  // @return {object/undefined} the query object
   get: function(uuid) {
     return _.find(_queries, { uuid: uuid });
   },
 
-  // Get the queries of a specific user
-  // @param {name} the name of the user
-  getForUser: function(name) {
-    return _.find(_queries, { owner: name });
+  // Executes a where query on the queries
+  // @param {opts} the search params
+  where: function(opts) {
+    return _.where(_queries, opts);
+  },
+
+  // Gets the current user queries from the collection
+  // @return {array/undefined} the queries in an array
+  getCurrentUserQueries: function() {
+    var user = UserStore.getCurrentUser();
+
+    // Return the current queries of the current user
+    return this.where({ user: user.name });
   },
 
   // Get all current queries from the collection
@@ -88,19 +103,30 @@ var QueryStore = assign(StoreDefaults, EventEmitter.prototype, {
 
 });
 
-QueryStore.dispatchToken = QueryDispatcher.register(function(payload) {
+QueryStore.dispatchToken = AppDispatcher.register(function(payload) {
   var action = payload.action;
 
   switch(action.type) {
 
     case QueryConstants.CREATE_QUERY:
-      QueryApiUtils.createQuery(action.data);
-      QueryStore.emitChange('create');
+      QueryApiUtils.createQuery(action.data); // Let the API create a new query
       break;
 
     case QueryConstants.RECEIVED_SINGLE_QUERY:
-      _addQuery(action.query);
-      QueryStore.emitChange('add');
+      _addQuery(action.query); // Add the new query to the store
+      QueryStore.emitChange('add'); // Emit the add event for the store
+      QueryStore.emitChange('change'); // Emit the change event for the store
+      break;
+
+    case QueryConstants.RECEIVED_MULTIPLE_QUERIES:
+
+      // Loop over all the queries and add them
+      _.each(action.queries, function(query) {
+        _addQuery(query); // Add the queries to the store
+        QueryStore.emitChange('add'); // Emit the add event for the store
+      });
+
+      // Emit the change event for this bulk action
       QueryStore.emitChange('change');
       break;
 
@@ -115,13 +141,18 @@ QueryStore.dispatchToken = QueryDispatcher.register(function(payload) {
       break;
 
     case QueryConstants.DESTROY_QUERY:
-      QueryApiUtils.destroyQuery(action.uuid);
+      QueryApiUtils.destroyQuery(action.uuid); // Remove the query
       break;
 
     case QueryConstants.RECEIVED_DESTROY_QUERY:
-      _removeQuery(action.uuid);
-      QueryStore.emitChange('destroy');
-      QueryStore.emitChange('change');
+      _removeQuery(action.uuid); // Remove the query based on uuid
+      QueryStore.emitChange('destroy'); // Emit the destroy event on the store
+      QueryStore.emitChange('change'); // Emit a change event for the store
+      break;
+
+    case UserConstants.RECEIVED_USER_INFO:
+      var user = action.user;
+      QueryApiUtils.getUserQueries(user.name);
       break;
 
     default:

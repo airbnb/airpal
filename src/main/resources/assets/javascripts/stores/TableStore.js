@@ -2,10 +2,10 @@
  * TableStore
  */
 
-var StoreDefaults = require('./StoreDefaults');
-var TableDispatcher = require('../dispatchers/TableDispatcher');
-var TableConstants = require('../constants/TableConstants');
-var TableApiUtils = require('../utils/TableApiUtils');
+var StoreDefaults   = require('./StoreDefaults');
+var AppDispatcher   = require('../dispatchers/AppDispatcher');
+var TableConstants  = require('../constants/TableConstants');
+var TableApiUtils   = require('../utils/TableApiUtils');
 
 /* Store helpers */
 var EventEmitter = require('events').EventEmitter;
@@ -83,7 +83,7 @@ function _markActive(name) {
   table.active = true;
 }
 
-var TableStore = assign(StoreDefaults, EventEmitter.prototype, {
+var TableStore = assign({}, StoreDefaults, EventEmitter.prototype, {
 
   // Get the table by name
   // @param name {string} the table name
@@ -115,7 +115,7 @@ var TableStore = assign(StoreDefaults, EventEmitter.prototype, {
   }
 });
 
-TableStore.dispatchToken = TableDispatcher.register(function(payload) {
+TableStore.dispatchToken = AppDispatcher.register(function(payload) {
   var action = payload.action;
 
   switch(action.type) {

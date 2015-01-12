@@ -2,14 +2,14 @@
  * UserStore
  */
 
-var StoreDefaults = require('./StoreDefaults');
-var UserDispatcher = require('../dispatchers/UserDispatcher');
-var UserConstants = require('../constants/UserConstants');
+var StoreDefaults   = require('./StoreDefaults');
+var AppDispatcher  = require('../dispatchers/AppDispatcher');
+var UserConstants   = require('../constants/UserConstants');
 
 /* Store helpers */
-var EventEmitter = require('events').EventEmitter;
-var assign = require('object-assign');
-var _ = require('lodash');
+var EventEmitter  = require('events').EventEmitter;
+var assign        = require('object-assign');
+var _             = require('lodash');
 
 /**
  * User object
@@ -33,7 +33,7 @@ function _addUser(user) {
   _user = user;
 }
 
-var UserStore = assign(StoreDefaults, EventEmitter.prototype, {
+var UserStore = assign({}, StoreDefaults, EventEmitter.prototype, {
 
   /**
    * Get the current user
@@ -45,13 +45,15 @@ var UserStore = assign(StoreDefaults, EventEmitter.prototype, {
 
 });
 
-UserStore.dispatchToken = UserDispatcher.register(function(payload) {
+UserStore.dispatchToken = AppDispatcher.register(function(payload) {
   var action = payload.action;
 
   switch(action.type) {
 
     case UserConstants.RECEIVED_USER_INFO:
       _addUser(action.user);
+
+      // Emit the other changes
       UserStore.emitChange('add');
       UserStore.emitChange('change');
       break;

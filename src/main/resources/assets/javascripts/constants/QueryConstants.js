@@ -13,4 +13,6 @@ module.exports = keyMirror({
   RECEIVED_MULTIPLE_QUERIES: null,
   RECEIVED_UPDATED_QUERY: null,
   RECEIVED_DESTROYED_QUERY: null,
+
+  FETCH_USER_QUERIES: null
 });
