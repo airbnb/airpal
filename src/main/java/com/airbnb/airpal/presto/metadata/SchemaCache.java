@@ -1,9 +1,11 @@
 package com.airbnb.airpal.presto.metadata;
 
 import com.airbnb.airpal.core.BackgroundCacheLoader;
+import com.airbnb.airpal.core.execution.QueryClient;
 import com.airbnb.airpal.presto.QueryRunner;
 import com.facebook.presto.client.QueryResults;
 import com.facebook.presto.client.StatementClient;
+import com.google.common.base.Function;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
@@ -13,6 +15,9 @@ import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import lombok.extern.slf4j.Slf4j;
+
+import javax.annotation.Nullable;
 
 import java.io.Closeable;
 import java.util.List;
@@ -26,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.String.format;
 
+@Slf4j
 public class SchemaCache
         implements Closeable
 {
@@ -64,33 +70,43 @@ public class SchemaCache
 
     private Map<String, List<String>> queryMetadata(String query)
     {
-        Map<String, List<String>> cache = Maps.newHashMap();
+        final Map<String, List<String>> cache = Maps.newHashMap();
         QueryRunner queryRunner = queryRunnerFactory.create();
+        QueryClient queryClient = new QueryClient(queryRunner, io.dropwizard.util.Duration.seconds(60), query);
 
-        try (StatementClient client = queryRunner.startInternalQuery(query)) {
-            while (client.isValid() && !Thread.currentThread().isInterrupted()) {
-                QueryResults results = client.current();
-                if (results.getData() != null) {
-                    for (List<Object> row : results.getData()) {
-                        String schema = (String) row.get(1);
-                        String table = (String) row.get(2);
+        try {
+            queryClient.executeWith(new Function<StatementClient, Void>() {
+                @Nullable
+                @Override
+                public Void apply(StatementClient client)
+                {
+                    QueryResults results = client.current();
+                    if (results.getData() != null) {
+                        for (List<Object> row : results.getData()) {
+                            String schema = (String) row.get(1);
+                            String table = (String) row.get(2);
 
-                        if (EXCLUDED_SCHEMAS.contains(schema)) {
-                            continue;
+                            if (EXCLUDED_SCHEMAS.contains(schema)) {
+                                continue;
+                            }
+
+                            List<String> tables = cache.get(schema);
+
+                            if (tables == null) {
+                                tables = Lists.newArrayList();
+                                cache.put(schema, tables);
+                            }
+
+                            tables.add(table);
                         }
-
-                        List<String> tables = cache.get(schema);
-
-                        if (tables == null) {
-                            tables = Lists.newArrayList();
-                            cache.put(schema, tables);
-                        }
-
-                        tables.add(table);
                     }
+
+                    return null;
                 }
-                client.advance();
-            }
+            });
+        }
+        catch (QueryClient.QueryTimeOutException e) {
+            log.error("Caught timeout loading columns", e);
         }
 
         return ImmutableMap.copyOf(cache);

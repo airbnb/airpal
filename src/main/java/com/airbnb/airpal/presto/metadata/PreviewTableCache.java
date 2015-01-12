@@ -1,17 +1,22 @@
 package com.airbnb.airpal.presto.metadata;
 
 import com.airbnb.airpal.core.BackgroundCacheLoader;
+import com.airbnb.airpal.core.execution.QueryClient;
 import com.airbnb.airpal.presto.QueryRunner;
 import com.airbnb.airpal.presto.Table;
 import com.airbnb.airpal.presto.Util;
 import com.facebook.presto.client.QueryResults;
 import com.facebook.presto.client.StatementClient;
+import com.google.common.base.Function;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import io.airlift.units.Duration;
+import lombok.extern.slf4j.Slf4j;
+
+import javax.annotation.Nullable;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -19,6 +24,7 @@ import java.util.concurrent.ExecutorService;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+@Slf4j
 public class PreviewTableCache
 {
     private final LoadingCache<Table, List<List<Object>>> previewTableCache;
@@ -52,17 +58,27 @@ public class PreviewTableCache
 
     private List<List<Object>> queryRows(String query)
     {
-        ImmutableList.Builder<List<Object>> cache = ImmutableList.builder();
+        final ImmutableList.Builder<List<Object>> cache = ImmutableList.builder();
         QueryRunner queryRunner = queryRunnerFactory.create();
+        QueryClient queryClient = new QueryClient(queryRunner, io.dropwizard.util.Duration.seconds(60), query);
 
-        try (StatementClient client = queryRunner.startInternalQuery(query)) {
-            while (client.isValid() && !Thread.currentThread().isInterrupted()) {
-                QueryResults results = client.current();
-                if (results.getData() != null) {
-                    cache.addAll(results.getData());
+        try {
+            queryClient.executeWith(new Function<StatementClient, Void>() {
+                @Nullable
+                @Override
+                public Void apply(StatementClient client)
+                {
+                    QueryResults results = client.current();
+                    if (results.getData() != null) {
+                        cache.addAll(results.getData());
+                    }
+
+                    return null;
                 }
-                client.advance();
-            }
+            });
+        }
+        catch (QueryClient.QueryTimeOutException e) {
+            log.error("Caught timeout loading columns", e);
         }
 
         return cache.build();
