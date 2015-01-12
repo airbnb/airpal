@@ -2,13 +2,13 @@
  * UserActions
  */
 
-var UserDispatcher = require('../dispatchers/UserDispatcher');
+var AppDispatcher = require('../dispatchers/AppDispatcher');
 var UserConstants = require('../constants/UserConstants');
 
 module.exports = {
 
   receivedCurrentUser: function(user) {
-    UserDispatcher.handleServerAction({
+    AppDispatcher.handleServerAction({
       type: UserConstants.RECEIVED_USER_INFO,
       user: user
     });

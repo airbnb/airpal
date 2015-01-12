@@ -2,28 +2,28 @@
  * TableActions
  */
 
-var TableDispatcher = require('../dispatchers/TableDispatcher');
+var AppDispatcher = require('../dispatchers/AppDispatcher');
 var TableConstants = require('../constants/TableConstants');
 
 module.exports = {
 
   // - ViewActions --------------------------------------------------------- //
   addTable: function(table) {
-    TableDispatcher.handleViewAction({
+    AppDispatcher.handleViewAction({
       type: TableConstants.ADD_TABLE,
       table: table
     });
   },
 
   removeTable: function(name) {
-    TableDispatcher.handleViewAction({
+    AppDispatcher.handleViewAction({
       type: TableConstants.REMOVE_TABLE,
       name: name
     });
   },
 
   selectTable: function(name) {
-    TableDispatcher.handleViewAction({
+    AppDispatcher.handleViewAction({
       type: TableConstants.SELECT_TABLE,
       name: name
     });
@@ -31,7 +31,7 @@ module.exports = {
 
   // - ServerActions ------------------------------------------------------- //
   receivedTableData: function(table, columns, data) {
-    TableDispatcher.handleServerAction({
+    AppDispatcher.handleServerAction({
       type: TableConstants.RECEIVED_TABLE_DATA,
       table: table,
       columns: columns,

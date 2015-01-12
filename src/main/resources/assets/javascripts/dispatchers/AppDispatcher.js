@@ -1,12 +1,12 @@
 /*
- * TableDispatcher
+ * AppDispatcher
  */
 
 var AppConstants = require('../constants/AppConstants');
 var Dispatcher = require('flux').Dispatcher;
 var assign = require('object-assign');
 
-var TableDispatcher = assign(new Dispatcher(), {
+var AppDispatcher = assign(new Dispatcher(), {
 
   /**
    * @param {object} action The details of the action, including the action's
@@ -34,4 +34,4 @@ var TableDispatcher = assign(new Dispatcher(), {
 
 });
 
-module.exports = TableDispatcher;
+module.exports = AppDispatcher;
