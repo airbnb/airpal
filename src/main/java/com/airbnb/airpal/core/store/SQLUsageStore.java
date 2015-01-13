@@ -3,6 +3,7 @@ package com.airbnb.airpal.core.store;
 import com.airbnb.airpal.presto.Table;
 import com.airbnb.airpal.sql.Util;
 import com.airbnb.airpal.sql.beans.JobUsageCountRow;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.hubspot.rosetta.jdbi.RosettaResultSetMapperFactory;
 import io.dropwizard.util.Duration;
@@ -30,7 +31,12 @@ public class SQLUsageStore implements UsageStore
     @Override
     public long getUsages(Table table)
     {
-        return 0;
+        Map<Table, Long> usages = getUsages(ImmutableList.of(table));
+        if (usages.containsKey(table)) {
+            return usages.get(table);
+        } else {
+            return 0;
+        }
     }
 
     @Override
