@@ -47,9 +47,9 @@ public class QueryRunner
             this.sessionFactory = sessionFactory;
         }
 
-        public QueryRunner create(String schema)
+        public QueryRunner create(String user, String schema)
         {
-            return new QueryRunner(sessionFactory.create(schema), jsonCodec(QueryResults.class), httpClient);
+            return new QueryRunner(sessionFactory.create(user, schema), jsonCodec(QueryResults.class), httpClient);
         }
 
         public QueryRunner create()

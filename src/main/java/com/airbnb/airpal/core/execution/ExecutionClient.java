@@ -109,7 +109,7 @@ public class ExecutionClient
 
         final Execution execution = new Execution(job,
                 eventBus,
-                queryRunnerFactory.create(schema),
+                queryRunnerFactory.create(user.getUserName(), schema),
                 queryInfoClient,
                 new QueryExecutionAuthorizer(user, "hive", user.getDefaultSchema()),
                 timeout,
