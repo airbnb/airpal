@@ -23,7 +23,7 @@ metaStoreConfiguration:
   driverName: com.mysql.jdbc.Driver
 
 shiro:
-  iniConfigs: ["classpath:shiro_static_users.ini"]
+  iniConfigs: ["classpath:shiro_allow_all.ini"]
 
 airpalHosts:
   - http://127.0.0.1:8082
