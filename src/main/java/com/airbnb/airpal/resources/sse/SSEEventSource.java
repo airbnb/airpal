@@ -41,6 +41,7 @@ public class SSEEventSource implements EventSource
             }
             catch (IOException e) {
                 log.error("Could not send data to SSEEventSource", e);
+                jobUpdateToSSERelay.removeListener(this);
             }
         } else {
             log.error("Emitter was closed, could not emit message!");
