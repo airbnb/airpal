@@ -132,9 +132,10 @@ public class Execution implements Callable<Job>
         final PersistentJobOutput output = job.getOutput();
         final String query = output.processQuery(userQuery);
         final Persistor persistor = output.getPersistor(job);
+        job.setQueryStats(createNoOpQueryStats());
 
         if (!persistor.canPersist(authorizer)) {
-            throw new ExecutionFailureException(job, "Cannot write tables", null);
+            throw new ExecutionFailureException(job, "Not authorized to create tables", null);
         }
 
         final Stopwatch stopwatch = Stopwatch.createStarted();
@@ -144,14 +145,12 @@ public class Execution implements Callable<Job>
         try {
             tables = authorizer.tablesUsedByQuery(query);
         } catch (ParsingException e) {
-            job.setQueryStats(createNoOpQueryStats());
             job.setError(new QueryError(e.getMessage(), null, -1, new ErrorLocation(e.getLineNumber(), e.getColumnNumber()), null));
             cancelAndThrow(null, stopwatch, new ExecutionFailureException(job, "Invalid query, could not parse", e));
         }
 
         if (!authorizer.isAuthorizedRead(tables)) {
-            job.setQueryStats(createNoOpQueryStats());
-            cancelAndThrow(null, stopwatch, new ExecutionFailureException(job, "Cannot access tables", null));
+            cancelAndThrow(null, stopwatch, new ExecutionFailureException(job, "Not authorized to access tables", null));
         }
 
         try (StatementClient client = queryRunner.startInternalQuery(query)) {

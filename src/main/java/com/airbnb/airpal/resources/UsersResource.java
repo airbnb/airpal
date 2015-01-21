@@ -4,6 +4,7 @@ import com.airbnb.airpal.api.Job;
 import com.airbnb.airpal.api.JobState;
 import com.airbnb.airpal.core.AirpalUser;
 import com.airbnb.airpal.core.AuthorizationUtil;
+import com.airbnb.airpal.core.store.ActiveJobsStore;
 import com.airbnb.airpal.core.store.JobHistoryStore;
 import com.airbnb.airpal.presto.PartitionedTable;
 import com.airbnb.airpal.presto.PartitionedTable.PartitionedTableToTable;
@@ -35,11 +36,13 @@ import static com.airbnb.airpal.resources.QueryResource.JOB_ORDERING;
 public class UsersResource
 {
     private final JobHistoryStore jobHistoryStore;
+    private final ActiveJobsStore activeJobsStore;
 
     @Inject
-    public UsersResource(JobHistoryStore jobHistoryStore)
+    public UsersResource(JobHistoryStore jobHistoryStore, ActiveJobsStore activeJobsStore)
     {
         this.jobHistoryStore = jobHistoryStore;
+        this.activeJobsStore = activeJobsStore;
     }
 
     @GET
@@ -113,6 +116,20 @@ public class UsersResource
                 .onResultOf(JOB_ORDERING)
                 .reverse()
                 .immutableSortedCopy(filtered.build());
+        return Response.ok(sortedResult).build();
+    }
+
+    @GET
+    @Path("active-queries")
+    public Response getUserActiveQueries(@Auth AirpalUser user)
+    {
+        List<Job> sortedResult = Ordering
+                .natural()
+                .nullsLast()
+                .onResultOf(JOB_ORDERING)
+                .reverse()
+                .immutableSortedCopy(activeJobsStore.getJobsForUser(user));
+
         return Response.ok(sortedResult).build();
     }
 }
