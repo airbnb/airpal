@@ -21,8 +21,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static java.lang.String.format;
-
 @Value
 @EqualsAndHashCode(callSuper = false)
 public class InputReferenceExtractor
@@ -126,7 +124,6 @@ public class InputReferenceExtractor
     @Override
     protected CatalogSchemaContext visitNode(Node node, CatalogSchemaContext context)
     {
-        System.out.println(format("Inspecting Node: %s :: Context: %s", node, context));
         return context;
     }
 

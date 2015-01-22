@@ -7,6 +7,7 @@ import com.airbnb.airpal.api.event.JobFinishedEvent;
 import com.airbnb.airpal.api.output.HiveTablePersistentOutput;
 import com.airbnb.airpal.core.AirpalUser;
 import com.airbnb.airpal.core.PersistentJobOutputFactory;
+import com.airbnb.airpal.core.store.ActiveJobsStore;
 import com.airbnb.airpal.core.store.JobHistoryStore;
 import com.airbnb.airpal.core.store.UsageStore;
 import com.airbnb.airpal.presto.QueryInfoClient;
@@ -55,17 +56,19 @@ public class ExecutionClient
     private final ColumnCache columnCache;
     private final QueryInfoClient queryInfoClient;
     private final QueryRunnerFactory queryRunnerFactory;
+    private final ActiveJobsStore activeJobsStore;
     private final Map<UUID, Execution> executionMap = new ConcurrentHashMap<>();
 
     @Inject
     public ExecutionClient(QueryRunnerFactory queryRunnerFactory,
-                           EventBus eventBus,
-                           JobHistoryStore historyStore,
-                           PersistentJobOutputFactory persistentJobOutputFactory,
-                           UsageStore usageStore,
-                           SchemaCache schemaCache,
-                           ColumnCache columnCache,
-                           QueryInfoClient queryInfoClient)
+            EventBus eventBus,
+            JobHistoryStore historyStore,
+            PersistentJobOutputFactory persistentJobOutputFactory,
+            UsageStore usageStore,
+            SchemaCache schemaCache,
+            ColumnCache columnCache,
+            QueryInfoClient queryInfoClient,
+            ActiveJobsStore activeJobsStore)
     {
         this.queryRunnerFactory = queryRunnerFactory;
         this.eventBus = eventBus;
@@ -75,6 +78,7 @@ public class ExecutionClient
         this.schemaCache = schemaCache;
         this.columnCache = columnCache;
         this.queryInfoClient = queryInfoClient;
+        this.activeJobsStore = activeJobsStore;
     }
 
     public UUID runQuery(final ExecutionRequest request,
@@ -112,6 +116,7 @@ public class ExecutionClient
                 columnCache);
 
         executionMap.put(uuid, execution);
+        activeJobsStore.jobStarted(job);
 
         ListenableFuture<Job> result = executor.submit(execution);
         Futures.addCallback(result, new FutureCallback<Job>()
@@ -119,9 +124,9 @@ public class ExecutionClient
             @Override
             public void onSuccess(@Nullable Job result)
             {
-                System.out.println("Succesful job!");
-                assert result != null;
-                result.setState(JobState.FINISHED);
+                if (result != null) {
+                    result.setState(JobState.FINISHED);
+                }
                 jobFinished(result);
             }
 
@@ -147,7 +152,7 @@ public class ExecutionClient
     protected void jobFinished(Job job)
     {
         job.setQueryFinished(new DateTime());
-
+        activeJobsStore.jobFinished(job);
         historyStore.addRun(job);
 
         for (Table t : job.getTablesUsed()) {

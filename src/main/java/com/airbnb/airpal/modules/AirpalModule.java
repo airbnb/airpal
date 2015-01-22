@@ -7,7 +7,9 @@ import com.airbnb.airpal.core.PersistentJobOutputFactory;
 import com.airbnb.airpal.core.execution.ExecutionClient;
 import com.airbnb.airpal.core.health.PrestoHealthCheck;
 import com.airbnb.airpal.core.hive.HiveTableUpdatedCache;
+import com.airbnb.airpal.core.store.ActiveJobsStore;
 import com.airbnb.airpal.core.store.CachingUsageStore;
+import com.airbnb.airpal.core.store.InMemoryActiveJobsStore;
 import com.airbnb.airpal.core.store.JobHistoryStore;
 import com.airbnb.airpal.core.store.JobHistoryStoreDAO;
 import com.airbnb.airpal.core.store.QueryStore;
@@ -296,5 +298,12 @@ public class AirpalModule extends AbstractModule
     public AirpalUserFactory provideAirpalUserFactory()
     {
         return new AirpalUserFactory(config.getPrestoSchema(), org.joda.time.Duration.standardMinutes(15), "default");
+    }
+
+    @Provides
+    @Singleton
+    public ActiveJobsStore provideActiveJobsStore()
+    {
+        return new InMemoryActiveJobsStore();
     }
 }
