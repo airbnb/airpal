@@ -7,14 +7,9 @@ describe('UserStore', function() {
   var UserDispatcher, UserStore, callback;
 
   beforeEach(function() {
-    UserDispatcher = require('../../javascripts/dispatchers/UserDispatcher');
+    UserDispatcher = require('../../javascripts/dispatchers/AppDispatcher');
     UserStore = require('../../javascripts/stores/UserStore');
     callback = UserDispatcher.register.mock.calls[0][0];
-  });
-
-  it('registers a callback with the dispatcher', function() {
-    console.info('it registers a callback with the dispatcher');
-    expect(UserDispatcher.register.mock.calls.length).toBe(1);
   });
 
   it('returns a default user', function() {
