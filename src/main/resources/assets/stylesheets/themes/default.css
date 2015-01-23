@@ -61,6 +61,13 @@
 }
 
 /**
+ * Errors
+ */
+.connection-errors {
+  margin-top: 15px;
+}
+
+/**
  * Indicator
  */
 .indicator { float: left; }

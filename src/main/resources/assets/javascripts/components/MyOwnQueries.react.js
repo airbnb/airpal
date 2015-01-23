@@ -1,78 +1,30 @@
 /** @jsx React.DOM */
 var React   = require('react'),
-    _       = require('lodash'),
-    moment  = require('moment');
+    _       = require('lodash');
 
 /* Actions */
-var QueryActions = require('../actions/QueryActions');
+var RunActions    = require('../actions/RunActions');
 
 /* Stores */
-var QueryStore  = require('../stores/QueryStore'),
-    UserStore   = require('../stores/UserStore');
-
-// State actions
-function getStateFromStore() {
-  return {
-    user: UserStore.getCurrentUser(),
-    queries: QueryStore.getCurrentUserQueries()
-  };
-}
+var RunStore      = require('../stores/RunStore');
 
 var MyOwnQueries = React.createClass({
   displayName: 'MyOwnQueries',
 
-  getInitialState: function() {
-    return getStateFromStore();
+  componentWillMount: function() {
+    RunActions.connect();
   },
 
   componentDidMount: function() {
-    UserStore.addStoreListener('change', this._onChange);
-    QueryStore.addStoreListener('change', this._onChange);
-  },
 
-  componentWillUnmount: function() {
-    UserStore.removeStoreListener('change');
-    QueryStore.removeStoreListener('change');
+    // Add event listeners to the window to detect online/offline changes
+    // for the user
+    window.addEventListener('online',   function() { RunActions.wentOnline(); });
+    window.addEventListener('offline',  function() { RunActions.wentOffline(); });
   },
 
   render: function () {
-    console.log(this.state.queries);
-    return (
-      <div>
-        <table className="table table-striped">
-          <thead>
-            <tr>
-              <th>Query</th>
-              <th>Started</th>
-              <th>Ended</th>
-              <th>Download</th>
-            </tr>
-          </thead>
-          <tbody>{this.renderTableRows()}</tbody>
-        </table>
-      </div>
-    );
-  },
-
-  renderTableRows: function() {
-    if( _.isEmpty(this.state.queries) ) return;
-
-    console.log(this.state.queries);
-    return _.map(this.state.queries, function(obj, idx) {
-      return(
-        <tr key={idx}>
-          <td>{obj.query}</td>
-          <td>{moment(obj.queryStarted).calendar()}</td>
-          <td>{moment(obj.queryFinished).calendar()}</td>
-          <td><a href={obj.output.location} title="Download the file">Download file</a></td>
-        </tr>
-      );
-    });
-  },
-
-  /* - Store events -------------------------------------------------------- */
-  _onChange: function() {
-    this.setState(getStateFromStore());
+    return (<div>MyOwnQueries</div>);
   }
 });
 
