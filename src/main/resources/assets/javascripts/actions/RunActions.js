@@ -28,10 +28,11 @@ module.exports = {
     });
   },
 
-  executeQuery: function(query) {
+  executeQuery: function(obj) {
     AppDispatcher.handleViewAction({
       type: RunConstants.EXECUTE_QUERY,
-      query: query
+      query: obj.query,
+      tmpTable: obj.tmpTable
     });
   },
 

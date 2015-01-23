@@ -29,4 +29,10 @@ airpalHosts:
   - http://127.0.0.1:8082
 
 dataSourceFactory:
-  driverClass: com.mysql.jdbc.Driver
+  driverClass:      com.mysql.jdbc.Driver
+  url:              jdbc:mysql://127.0.0.1:13306/airpal
+  user:             root
+
+s3AccessKey:  "AKIAJ7PFGMZLEOWN4B3Q"
+s3SecretKey:  "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"
+s3Bucket:     "airpal-project"
