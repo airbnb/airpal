@@ -1,20 +1,24 @@
 /** @jsx React.DOM */
 var React = require('react');
 
-/* Views */
-var QuerySaveModal = require('./QuerySaveModal.react');
+/* Actions */
+var RunActions      = require('../actions/RunActions');
 
 /* Helpers */
-var OverlayMixin  = require('react-bootstrap').OverlayMixin,
-    _ = require('lodash');
+var OverlayMixin    = require('react-bootstrap').OverlayMixin,
+    _               = require('lodash');
 
 /* Editor */
-var ace = require('brace'),
-    Placeholder = ace.acequire('ace/placeholder').Placeholder,
-    Range = ace.acequire('ace/range').Range;
+var ace             = require('brace'),
+    Placeholder     = ace.acequire('ace/placeholder').Placeholder,
+    Range           = ace.acequire('ace/range').Range;
 
 /* Stores */
-var QueryStore = require('../stores/QueryStore');
+var QueryStore      = require('../stores/QueryStore'),
+    RunStore        = require('../stores/RunStore');
+
+/* Views */
+var QuerySaveModal  = require('./QuerySaveModal.react');
 
 require('brace/theme/monokai');
 require('brace/mode/sql');
@@ -46,10 +50,7 @@ var QueryEditor = React.createClass({
   },
 
   getInitialState: function() {
-    return {
-      isModalOpen: false,
-      runText: 'query'
-    };
+    return { isModalOpen: false, runText: 'query' };
   },
 
   render: function () {
@@ -93,7 +94,7 @@ var QueryEditor = React.createClass({
                 </div>
 
                 <div className="btn-group">
-                  <button className="btn btn-success">Run {this.state.runText}</button>
+                  <button className="btn btn-success" onClick={this.handleRun}>Run {this.state.runText}</button>
                 </div>
               </div>
             </div>
@@ -116,6 +117,10 @@ var QueryEditor = React.createClass({
     this.setState({
       isModalOpen: !this.state.isModalOpen
     });
+  },
+
+  handleRun: function() {
+    RunActions.executeQuery(this._getQuery());
   },
 
   handleChangeSelection: function() {

@@ -10,6 +10,7 @@ module.exports = keyMirror({
   USER_WENT_ONLINE:       null,
   USER_WENT_OFFLINE:      null,
   CONNECT:                null,
+  EXECUTE_QUERY:          null,
 
   // Server constants
   ON_SSE_OPEN:            null,
