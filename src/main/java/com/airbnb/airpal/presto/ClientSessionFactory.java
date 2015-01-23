@@ -31,6 +31,18 @@ public class ClientSessionFactory
         this.locale = Locale.getDefault();
     }
 
+    public ClientSession create(String user, String schema)
+    {
+        return new ClientSession(server.get(),
+                user,
+                source,
+                catalog,
+                schema,
+                timeZoneId,
+                locale,
+                debug);
+    }
+
     public ClientSession create(String schema)
     {
         return new ClientSession(server.get(),

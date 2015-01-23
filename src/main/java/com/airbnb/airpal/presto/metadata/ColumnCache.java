@@ -1,6 +1,7 @@
 package com.airbnb.airpal.presto.metadata;
 
 import com.airbnb.airpal.core.BackgroundCacheLoader;
+import com.airbnb.airpal.core.execution.QueryClient;
 import com.airbnb.airpal.presto.QueryRunner;
 import com.airbnb.airpal.presto.Util;
 import com.airbnb.airpal.presto.hive.HiveColumn;
@@ -8,6 +9,7 @@ import com.airbnb.airpal.presto.hive.HivePartition;
 import com.facebook.presto.client.Column;
 import com.facebook.presto.client.QueryResults;
 import com.facebook.presto.client.StatementClient;
+import com.google.common.base.Function;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
@@ -16,6 +18,9 @@ import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import io.airlift.units.Duration;
+import lombok.extern.slf4j.Slf4j;
+
+import javax.annotation.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -26,6 +31,7 @@ import static com.airbnb.airpal.presto.QueryRunner.QueryRunnerFactory;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.String.format;
 
+@Slf4j
 public class ColumnCache
 {
     private final LoadingCache<String, List<HiveColumn>> schemaTableCache;
@@ -74,29 +80,39 @@ public class ColumnCache
 
     private List<HivePartition> queryPartitions(String query)
     {
-        ImmutableList.Builder<HivePartition> cache = ImmutableList.builder();
-        Map<Column, List<Object>> objects = Maps.newHashMap();
+        final ImmutableList.Builder<HivePartition> cache = ImmutableList.builder();
+        final Map<Column, List<Object>> objects = Maps.newHashMap();
         QueryRunner queryRunner = queryRunnerFactory.create();
+        QueryClient queryClient = new QueryClient(queryRunner, io.dropwizard.util.Duration.seconds(60), query);
 
-        try (StatementClient client = queryRunner.startInternalQuery(query)) {
-            while (client.isValid() && !Thread.currentThread().isInterrupted()) {
-                QueryResults results = client.current();
-                if (results.getData() != null && results.getColumns() != null) {
-                    final List<Column> columns = results.getColumns();
+        try {
+            queryClient.executeWith(new Function<StatementClient, Void>() {
+                @Nullable
+                @Override
+                public Void apply(StatementClient client)
+                {
+                    QueryResults results = client.current();
+                    if (results.getData() != null && results.getColumns() != null) {
+                        final List<Column> columns = results.getColumns();
 
-                    for (Column column : columns) {
-                        objects.put(column, Lists.newArrayList());
-                    }
+                        for (Column column : columns) {
+                            objects.put(column, Lists.newArrayList());
+                        }
 
-                    for (List<Object> row : results.getData()) {
-                        for (int i = 0; i < row.size(); i++) {
-                            Column column = columns.get(i);
-                            objects.get(column).add(row.get(i));
+                        for (List<Object> row : results.getData()) {
+                            for (int i = 0; i < row.size(); i++) {
+                                Column column = columns.get(i);
+                                objects.get(column).add(row.get(i));
+                            }
                         }
                     }
+
+                    return null;
                 }
-                client.advance();
-            }
+            });
+        }
+        catch (QueryClient.QueryTimeOutException e) {
+            log.error("Caught timeout loading columns", e);
         }
 
         for (Map.Entry<Column, List<Object>> entry : objects.entrySet()) {
@@ -108,23 +124,33 @@ public class ColumnCache
 
     private List<HiveColumn> queryColumns(String query)
     {
-        ImmutableList.Builder<HiveColumn> cache = ImmutableList.builder();
+        final ImmutableList.Builder<HiveColumn> cache = ImmutableList.builder();
         QueryRunner queryRunner = queryRunnerFactory.create();
+        QueryClient queryClient = new QueryClient(queryRunner, io.dropwizard.util.Duration.seconds(60), query);
 
-        try (StatementClient client = queryRunner.startInternalQuery(query)) {
-            while (client.isValid() && !Thread.currentThread().isInterrupted()) {
-                QueryResults results = client.current();
-                if (results.getData() != null) {
-                    for (List<Object> row : results.getData()) {
-                        Column column = new Column((String) row.get(0), (String) row.get(1));
-                        boolean isNullable = (Boolean) row.get(2);
-                        boolean isPartition = (Boolean) row.get(3);
+        try {
+            queryClient.executeWith(new Function<StatementClient, Void>() {
+                @Nullable
+                @Override
+                public Void apply(StatementClient client)
+                {
+                    QueryResults results = client.current();
+                    if (results.getData() != null) {
+                        for (List<Object> row : results.getData()) {
+                            Column column = new Column((String) row.get(0), (String) row.get(1));
+                            boolean isNullable = (Boolean) row.get(2);
+                            boolean isPartition = (Boolean) row.get(3);
 
-                        cache.add(HiveColumn.fromColumn(column, isNullable, isPartition));
+                            cache.add(HiveColumn.fromColumn(column, isNullable, isPartition));
+                        }
                     }
+
+                    return null;
                 }
-                client.advance();
-            }
+            });
+        }
+        catch (QueryClient.QueryTimeOutException e) {
+            log.error("Caught timeout loading columns", e);
         }
 
         return cache.build();

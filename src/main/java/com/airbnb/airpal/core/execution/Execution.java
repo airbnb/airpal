@@ -5,6 +5,7 @@ import com.airbnb.airpal.api.JobState;
 import com.airbnb.airpal.api.event.JobUpdateEvent;
 import com.airbnb.airpal.api.output.PersistentJobOutput;
 import com.airbnb.airpal.core.Persistor;
+import com.airbnb.airpal.core.execution.QueryClient.QueryTimeOutException;
 import com.airbnb.airpal.presto.QueryInfoClient;
 import com.airbnb.airpal.presto.QueryRunner;
 import com.airbnb.airpal.presto.Table;
@@ -18,9 +19,9 @@ import com.facebook.presto.client.QueryResults;
 import com.facebook.presto.client.StatementClient;
 import com.facebook.presto.execution.QueryStats;
 import com.facebook.presto.sql.parser.ParsingException;
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
-import com.google.common.base.Stopwatch;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -37,6 +38,7 @@ import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -138,101 +140,107 @@ public class Execution implements Callable<Job>
             throw new ExecutionFailureException(job, "Not authorized to create tables", null);
         }
 
-        final Stopwatch stopwatch = Stopwatch.createStarted();
         final List<List<Object>> outputPreview = new ArrayList<>(maxRowsPreviewOutput);
-        Set<Table> tables = Collections.emptySet();
+        final Set<Table> tables = new HashSet<>();
 
         try {
-            tables = authorizer.tablesUsedByQuery(query);
+            tables.addAll(authorizer.tablesUsedByQuery(query));
         } catch (ParsingException e) {
             job.setError(new QueryError(e.getMessage(), null, -1, new ErrorLocation(e.getLineNumber(), e.getColumnNumber()), null));
-            cancelAndThrow(null, stopwatch, new ExecutionFailureException(job, "Invalid query, could not parse", e));
+
+            throw new ExecutionFailureException(job, "Invalid query, could not parse", e);
         }
 
         if (!authorizer.isAuthorizedRead(tables)) {
-            cancelAndThrow(null, stopwatch, new ExecutionFailureException(job, "Not authorized to access tables", null));
+            job.setQueryStats(createNoOpQueryStats());
+
+            throw new ExecutionFailureException(job, "Cannot access tables", null);
         }
 
-        try (StatementClient client = queryRunner.startInternalQuery(query)) {
-            while (client.isValid() && !Thread.currentThread().isInterrupted()) {
-                QueryResults results = client.current();
-                List<Column> resultColumns = null;
-                JobState jobState = null;
-                QueryError queryError = null;
-                QueryStats queryStats = null;
-
-                if (isCancelled) {
-                    cancelAndThrow(client,
-                            stopwatch,
-                            new ExecutionFailureException(job,
-                                    "Query was cancelled",
-                                    null));
-                }
-
-                if (stopwatch.elapsed(TimeUnit.MILLISECONDS) > timeout.getMillis()) {
-                    cancelAndThrow(client,
-                            stopwatch,
-                            new ExecutionFailureException(job,
-                                    format("Query exceeded maximum execution time of %s", timeout.toString()),
-                                    null));
-                }
-
-                if (results.getError() != null) {
-                    queryError = results.getError();
-                    jobState = JobState.FAILED;
-                }
-
-                if ((results.getInfoUri() != null) && (jobState != JobState.FAILED)) {
-                    BasicQueryInfo queryInfo = queryInfoClient.from(results.getInfoUri());
-
-                    if (queryInfo != null) {
-                        queryStats = queryInfo.getQueryStats();
+        QueryClient queryClient = new QueryClient(queryRunner, timeout, query);
+        try {
+            queryClient.executeWith(new Function<StatementClient, Void>()
+            {
+                @Nullable
+                @Override
+                public Void apply(@Nullable StatementClient client)
+                {
+                    if (client == null) {
+                        return null;
                     }
-                }
 
-                if (results.getStats() != null) {
-                    jobState = JobState.fromStatementState(results.getStats().getState());
-                }
+                    QueryResults results = client.current();
+                    List<Column> resultColumns = null;
+                    JobState jobState = null;
+                    QueryError queryError = null;
+                    QueryStats queryStats = null;
 
-                if (results.getColumns() != null) {
-                    resultColumns = results.getColumns();
-                    persistor.onColumns(resultColumns);
-                }
-
-                if (results.getData() != null) {
-                    List<List<Object>> resultsData = ImmutableList.copyOf(results.getData());
-                    persistor.onData(resultsData);
-
-                    /*
-                    int remainingCapacity = maxRowsPreviewOutput - outputPreview.size();
-                    if (remainingCapacity > 0) {
-                        outputPreview.addAll(resultsData.subList(0, Math.min(remainingCapacity, resultsData.size()) - 1));
+                    if (isCancelled) {
+                        throw new ExecutionFailureException(job,
+                                "Query was cancelled",
+                                null);
                     }
-                    */
+
+                    if (results.getError() != null) {
+                        queryError = results.getError();
+                        jobState = JobState.FAILED;
+                    }
+
+                    if ((results.getInfoUri() != null) && (jobState != JobState.FAILED)) {
+                        BasicQueryInfo queryInfo = queryInfoClient.from(results.getInfoUri());
+
+                        if (queryInfo != null) {
+                            queryStats = queryInfo.getQueryStats();
+                        }
+                    }
+
+                    if (results.getStats() != null) {
+                        jobState = JobState.fromStatementState(results.getStats().getState());
+                    }
+
+                    if (results.getColumns() != null) {
+                        resultColumns = results.getColumns();
+                        persistor.onColumns(resultColumns);
+                    }
+
+                    if (results.getData() != null) {
+                        List<List<Object>> resultsData = ImmutableList.copyOf(results.getData());
+                        persistor.onData(resultsData);
+
+                        /*
+                        int remainingCapacity = maxRowsPreviewOutput - outputPreview.size();
+                        if (remainingCapacity > 0) {
+                            outputPreview.addAll(resultsData.subList(0, Math.min(remainingCapacity, resultsData.size()) - 1));
+                        }
+                        */
+                    }
+
+                    rlUpdateJobInfo(tables, resultColumns, queryStats, jobState, queryError, outputPreview);
+
+                    return null;
                 }
-
-                rlUpdateJobInfo(tables, resultColumns, queryStats, jobState, queryError, outputPreview);
-                client.advance();
-            }
-
-            QueryResults finalResults = client.finalResults();
-            if (finalResults != null && finalResults.getInfoUri() != null) {
-                BasicQueryInfo queryInfo = queryInfoClient.from(finalResults.getInfoUri());
-
-                if (queryInfo != null) {
-                    updateJobInfo(
-                            null,
-                            null,
-                            queryInfo.getQueryStats(),
-                            JobState.fromStatementState(finalResults.getStats().getState()),
-                            finalResults.getError(),
-                            outputPreview,
-                            true);
-                }
-            }
+            });
+        } catch (QueryTimeOutException e) {
+            throw new ExecutionFailureException(job,
+                            format("Query exceeded maximum execution time of %s minutes", Duration.millis(e.getElapsedMs()).getStandardMinutes()),
+                            null);
         }
 
-        stopwatch.stop();
+        QueryResults finalResults = queryClient.finalResults();
+        if (finalResults != null && finalResults.getInfoUri() != null) {
+            BasicQueryInfo queryInfo = queryInfoClient.from(finalResults.getInfoUri());
+
+            if (queryInfo != null) {
+                updateJobInfo(
+                        null,
+                        null,
+                        queryInfo.getQueryStats(),
+                        JobState.fromStatementState(finalResults.getStats().getState()),
+                        finalResults.getError(),
+                        outputPreview,
+                        true);
+            }
+        }
 
         if (job.getState() != JobState.FAILED) {
             persistor.persist();
@@ -268,26 +276,6 @@ public class Execution implements Callable<Job>
         }
 
         return tablesWithoutPartitions.build();
-    }
-
-    private static void cancelAndThrow(StatementClient client, Stopwatch stopwatch, ExecutionFailureException e)
-            throws ExecutionFailureException
-    {
-        try {
-            if (client != null && !client.cancelLeafStage()) {
-                client.close();
-            }
-        }
-        catch (IllegalStateException ignored) {
-            // Client is already closed.
-        }
-        catch (RuntimeException ignored) {
-            client.close();
-        }
-
-        stopwatch.stop();
-
-        throw e;
     }
 
     private static final Splitter QUERY_SPLITTER = Splitter.on(";").omitEmptyStrings().trimResults();
