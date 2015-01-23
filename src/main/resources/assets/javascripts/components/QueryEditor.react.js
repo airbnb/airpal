@@ -120,7 +120,7 @@ var QueryEditor = React.createClass({
   },
 
   handleRun: function() {
-    RunActions.executeQuery({
+    RunActions.execute({
       query: this._getQuery(),
       tmpTable: this._getCustomTableName()
     });
