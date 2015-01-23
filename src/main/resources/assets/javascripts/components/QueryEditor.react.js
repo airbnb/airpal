@@ -120,7 +120,10 @@ var QueryEditor = React.createClass({
   },
 
   handleRun: function() {
-    RunActions.executeQuery(this._getQuery());
+    RunActions.executeQuery({
+      query: this._getQuery(),
+      tmpTable: this._getCustomTableName()
+    });
   },
 
   handleChangeSelection: function() {
@@ -179,6 +182,13 @@ var QueryEditor = React.createClass({
 
     // Return the query value
     return query;
+  },
+
+  // Retrieves the custom table name
+  // @return {string} the custom table name
+  _getCustomTableName: function() {
+    var customTableName = this.refs.customName.getDOMNode().value;
+    return !_.isEmpty(customTableName) ? customTableName : null;
   },
 
   // Checks or there is currently something selected

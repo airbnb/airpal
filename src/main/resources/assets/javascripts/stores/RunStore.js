@@ -87,7 +87,7 @@ RunStore.dispatchToken = AppDispatcher.register(function(payload) {
       break;
 
     case RunConstants.EXECUTE_QUERY:
-      RunApiUtils.execute(action.query);
+      RunApiUtils.execute(action.query, action.tmpTable);
       RunStore.emitChange('execute');
       break;
 
