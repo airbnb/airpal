@@ -3,6 +3,8 @@
  */
 
 var StoreDefaults = {
+  // The collection holds the data for the store
+  collection: [],
 
   // Emit the changes with the eventemitter
   emitChange: function(eventName, options) {
