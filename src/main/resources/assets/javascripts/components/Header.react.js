@@ -38,21 +38,21 @@ var Header = React.createClass({
     return (
       <header className="row header-row">
 
-        <div className="col-sm-7">
+        <div className="col-sm-9">
           <h1>AirPal</h1>
         </div>
 
-        <div className="col-sm-5">
+        <div className="col-sm-3">
 
           <div className="row user-info">
-            <div className="col-sm-4">
+            <div className="col-sm-6">
               <dl>
                 <dt>User Name</dt>
                 <dd className="user-name">{this.state.user.name}</dd>
               </dl>
             </div>
 
-            <div className="col-sm-4">
+            <div className="col-sm-6">
               <p>
                 <strong>Access Level &nbsp;</strong>
 
@@ -67,10 +67,6 @@ var Header = React.createClass({
                   {this.state.user.executionPermissions.accessLevel}
                 </span>
               </p>
-            </div>
-
-            <div className="col-sm-4 text-right">
-              <a href="#" className="btn btn-default" id="start-tour">Take Tour</a>
             </div>
 
           </div>
