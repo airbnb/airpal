@@ -24,7 +24,6 @@ var RunStore = assign({}, StoreDefaults, EventEmitter.prototype, {
     this.close(); // Close any open connection
 
     // Create a new listener to the API endpoint
-    console.log('Open SSE connection');
     this._eventSource = new EventSource('/api/updates/subscribe');
 
     // Listen to incoming messages
@@ -35,7 +34,6 @@ var RunStore = assign({}, StoreDefaults, EventEmitter.prototype, {
 
   // Close the open SSE connect
   close: function() {
-    console.log('Attempting to close SSEConnection', this._eventSource);
     if (!!this._eventSource && this._eventSource.readyState) {
       this._eventSource.close();
     }
