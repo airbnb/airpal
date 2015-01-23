@@ -6,6 +6,7 @@ var StoreDefaults   = require('./StoreDefaults');
 var AppDispatcher   = require('../dispatchers/AppDispatcher');
 var RunConstants    = require('../constants/RunConstants');
 var RunActions      = require('../actions/RunActions');
+var RunApiUtils     = require('../utils/RunApiUtils');
 
 /* Store helpers */
 var EventEmitter  = require('events').EventEmitter;
@@ -66,21 +67,28 @@ RunStore.dispatchToken = AppDispatcher.register(function(payload) {
 
   switch(action.type) {
     case RunConstants.USER_WENT_ONLINE:
-      RunStore.emitChange('online');
       RunStore.connect();
+      RunStore.emitChange('online');
       break;
 
     case RunConstants.USER_WENT_OFFLINE:
-      RunStore.emitChange('offline');
       RunStore.close();
+      RunStore.emitChange('offline');
       break;
 
     case RunConstants.ON_MESSAGE:
       RunStore.createOrUpdate(action.data);
+      RunStore.emitChange('message');
       break;
 
     case RunConstants.CONNECT:
       RunStore.connect();
+      RunStore.emitChange('connected');
+      break;
+
+    case RunConstants.EXECUTE_QUERY:
+      RunApiUtils.execute(action.query);
+      RunStore.emitChange('execute');
       break;
 
     default:

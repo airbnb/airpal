@@ -28,6 +28,13 @@ module.exports = {
     });
   },
 
+  executeQuery: function(query) {
+    AppDispatcher.handleViewAction({
+      type: RunConstants.EXECUTE_QUERY,
+      query: query
+    });
+  },
+
   // - ServerActions ------------------------------------------------------- //
   onOpen: function() {
     AppDispatcher.handleServerAction({

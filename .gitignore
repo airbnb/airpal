@@ -24,3 +24,6 @@ bower_components/
 # Ignore Node files
 node_modules
 npm-debug.log
+
+# Personal files
+start.java
