@@ -2,8 +2,8 @@ package com.airbnb.airpal.api.output;
 
 import com.airbnb.airpal.api.Job;
 import com.airbnb.airpal.api.output.builders.CsvOutputBuilder;
+import com.airbnb.airpal.api.output.builders.FileTooLargeException;
 import com.airbnb.airpal.api.output.builders.JobOutputBuilder;
-import com.airbnb.airpal.core.Persistor;
 import com.airbnb.airpal.core.execution.QueryExecutionAuthorizer;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.HttpMethod;
@@ -77,7 +77,7 @@ public class S3CsvPersistentOutput implements PersistentJobOutput
     {
         List<File> files = Lists.newArrayList(builder.build());
 
-        if (files == null || files.size() != 1)
+        if (files.size() != 1)
             return;
 
         File file = files.get(0);
@@ -132,7 +132,7 @@ public class S3CsvPersistentOutput implements PersistentJobOutput
     }
 
     private String getOutputKey(String fileBaseName) {
-        return "andykram/airpal/" + fileBaseName;
+        return "airpal/" + fileBaseName;
     }
 
     private long getExpirationWindow() {
@@ -146,12 +146,12 @@ public class S3CsvPersistentOutput implements PersistentJobOutput
     }
 
     @Override
-    public Persistor getPersistor(final Job job)
+    public Persistor getPersistor(final Job job, final long maxOutputSizeBytes)
     {
         final S3CsvPersistentOutput t = this;
         final CsvOutputBuilder builder;
         try {
-            builder = new CsvOutputBuilder(true, jobUUID);
+            builder = new CsvOutputBuilder(true, jobUUID, maxOutputSizeBytes);
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -167,6 +167,7 @@ public class S3CsvPersistentOutput implements PersistentJobOutput
 
             @Override
             public void onColumns(List<Column> columns)
+                    throws FileTooLargeException
             {
                 if (setColumn.compareAndSet(false, true)) {
                     builder.addColumns(columns);
@@ -175,6 +176,7 @@ public class S3CsvPersistentOutput implements PersistentJobOutput
 
             @Override
             public void onData(Iterable<List<Object>> data)
+                    throws FileTooLargeException
             {
                 for (List<Object> row : data) {
                     builder.addRow(row);

@@ -1,4 +1,4 @@
-package com.airbnb.airpal.core.store;
+package com.airbnb.airpal.core.store.jobs;
 
 import com.airbnb.airpal.api.Job;
 import com.airbnb.airpal.core.AirpalUser;

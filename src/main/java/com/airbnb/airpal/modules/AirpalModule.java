@@ -3,19 +3,19 @@ package com.airbnb.airpal.modules;
 import com.airbnb.airlift.http.client.OldJettyHttpClient;
 import com.airbnb.airpal.AirpalConfiguration;
 import com.airbnb.airpal.core.AirpalUserFactory;
-import com.airbnb.airpal.core.PersistentJobOutputFactory;
+import com.airbnb.airpal.api.output.PersistentJobOutputFactory;
 import com.airbnb.airpal.core.execution.ExecutionClient;
 import com.airbnb.airpal.core.health.PrestoHealthCheck;
 import com.airbnb.airpal.core.hive.HiveTableUpdatedCache;
-import com.airbnb.airpal.core.store.ActiveJobsStore;
-import com.airbnb.airpal.core.store.CachingUsageStore;
-import com.airbnb.airpal.core.store.InMemoryActiveJobsStore;
-import com.airbnb.airpal.core.store.JobHistoryStore;
-import com.airbnb.airpal.core.store.JobHistoryStoreDAO;
-import com.airbnb.airpal.core.store.QueryStore;
-import com.airbnb.airpal.core.store.QueryStoreDAO;
-import com.airbnb.airpal.core.store.SQLUsageStore;
-import com.airbnb.airpal.core.store.UsageStore;
+import com.airbnb.airpal.core.store.jobs.ActiveJobsStore;
+import com.airbnb.airpal.core.store.usage.CachingUsageStore;
+import com.airbnb.airpal.core.store.jobs.InMemoryActiveJobsStore;
+import com.airbnb.airpal.core.store.history.JobHistoryStore;
+import com.airbnb.airpal.core.store.history.JobHistoryStoreDAO;
+import com.airbnb.airpal.core.store.queries.QueryStore;
+import com.airbnb.airpal.core.store.queries.QueryStoreDAO;
+import com.airbnb.airpal.core.store.usage.SQLUsageStore;
+import com.airbnb.airpal.core.store.usage.UsageStore;
 import com.airbnb.airpal.presto.ClientSessionFactory;
 import com.airbnb.airpal.presto.QueryInfoClient;
 import com.airbnb.airpal.presto.Table;
@@ -50,6 +50,7 @@ import com.google.inject.name.Names;
 import io.airlift.configuration.ConfigurationFactory;
 import io.airlift.http.client.AsyncHttpClient;
 import io.airlift.http.client.HttpClientConfig;
+import io.airlift.units.DataSize;
 import io.airlift.units.Duration;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.setup.Environment;
@@ -305,5 +306,13 @@ public class AirpalModule extends AbstractModule
     public ActiveJobsStore provideActiveJobsStore()
     {
         return new InMemoryActiveJobsStore();
+    }
+
+    @Provides
+    @Singleton
+    @Named("max-output-bytes")
+    public long provideMaxActiveSizeBytes()
+    {
+        return Math.round(Math.floor(config.getMaxOutputSize().getValue(DataSize.Unit.BYTE)));
     }
 }

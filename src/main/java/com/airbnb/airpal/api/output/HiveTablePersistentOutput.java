@@ -1,7 +1,6 @@
 package com.airbnb.airpal.api.output;
 
 import com.airbnb.airpal.api.Job;
-import com.airbnb.airpal.core.Persistor;
 import com.airbnb.airpal.core.execution.QueryExecutionAuthorizer;
 import com.facebook.presto.client.Column;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -60,7 +59,7 @@ public class HiveTablePersistentOutput implements PersistentJobOutput
     }
 
     @Override
-    public Persistor getPersistor(final Job job)
+    public Persistor getPersistor(final Job job, final long ignored)
     {
         final String tableFqn = format("airpal.%s", tmpTableName);
 

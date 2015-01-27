@@ -1,4 +1,4 @@
-package com.airbnb.airpal.core.store;
+package com.airbnb.airpal.core.store.queries;
 
 import com.airbnb.airpal.api.queries.SavedQuery;
 import com.airbnb.airpal.api.queries.UserSavedQuery;

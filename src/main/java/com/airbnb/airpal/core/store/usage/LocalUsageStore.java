@@ -1,4 +1,4 @@
-package com.airbnb.airpal.core.store;
+package com.airbnb.airpal.core.store.usage;
 
 import com.airbnb.airpal.presto.Table;
 import com.codahale.metrics.Histogram;
