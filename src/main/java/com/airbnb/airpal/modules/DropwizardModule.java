@@ -1,8 +1,8 @@
 package com.airbnb.airpal.modules;
 
 import com.airbnb.airpal.AirpalConfiguration;
+import com.airbnb.airpal.api.output.CSVPersistentOutput;
 import com.airbnb.airpal.api.output.HiveTablePersistentOutput;
-import com.airbnb.airpal.api.output.S3CsvPersistentOutput;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,10 +33,10 @@ public class DropwizardModule extends AbstractModule {
     @Singleton
     @Provides
     protected ObjectMapper provideObjectMapper()
-    { //List<SimpleModule> modules) {
+    {
         ObjectMapper mapper = environment.getObjectMapper();
         mapper.registerSubtypes(
-                new NamedType(S3CsvPersistentOutput.class, "csv"),
+                new NamedType(CSVPersistentOutput.class, "csv"),
                 new NamedType(HiveTablePersistentOutput.class, "hive")
         );
 

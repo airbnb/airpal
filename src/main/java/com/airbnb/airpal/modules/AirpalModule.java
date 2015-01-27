@@ -2,11 +2,15 @@ package com.airbnb.airpal.modules;
 
 import com.airbnb.airlift.http.client.OldJettyHttpClient;
 import com.airbnb.airpal.AirpalConfiguration;
+import com.airbnb.airpal.api.output.builders.OutputBuilderFactory;
+import com.airbnb.airpal.api.output.persistors.CSVPersistorFactory;
+import com.airbnb.airpal.api.output.persistors.PersistorFactory;
 import com.airbnb.airpal.core.AirpalUserFactory;
 import com.airbnb.airpal.api.output.PersistentJobOutputFactory;
 import com.airbnb.airpal.core.execution.ExecutionClient;
 import com.airbnb.airpal.core.health.PrestoHealthCheck;
 import com.airbnb.airpal.core.hive.HiveTableUpdatedCache;
+import com.airbnb.airpal.core.store.files.ExpiringFileStore;
 import com.airbnb.airpal.core.store.jobs.ActiveJobsStore;
 import com.airbnb.airpal.core.store.usage.CachingUsageStore;
 import com.airbnb.airpal.core.store.jobs.InMemoryActiveJobsStore;
@@ -23,6 +27,7 @@ import com.airbnb.airpal.presto.metadata.ColumnCache;
 import com.airbnb.airpal.presto.metadata.PreviewTableCache;
 import com.airbnb.airpal.presto.metadata.SchemaCache;
 import com.airbnb.airpal.resources.ExecuteResource;
+import com.airbnb.airpal.resources.FilesResource;
 import com.airbnb.airpal.resources.HealthResource;
 import com.airbnb.airpal.resources.PingResource;
 import com.airbnb.airpal.resources.QueryResource;
@@ -91,6 +96,7 @@ public class AirpalModule extends AbstractModule
         bind(PingResource.class).in(Scopes.SINGLETON);
         bind(SessionResource.class).in(Scopes.SINGLETON);
         bind(SSEEventSourceServlet.class).in(Scopes.SINGLETON);
+        bind(FilesResource.class).in(Scopes.SINGLETON);
 
         bind(EnvironmentLoaderListener.class).in(Scopes.SINGLETON);
         bind(new TypeLiteral<List<URI>>(){}).annotatedWith(Names.named("corsAllowedHosts")).toInstance(config.getAirpalHosts());
@@ -310,9 +316,30 @@ public class AirpalModule extends AbstractModule
 
     @Provides
     @Singleton
-    @Named("max-output-bytes")
-    public long provideMaxActiveSizeBytes()
+    public ExpiringFileStore provideExpiringFileStore()
     {
-        return Math.round(Math.floor(config.getMaxOutputSize().getValue(DataSize.Unit.BYTE)));
+        return new ExpiringFileStore(new DataSize(100, DataSize.Unit.MEGABYTE), new org.joda.time.Duration(1000 * 60 * 60), new org.joda.time.Duration(1000 * 60 * 60));
+    }
+
+    @Provides
+    @Singleton
+    public CSVPersistorFactory provideCSVPersistorFactory(ExpiringFileStore fileStore)
+    {
+        return new CSVPersistorFactory(config.isUseS3(), fileStore);
+    }
+
+    @Provides
+    @Singleton
+    public PersistorFactory providePersistorFactory(CSVPersistorFactory csvPersistorFactory)
+    {
+        return new PersistorFactory(csvPersistorFactory);
+    }
+
+    @Provides
+    @Singleton
+    public OutputBuilderFactory provideOutputBuilderFactory()
+    {
+        long maxFileSizeInBytes = Math.round(Math.floor(config.getMaxOutputSize().getValue(DataSize.Unit.BYTE)));
+        return new OutputBuilderFactory(maxFileSizeInBytes);
     }
 }

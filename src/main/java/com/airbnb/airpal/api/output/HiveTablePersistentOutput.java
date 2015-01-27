@@ -1,15 +1,12 @@
 package com.airbnb.airpal.api.output;
 
-import com.airbnb.airpal.api.Job;
-import com.airbnb.airpal.core.execution.QueryExecutionAuthorizer;
-import com.facebook.presto.client.Column;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.net.URI;
-import java.util.List;
 import java.util.UUID;
 
 import static java.lang.String.format;
@@ -21,6 +18,7 @@ public class HiveTablePersistentOutput implements PersistentJobOutput
     private final String tmpTableName;
 
     @Getter
+    @Setter
     private URI location;
 
     public HiveTablePersistentOutput(UUID jobUUID,
@@ -56,33 +54,5 @@ public class HiveTablePersistentOutput implements PersistentJobOutput
     {
         String tableFqn = format("airpal.%s", tmpTableName);
         return format("CREATE TABLE %s AS %s", tableFqn, query);
-    }
-
-    @Override
-    public Persistor getPersistor(final Job job, final long ignored)
-    {
-        final String tableFqn = format("airpal.%s", tmpTableName);
-
-        return new Persistor() {
-            @Override
-            public void onColumns(List<Column> columns)
-            {}
-
-            @Override
-            public void onData(Iterable<List<Object>> data)
-            {}
-
-            @Override
-            public void persist()
-            {
-                location = URI.create(tableFqn);
-            }
-
-            @Override
-            public boolean canPersist(QueryExecutionAuthorizer authorizer)
-            {
-                return authorizer.isAuthorizedWrite("hive", "airpal", tmpTableName);
-            }
-        };
     }
 }

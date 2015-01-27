@@ -31,7 +31,7 @@ public class PersistentJobOutputFactory
         if (!Strings.isNullOrEmpty(tmpTable)) {
             return new HiveTablePersistentOutput(jobUUID, tmpTable);
         } else {
-            return new S3CsvPersistentOutput(jobUUID, s3Client, corsAllowedHosts, s3Bucket);
+            return new CSVPersistentOutput(null, "csv", null);
         }
     }
 
@@ -40,7 +40,7 @@ public class PersistentJobOutputFactory
         if (location == null) {
             return null;
         } else if (location.isAbsolute()) {
-            return new S3CsvPersistentOutput(location, type, description);
+            return new CSVPersistentOutput(location, type, description);
         } else {
             return new HiveTablePersistentOutput(location, type, description);
         }
