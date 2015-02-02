@@ -13,6 +13,7 @@ public class CSVPersistorFactory
 
     public Persistor getPersistor(Job job, PersistentJobOutput jobOutput)
     {
+        // TODO: Support variable CSV persistor.
         if (useS3Persistor) {
             return new S3FilePersistor(null, null, 0L);
         } else {

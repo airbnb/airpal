@@ -1,38 +1,29 @@
 package com.airbnb.airpal.core.store.files;
 
-import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 import com.google.common.cache.Weigher;
-import com.google.common.collect.ImmutableMap;
 import io.airlift.units.DataSize;
-import io.dropwizard.lifecycle.Managed;
 import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
-import org.joda.time.Duration;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ExecutionException;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-public class ExpiringFileStore implements Managed, Runnable
+@Slf4j
+public class ExpiringFileStore
 {
-    private Duration cleanupDelay = new Duration(1_000 * 60);
-    private ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-    private Cache<String, FileWithMetadata> fileWithMetadataCache;
+    private LoadingCache<String, FileWithMetadata> fileWithMetadataCache;
+    private File basePath = new File(System.getProperty("java.io.tmpdir"));
 
-    public ExpiringFileStore(DataSize maxStorageSize, Duration maxStorageTime, Duration cleanupDelay)
+    public ExpiringFileStore(DataSize maxStorageSize)
     {
-        this.cleanupDelay = checkNotNull(cleanupDelay, "cleanupDelay was null");
-
         long maxWeightInBytes = Math.round(Math.floor(maxStorageSize.getValue(DataSize.Unit.BYTE)));
         this.fileWithMetadataCache = CacheBuilder.newBuilder().maximumWeight(maxWeightInBytes).weigher(new Weigher<String, FileWithMetadata>() {
             @Override
@@ -49,37 +40,19 @@ public class ExpiringFileStore implements Managed, Runnable
                     f.delete();
                 }
             }
-        }).build();
-    }
+        }).build(new CacheLoader<String, FileWithMetadata>() {
+            @Override
+            public FileWithMetadata load(String key)
+                    throws Exception
+            {
+                File file = new File(basePath, key);
+                if (file.exists()) {
+                    return new FileWithMetadata(file, new DataSize(file.length(), DataSize.Unit.BYTE), DateTime.now());
+                }
 
-    @Override
-    public void start()
-            throws Exception
-    {
-        executorService.scheduleWithFixedDelay(this, 0, cleanupDelay.getStandardSeconds(), TimeUnit.SECONDS);
-    }
-
-    @Override
-    public void stop()
-            throws Exception
-    {
-        executorService.shutdown();
-    }
-
-    @Override
-    public void run()
-    {
-        // Do cleanup
-        Set<String> keysToRemove = new HashSet<>();
-        Map<String, FileWithMetadata> fileMap = ImmutableMap.copyOf(fileWithMetadataCache.asMap());
-        for (Map.Entry<String, FileWithMetadata> entry : fileMap.entrySet()) {
-            FileWithMetadata fileWithMetadata = entry.getValue();
-            String key = entry.getKey();
-
-//            if (fileWithMetadata.getSize().compareTo(maxStorageSize) > 0) {
-//                fileWithMetadataCache.invalidate(key);
-//            }
-        }
+                throw new FileNotFoundException();
+            }
+        });
     }
 
     public void addFile(String key, File file)
@@ -91,11 +64,10 @@ public class ExpiringFileStore implements Managed, Runnable
 
     public File get(String key)
     {
-        FileWithMetadata fileWithMetadata = fileWithMetadataCache.getIfPresent(key);
-
-        if (fileWithMetadata != null) {
-            return fileWithMetadata.getFile();
-        } else {
+        try {
+            return fileWithMetadataCache.get(key).getFile();
+        }
+        catch (ExecutionException e) {
             return null;
         }
     }

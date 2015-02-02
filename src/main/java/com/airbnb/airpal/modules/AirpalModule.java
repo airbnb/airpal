@@ -318,7 +318,7 @@ public class AirpalModule extends AbstractModule
     @Singleton
     public ExpiringFileStore provideExpiringFileStore()
     {
-        return new ExpiringFileStore(new DataSize(100, DataSize.Unit.MEGABYTE), new org.joda.time.Duration(1000 * 60 * 60), new org.joda.time.Duration(1000 * 60 * 60));
+        return new ExpiringFileStore(new DataSize(100, DataSize.Unit.MEGABYTE));
     }
 
     @Provides
