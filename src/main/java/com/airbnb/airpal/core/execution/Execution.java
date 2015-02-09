@@ -178,13 +178,6 @@ public class Execution implements Callable<Job>
                         if (results.getData() != null) {
                             List<List<Object>> resultsData = ImmutableList.copyOf(results.getData());
                             persistor.onData(resultsData);
-
-                            /*
-                            int remainingCapacity = maxRowsPreviewOutput - outputPreview.size();
-                            if (remainingCapacity > 0) {
-                                outputPreview.addAll(resultsData.subList(0, Math.min(remainingCapacity, resultsData.size()) - 1));
-                            }
-                            */
                         }
                     } catch (FileTooLargeException e) {
                         throw new ExecutionFailureException(job,
