@@ -96,6 +96,12 @@ public class AirpalConfiguration extends Configuration
 
     @Getter
     @Setter
+    @JsonProperty
+    @NotNull
+    private DataSize maxOutputSize = DataSize.valueOf("1GB");
+
+    @Getter
+    @Setter
     @Valid
     @JsonProperty
     @NotNull

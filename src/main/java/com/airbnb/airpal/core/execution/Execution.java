@@ -4,7 +4,8 @@ import com.airbnb.airpal.api.Job;
 import com.airbnb.airpal.api.JobState;
 import com.airbnb.airpal.api.event.JobUpdateEvent;
 import com.airbnb.airpal.api.output.PersistentJobOutput;
-import com.airbnb.airpal.core.Persistor;
+import com.airbnb.airpal.api.output.Persistor;
+import com.airbnb.airpal.api.output.builders.FileTooLargeException;
 import com.airbnb.airpal.core.execution.QueryClient.QueryTimeOutException;
 import com.airbnb.airpal.presto.QueryInfoClient;
 import com.airbnb.airpal.presto.QueryRunner;
@@ -24,7 +25,6 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.eventbus.EventBus;
 import com.google.common.util.concurrent.RateLimiter;
 import io.airlift.units.DataSize;
@@ -66,6 +66,7 @@ public class Execution implements Callable<Job>
     @Getter
     private final Duration timeout;
     private final ColumnCache columnCache;
+    private final long maxOutputSizeBytes;
     private final RateLimiter updateLimiter = RateLimiter.create(2.0);
     private final int maxRowsPreviewOutput = 1_000;
     private boolean isCancelled = false;
@@ -94,37 +95,7 @@ public class Execution implements Callable<Job>
     @Override
     public Job call() throws Exception
     {
-        int retries = 20;
-        int attempts = 0;
-        Set<String> retryableExceptions = ImmutableSet.of(RuntimeException.class.getName());
-        Set<String> retryableExceptionMessages = ImmutableSet.of(
-                "Expected response code",
-                "noMoreSplits"
-        );
-
-        while (!isCancelled) {
-            attempts++;
-            try {
-                return doExecute();
-            } catch (ExecutionFailureException e) {
-                QueryError error = e.getJob().getError();
-                FailureInfo failureInfo = (error == null) ? null : error.getFailureInfo();
-
-                if ((failureInfo == null) ||
-                        !retryableExceptions.contains(failureInfo.getType()) ||
-                        !Iterables.any(retryableExceptionMessages, new StringContainsSubstringPredicate(failureInfo.getMessage())) ||
-                        !(retries > attempts)) {
-                    throw e;
-                }
-
-                job.setError(null);
-                job.setState(JobState.QUEUED);
-                updateJobInfo(job.getTablesUsed(), job.getColumns(), job.getQueryStats(), null, null, Collections.<List<Object>>emptyList(), true);
-                log.info("Retrying request after error {}", error.toString());
-            }
-        }
-
-        return job;
+        return doExecute();
     }
 
     private Job doExecute()
@@ -133,7 +104,7 @@ public class Execution implements Callable<Job>
         final String userQuery = QUERY_SPLITTER.splitToList(getJob().getQuery()).get(0);
         final PersistentJobOutput output = job.getOutput();
         final String query = output.processQuery(userQuery);
-        final Persistor persistor = output.getPersistor(job);
+        final Persistor persistor = output.getPersistor(job, maxOutputSizeBytes);
         job.setQueryStats(createNoOpQueryStats());
 
         if (!persistor.canPersist(authorizer)) {
@@ -198,21 +169,20 @@ public class Execution implements Callable<Job>
                         jobState = JobState.fromStatementState(results.getStats().getState());
                     }
 
-                    if (results.getColumns() != null) {
-                        resultColumns = results.getColumns();
-                        persistor.onColumns(resultColumns);
-                    }
-
-                    if (results.getData() != null) {
-                        List<List<Object>> resultsData = ImmutableList.copyOf(results.getData());
-                        persistor.onData(resultsData);
-
-                        /*
-                        int remainingCapacity = maxRowsPreviewOutput - outputPreview.size();
-                        if (remainingCapacity > 0) {
-                            outputPreview.addAll(resultsData.subList(0, Math.min(remainingCapacity, resultsData.size()) - 1));
+                    try {
+                        if (results.getColumns() != null) {
+                            resultColumns = results.getColumns();
+                            persistor.onColumns(resultColumns);
                         }
-                        */
+
+                        if (results.getData() != null) {
+                            List<List<Object>> resultsData = ImmutableList.copyOf(results.getData());
+                            persistor.onData(resultsData);
+                        }
+                    } catch (FileTooLargeException e) {
+                        throw new ExecutionFailureException(job,
+                                "Output file exceeded maximum configured filesize",
+                                e);
                     }
 
                     rlUpdateJobInfo(tables, resultColumns, queryStats, jobState, queryError, outputPreview);
@@ -222,8 +192,8 @@ public class Execution implements Callable<Job>
             });
         } catch (QueryTimeOutException e) {
             throw new ExecutionFailureException(job,
-                            format("Query exceeded maximum execution time of %s minutes", Duration.millis(e.getElapsedMs()).getStandardMinutes()),
-                            null);
+                    format("Query exceeded maximum execution time of %s minutes", Duration.millis(e.getElapsedMs()).getStandardMinutes()),
+                    e);
         }
 
         QueryResults finalResults = queryClient.finalResults();

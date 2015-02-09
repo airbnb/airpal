@@ -1,4 +1,4 @@
-package com.airbnb.airpal.core.store;
+package com.airbnb.airpal.core.store.history;
 
 import com.airbnb.airpal.api.Job;
 import com.airbnb.airpal.presto.Table;

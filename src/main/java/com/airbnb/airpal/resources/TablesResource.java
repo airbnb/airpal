@@ -2,7 +2,7 @@ package com.airbnb.airpal.resources;
 
 import com.airbnb.airpal.core.AirpalUser;
 import com.airbnb.airpal.core.hive.HiveTableUpdatedCache;
-import com.airbnb.airpal.core.store.UsageStore;
+import com.airbnb.airpal.core.store.usage.UsageStore;
 import com.airbnb.airpal.presto.PartitionedTable;
 import com.airbnb.airpal.presto.Table;
 import com.airbnb.airpal.presto.hive.HivePartition;

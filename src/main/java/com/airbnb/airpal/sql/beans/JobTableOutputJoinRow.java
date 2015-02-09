@@ -3,7 +3,7 @@ package com.airbnb.airpal.sql.beans;
 import com.airbnb.airpal.api.Job;
 import com.airbnb.airpal.api.JobState;
 import com.airbnb.airpal.api.output.PersistentJobOutput;
-import com.airbnb.airpal.core.PersistentJobOutputFactory;
+import com.airbnb.airpal.api.output.PersistentJobOutputFactory;
 import com.airbnb.airpal.presto.Table;
 import com.facebook.presto.client.Column;
 import com.facebook.presto.client.QueryError;

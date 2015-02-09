@@ -1,4 +1,4 @@
-package com.airbnb.airpal.core.store;
+package com.airbnb.airpal.core.store.history;
 
 import com.airbnb.airpal.api.EvictingDeque;
 import com.airbnb.airpal.api.Job;

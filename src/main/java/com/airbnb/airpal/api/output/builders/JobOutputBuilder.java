@@ -7,9 +7,11 @@ import java.util.List;
 
 public interface JobOutputBuilder
 {
-    public void addRow(List<Object> row);
+    public void addRow(List<Object> row)
+            throws FileTooLargeException;
 
-    public void addColumns(List<Column> columns);
+    public void addColumns(List<Column> columns)
+            throws FileTooLargeException;
 
     public Iterable<File> build();
 

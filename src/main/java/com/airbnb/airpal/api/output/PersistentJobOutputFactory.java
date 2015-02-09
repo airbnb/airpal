@@ -1,8 +1,5 @@
-package com.airbnb.airpal.core;
+package com.airbnb.airpal.api.output;
 
-import com.airbnb.airpal.api.output.HiveTablePersistentOutput;
-import com.airbnb.airpal.api.output.PersistentJobOutput;
-import com.airbnb.airpal.api.output.S3CsvPersistentOutput;
 import com.amazonaws.services.s3.AmazonS3;
 import com.google.common.base.Strings;
 import com.google.inject.Inject;
