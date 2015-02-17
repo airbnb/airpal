@@ -14,13 +14,15 @@ var bundleLogger = require('../util/bundleLogger');
 var gulp         = require('gulp');
 var handleErrors = require('../util/handleErrors');
 var source       = require('vinyl-source-stream');
-var config       = require('../config').browserify;
+var allConfig    = require('../config');
+var isDevelopment = allConfig.isDevelopment;
+var config       = allConfig.browserify;
 
 gulp.task('browserify', function(callback) {
 
   var bundleQueue = config.bundleConfigs.length;
 
-  var browserifyThis = function(bundleConfig) {
+  function browserifyThis(bundleConfig) {
 
     var bundler = browserify({
 
@@ -37,19 +39,19 @@ gulp.task('browserify', function(callback) {
       debug: config.debug
     });
 
-    var bundle = function() {
+    function bundle() {
       // Log when bundling starts
       bundleLogger.start(bundleConfig.outputName);
 
-      return bundler
-
+      if (!isDevelopment) {
         // Make sure to minify before bundling
-        .plugin('minifyify', {
+        bundler.plugin('minifyify', {
           map: 'app.min.map',
           output: bundleConfig.dest + '/app.min.map'
         })
+      }
 
-        .bundle()
+      return bundler.bundle()
 
         // Report compile errors
         .on('error', handleErrors)
@@ -62,9 +64,9 @@ gulp.task('browserify', function(callback) {
         // Specify the output destination
         .pipe(gulp.dest(bundleConfig.dest))
         .on('end', reportFinished);
-    };
+    }
 
-    if(global.isWatching) {
+    if (global.isWatching) {
 
       // Wrap with watchify and rebundle on changes
       bundler = watchify(bundler);
@@ -73,24 +75,24 @@ gulp.task('browserify', function(callback) {
       bundler.on('update', bundle);
     }
 
-    var reportFinished = function() {
+    function reportFinished() {
 
       // Log when bundling completes
       bundleLogger.end(bundleConfig.outputName)
 
-      if(bundleQueue) {
+      if (bundleQueue) {
         bundleQueue--;
-        if(bundleQueue === 0) {
+        if (bundleQueue === 0) {
 
           // If queue is empty, tell gulp the task is complete.
           // https://github.com/gulpjs/gulp/blob/master/docs/API.md#accept-a-callback
           callback();
         }
       }
-    };
+    }
 
     return bundle();
-  };
+  }
 
   // Start bundling with Browserify for each bundleConfig specified
   config.bundleConfigs.forEach(browserifyThis);
