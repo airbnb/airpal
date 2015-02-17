@@ -79,14 +79,14 @@ java -Ddw.prestoCoordinator=http://presto-coordinator-url.com \
 
 2. Create a MySQL database for Airpal. We recommend you call it `airpal` and will assume that for future steps.
 
-3. Migrate your database
+3. Migrate your database.
 
     ```
     java -Duser.timezone=UTC \
          -cp build/libs/airpal-*-all.jar db migrate reference.yml
     ```
 
-4. Run Airpal
+4. Run Airpal.
 
     ```
     java -server \
@@ -94,7 +94,7 @@ java -Ddw.prestoCoordinator=http://presto-coordinator-url.com \
          -cp build/libs/airpal-*-all.jar server reference.yml
     ```
 
-5. Visit Airpal
+5. Visit Airpal.
     Assuming you used the default settings in `reference.yml` you can
     now open http://localhost:8081 to use Airpal. Note that you might
     have to change the host, depending on where you deployed it.
