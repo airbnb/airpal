@@ -1,33 +1,37 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html class="no-js" lang="">
   <head>
     <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Airpal</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="app/stylesheets/vendor/normalize.css">
+    <link rel="stylesheet" href="app/stylesheets/bootstrap.min.css">
+    <link rel="stylesheet" href="app/stylesheets/plugins/selectize.min.css">
+    <link rel="stylesheet" href="app/stylesheets/themes/airbnb.css">
+    <link rel="stylesheet" href="app/stylesheets/themes/default.css">
+
     <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.2/html5shiv.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/es5-shim/2.1.0/es5-shim.min.js"></script>
+      <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.2/html5shiv.js"></script>
+      <script src="//cdnjs.cloudflare.com/ajax/libs/es5-shim/2.1.0/es5-shim.min.js"></script>
     <![endif]-->
-    <link rel="stylesheet" href="/app/css/o2.css">
-    <link rel="stylesheet" href="/app/css/o2-fonts.css">
-    <link rel="stylesheet" href="/app/css/index.css">
-    <link rel="stylesheet" href="/app/css/selectize.default.css">
-    <link rel="stylesheet" href="/app/css/hover.css">
-    <link rel="stylesheet" href="/app/css/highlight-themes/default.css">
-    <link rel="stylesheet" href="/app/css/highlight.monokai_sublime.css">
-    <link rel="stylesheet" href="/app/css/joyride-2.1.css">
-    <link rel="stylesheet" href="/app/css/slick.grid.css">
-    <link rel="stylesheet" href="/app/css/slick-default-theme.css">
-    <link rel="stylesheet" href="/app/css/slick-default-theme.css">
-    <link rel="stylesheet" href="/app/css/app.css">
+
+    <script src="app/javascripts/vendor/modernizr-2.8.3.min.js"></script>
   </head>
   <body>
-    <div class="page-container">
-      <div id="react-container">
-      </div>
-    </div>
 
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <script src="/app/js/lib/jquery.joyride-2.1.js"></script>
-    <script src="/app/build/javascripts/main.js"></script>
+    <!--[if lt IE 8]>
+        <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+    <div class="container js-react-app"></div><!-- .container -->
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="app/javascripts/vendor/jquery-1.9.0.min.js"><\/script>')</script>
+    <script src="app/build/plugin.js"></script>
+    <script src="app/build/app.js"></script>
+
   </body>
 </html>

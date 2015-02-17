@@ -1,33 +1,17 @@
-var gulp        = require('gulp');
-var gutil       = require('gulp-util');
-var source      = require('vinyl-source-stream');
-var buffer      = require('vinyl-buffer');
-var browserify  = require('browserify');
-var reactify    = require('reactify');
-var uglify      = require('gulp-uglify');
+/*
+  gulpfile.js
+  ===========
+  Rather than manage one giant configuration file responsible
+  for creating multiple tasks, each task has been broken out into
+  its own file in gulp/tasks. Any files in that directory get
+  automatically required below.
 
-// Keep track of all paths
-var paths = {
-  scripts: ['./js/**/*.js'],
-};
+  To add a new task, simply add a new task file that directory.
+  gulp/tasks/default.js specifies the default set of tasks to run
+  when you run `gulp`.
+*/
 
-// Create a "browserify" task
-gulp.task('browserify', function() {
-  browserify('./js/app.js', {
-    transform: [reactify],
-    cache: {},
-    packageCache: {},
-    fullPaths: false
-  })
-    .bundle()
-    .on('error', gutil.log.bind(gutil, 'Browserify Error'))
-    .pipe(source('main.js'))
-    .pipe(buffer())
-    .pipe(uglify())
-    .pipe(gulp.dest('./build/javascripts'));
-});
+var requireDir = require('require-dir');
 
-// Create a "watch" task
-gulp.task('watch', function() {
-  gulp.watch(paths.scripts, ['browserify']);
-});
+// Require all tasks in gulp/tasks, including subfolders
+requireDir('./gulp/tasks', { recurse: true });
