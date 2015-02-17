@@ -63,19 +63,16 @@ public class AirpalConfiguration extends Configuration
     @Getter
     @Setter
     @JsonProperty
-    @NotNull
     private String s3SecretKey;
 
     @Getter
     @Setter
     @JsonProperty
-    @NotNull
     private String s3AccessKey;
 
     @Getter
     @Setter
     @JsonProperty
-    @NotNull
     private String s3Bucket;
 
     @Getter
@@ -113,6 +110,13 @@ public class AirpalConfiguration extends Configuration
     @JsonProperty
     @NotNull
     private ShiroConfiguration shiro;
+
+    @Getter
+    @Setter
+    @Valid
+    @JsonProperty
+    @NotNull
+    private boolean useS3 = false;
 
     @AllArgsConstructor
     @NoArgsConstructor

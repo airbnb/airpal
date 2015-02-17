@@ -1,6 +1,5 @@
 package com.airbnb.airpal.api.output;
 
-import com.airbnb.airpal.api.Job;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.net.URI;
@@ -13,8 +12,7 @@ public interface PersistentJobOutput
     public String getDescription();
 
     public URI getLocation();
+    public void setLocation(URI location);
 
     public String processQuery(String query);
-
-    public Persistor getPersistor(Job job, long maxOutputSizeBytes);
 }

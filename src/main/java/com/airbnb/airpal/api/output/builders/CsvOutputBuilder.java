@@ -3,7 +3,6 @@ package com.airbnb.airpal.api.output.builders;
 import au.com.bytecode.opencsv.CSVWriter;
 import com.facebook.presto.client.Column;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.io.CountingOutputStream;
 import lombok.extern.slf4j.Slf4j;
@@ -68,6 +67,12 @@ public class CsvOutputBuilder implements JobOutputBuilder
         }
     }
 
+    @Override
+    public String processQuery(String query)
+    {
+        return query;
+    }
+
     private void writeCsvRow(String[] cols)
             throws FileTooLargeException
     {
@@ -87,7 +92,7 @@ public class CsvOutputBuilder implements JobOutputBuilder
     }
 
     @Override
-    public Iterable<File> build()
+    public File build()
     {
         try {
             csvWriter.close();
@@ -95,11 +100,7 @@ public class CsvOutputBuilder implements JobOutputBuilder
             e.printStackTrace();
         }
 
-        if (outputFile != null) {
-            return ImmutableList.of(outputFile);
-        } else {
-            return null;
-        }
+        return outputFile;
     }
 
     @Override

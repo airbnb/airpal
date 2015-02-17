@@ -6,6 +6,8 @@ import com.airbnb.airpal.api.JobState;
 import com.airbnb.airpal.api.event.JobFinishedEvent;
 import com.airbnb.airpal.api.output.HiveTablePersistentOutput;
 import com.airbnb.airpal.api.output.PersistentJobOutputFactory;
+import com.airbnb.airpal.api.output.builders.OutputBuilderFactory;
+import com.airbnb.airpal.api.output.persistors.PersistorFactory;
 import com.airbnb.airpal.core.AirpalUser;
 import com.airbnb.airpal.core.store.history.JobHistoryStore;
 import com.airbnb.airpal.core.store.jobs.ActiveJobsStore;
@@ -29,7 +31,6 @@ import org.joda.time.DateTime;
 import org.joda.time.Duration;
 
 import javax.annotation.Nullable;
-import javax.inject.Named;
 
 import java.util.Collections;
 import java.util.List;
@@ -58,7 +59,8 @@ public class ExecutionClient
     private final QueryInfoClient queryInfoClient;
     private final QueryRunnerFactory queryRunnerFactory;
     private final ActiveJobsStore activeJobsStore;
-    private final long maxOutputSizeBytes;
+    private final OutputBuilderFactory outputBuilderFactory;
+    private final PersistorFactory persistorFactory;
     private final Map<UUID, Execution> executionMap = new ConcurrentHashMap<>();
 
     @Inject
@@ -71,7 +73,8 @@ public class ExecutionClient
             ColumnCache columnCache,
             QueryInfoClient queryInfoClient,
             ActiveJobsStore activeJobsStore,
-            @Named("max-output-bytes") long maxOutputSizeBytes)
+            OutputBuilderFactory outputBuilderFactory,
+            PersistorFactory persistorFactory)
     {
         this.queryRunnerFactory = queryRunnerFactory;
         this.eventBus = eventBus;
@@ -82,7 +85,8 @@ public class ExecutionClient
         this.columnCache = columnCache;
         this.queryInfoClient = queryInfoClient;
         this.activeJobsStore = activeJobsStore;
-        this.maxOutputSizeBytes = maxOutputSizeBytes;
+        this.outputBuilderFactory = outputBuilderFactory;
+        this.persistorFactory = persistorFactory;
     }
 
     public UUID runQuery(final ExecutionRequest request,
@@ -118,7 +122,8 @@ public class ExecutionClient
                 new QueryExecutionAuthorizer(user, "hive", user.getDefaultSchema()),
                 timeout,
                 columnCache,
-                maxOutputSizeBytes);
+                outputBuilderFactory,
+                persistorFactory);
 
         executionMap.put(uuid, execution);
         activeJobsStore.jobStarted(job);

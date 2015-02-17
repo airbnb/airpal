@@ -3,14 +3,15 @@ package com.airbnb.airpal.core.execution;
 import com.airbnb.airpal.api.Job;
 import com.airbnb.airpal.api.JobState;
 import com.airbnb.airpal.api.event.JobUpdateEvent;
-import com.airbnb.airpal.api.output.PersistentJobOutput;
-import com.airbnb.airpal.api.output.Persistor;
 import com.airbnb.airpal.api.output.builders.FileTooLargeException;
+import com.airbnb.airpal.api.output.builders.JobOutputBuilder;
+import com.airbnb.airpal.api.output.builders.OutputBuilderFactory;
+import com.airbnb.airpal.api.output.persistors.Persistor;
+import com.airbnb.airpal.api.output.persistors.PersistorFactory;
 import com.airbnb.airpal.core.execution.QueryClient.QueryTimeOutException;
 import com.airbnb.airpal.presto.QueryInfoClient;
 import com.airbnb.airpal.presto.QueryRunner;
 import com.airbnb.airpal.presto.Table;
-import com.airbnb.airpal.presto.hive.HiveColumn;
 import com.airbnb.airpal.presto.metadata.ColumnCache;
 import com.facebook.presto.client.Column;
 import com.facebook.presto.client.ErrorLocation;
@@ -21,10 +22,8 @@ import com.facebook.presto.client.StatementClient;
 import com.facebook.presto.execution.QueryStats;
 import com.facebook.presto.sql.parser.ParsingException;
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.eventbus.EventBus;
 import com.google.common.util.concurrent.RateLimiter;
 import io.airlift.units.DataSize;
@@ -36,13 +35,14 @@ import org.joda.time.Duration;
 
 import javax.annotation.Nullable;
 
+import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import static com.airbnb.airpal.core.execution.ExecutionClient.ExecutionFailureException;
@@ -66,7 +66,8 @@ public class Execution implements Callable<Job>
     @Getter
     private final Duration timeout;
     private final ColumnCache columnCache;
-    private final long maxOutputSizeBytes;
+    private final OutputBuilderFactory outputBuilderFactory;
+    private final PersistorFactory persistorFactory;
     private final RateLimiter updateLimiter = RateLimiter.create(2.0);
     private final int maxRowsPreviewOutput = 1_000;
     private boolean isCancelled = false;
@@ -74,22 +75,6 @@ public class Execution implements Callable<Job>
     public void cancel()
     {
         isCancelled = true;
-    }
-
-    @RequiredArgsConstructor
-    private static class StringContainsSubstringPredicate implements Predicate<String>
-    {
-        private final String referenceString;
-
-        @Override
-        public boolean apply(@Nullable String input)
-        {
-            if ((input == null) || (referenceString == null)) {
-                return false;
-            }
-
-            return referenceString.contains(input);
-        }
     }
 
     @Override
@@ -102,9 +87,17 @@ public class Execution implements Callable<Job>
             throws ExecutionFailureException
     {
         final String userQuery = QUERY_SPLITTER.splitToList(getJob().getQuery()).get(0);
-        final PersistentJobOutput output = job.getOutput();
-        final String query = output.processQuery(userQuery);
-        final Persistor persistor = output.getPersistor(job, maxOutputSizeBytes);
+        final JobOutputBuilder outputBuilder;
+        try {
+            outputBuilder = outputBuilderFactory.forJob(job);
+        }
+        catch (IOException e) {
+            throw new ExecutionFailureException(job, "Could not create output builder for job", e);
+        }
+
+        final Persistor persistor = persistorFactory.getPersistor(job, job.getOutput());
+        final String query = job.getOutput().processQuery(userQuery);
+
         job.setQueryStats(createNoOpQueryStats());
 
         if (!persistor.canPersist(authorizer)) {
@@ -172,12 +165,15 @@ public class Execution implements Callable<Job>
                     try {
                         if (results.getColumns() != null) {
                             resultColumns = results.getColumns();
-                            persistor.onColumns(resultColumns);
+                            outputBuilder.addColumns(resultColumns);
                         }
 
                         if (results.getData() != null) {
                             List<List<Object>> resultsData = ImmutableList.copyOf(results.getData());
-                            persistor.onData(resultsData);
+
+                            for (List<Object> row : resultsData) {
+                                outputBuilder.addRow(row);
+                            }
                         }
                     } catch (FileTooLargeException e) {
                         throw new ExecutionFailureException(job,
@@ -213,16 +209,18 @@ public class Execution implements Callable<Job>
         }
 
         if (job.getState() != JobState.FAILED) {
-            persistor.persist();
+            URI location = persistor.persist(outputBuilder, job);
+            if (location != null) {
+                job.getOutput().setLocation(location);
+            }
         } else {
             throw new ExecutionFailureException(job, null, null);
         }
 
-        System.out.println("Posting update event because finished");
-
         return getJob();
     }
 
+    /*
     private Set<Table> getTablesWithoutPartitions(Set<Table> tables)
     {
         ImmutableSet.Builder<Table> tablesWithoutPartitions = ImmutableSet.builder();
@@ -247,6 +245,7 @@ public class Execution implements Callable<Job>
 
         return tablesWithoutPartitions.build();
     }
+    */
 
     private static final Splitter QUERY_SPLITTER = Splitter.on(";").omitEmptyStrings().trimResults();
 

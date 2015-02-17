@@ -13,7 +13,9 @@ public interface JobOutputBuilder
     public void addColumns(List<Column> columns)
             throws FileTooLargeException;
 
-    public Iterable<File> build();
+    public String processQuery(String query);
+
+    public File build();
 
     public void delete();
 }
