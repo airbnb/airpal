@@ -43,6 +43,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
 import com.google.inject.AbstractModule;
@@ -100,7 +101,7 @@ public class AirpalModule extends AbstractModule
 
         bind(EnvironmentLoaderListener.class).in(Scopes.SINGLETON);
         bind(new TypeLiteral<List<URI>>(){}).annotatedWith(Names.named("corsAllowedHosts")).toInstance(config.getAirpalHosts());
-        bind(String.class).annotatedWith(Names.named("s3Bucket")).toInstance(config.getS3Bucket());
+        bind(String.class).annotatedWith(Names.named("s3Bucket")).toInstance(Strings.nullToEmpty(config.getS3Bucket()));
 
         bind(PrestoHealthCheck.class).in(Scopes.SINGLETON);
         bind(ExecutionClient.class).in(Scopes.SINGLETON);
