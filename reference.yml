@@ -29,3 +29,5 @@ airpalHosts:
 
 dataSourceFactory:
   driverClass: com.mysql.jdbc.Driver
+  user: MYSQL_USER
+  url: jdbc:mysql://127.0.0.1:3306/MYSQL_DB_NAME
