@@ -3,6 +3,7 @@ var React = require('react');
 
 /* Utilities */
 var moment = require('moment');
+var path = require('path');
 
 var MyOwnRunsRow = React.createClass({
   displayName: 'MyOwnQueriesRow',
@@ -20,12 +21,13 @@ var MyOwnRunsRow = React.createClass({
   },
 
   render: function () {
+    var model = this.state.model;
     return (
       <tr>
-        <td>{this.state.model.query}</td>
+        <td>{model.query}</td>
         <td>{this.queryState()}</td>
-        <td>{this.queryStartTime()}</td>
-        <td>{this.queryEndTime()}</td>
+        <td title={this.queryStartTimeFull()}>{this.queryStartTime()}</td>
+        <td>{model.queryStats.elapsedTime}</td>
         <td>{this.queryDownloadLink()}</td>
       </tr>
     );
@@ -49,22 +51,23 @@ var MyOwnRunsRow = React.createClass({
   },
 
   queryStartTime: function () {
-    if ( !!this.state.model.queryStarted ) {
-      return moment.utc(this.state.model.queryStarted, 'x').format('MM-DD-YYYY');
+    if (!!this.state.model.queryStarted) {
+      return moment.utc(this.state.model.queryStarted, 'x').format('lll');
     }
   },
 
-  queryEndTime: function() {
-    if ( !!this.state.model.queryFinished ) {
-      return moment.utc(this.state.model.queryFinished, 'x').calendar();
+  queryStartTimeFull: function () {
+    if (!!this.state.model.queryStarted) {
+      return moment.utc(this.state.model.queryStarted, 'x').format();
     }
   },
 
   queryDownloadLink: function() {
-    if ( !!this.state.model.output && !!this.state.model.output.location ) {
+    var output = this.state.model.output;
+    if (output && output.location) {
       return (
-        <a href={this.state.model.output.location} title="Grab the file">
-          Download
+        <a href={output.location} title="Download a CSV">
+          {path.basename(output.location)}
         </a>
       );
     }
