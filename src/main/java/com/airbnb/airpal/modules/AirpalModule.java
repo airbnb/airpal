@@ -249,14 +249,22 @@ public class AirpalModule extends AbstractModule
     @Provides
     public AWSCredentials provideAWSCredentials()
     {
-        return new BasicAWSCredentials(config.getS3AccessKey(),
-                                       config.getS3SecretKey());
+        if ((config.getS3AccessKey() == null) || (config.getS3SecretKey() == null)) {
+            return null;
+        } else {
+            return new BasicAWSCredentials(config.getS3AccessKey(),
+                    config.getS3SecretKey());
+        }
     }
 
     @Singleton
     @Provides
     public AmazonS3 provideAmazonS3Client(AWSCredentials awsCredentials)
     {
+        if (awsCredentials == null) {
+            return new AmazonS3Client();
+        }
+
         return new AmazonS3Client(awsCredentials);
     }
 
