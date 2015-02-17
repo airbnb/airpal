@@ -63,13 +63,6 @@ module.exports = {
       type: QueryConstants.RECEIVED_DESTROYED_QUERY,
       id: id
     });
-  },
-
-  fetchUserQueries: function(name) {
-    AppDispatcher.handleServerAction({
-      type: QueryConstants.FETCH_USER_QUERIES,
-      name: name
-    });
   }
 
 };

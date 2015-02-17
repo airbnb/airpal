@@ -32,6 +32,21 @@ module.exports = {
     });
   },
 
+  fetchUserQueries: function(user) {
+    $.ajax({
+      type: 'GET',
+      url: './api/users/' + user.name + '/queries',
+      contentType: 'application/json',
+
+      success: function(results, status, xhr) {
+        if ( _.isEmpty(results) ) return;
+
+        // Add each query to the collection
+        QueryActions.receivedQueries(results);
+      }
+    });
+  },
+
   createQuery: function(data) {
     $.ajax({
       type: 'POST',
