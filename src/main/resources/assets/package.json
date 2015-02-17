@@ -64,6 +64,7 @@
     "griddle-react": "^0.2.0",
     "jquery": "~1.9.0",
     "keymirror": "^0.1.0",
+    "moment": "^2.9.0",
     "object-assign": "^2.0.0",
     "react": "~0.12",
     "react-tools": "~0.12"
