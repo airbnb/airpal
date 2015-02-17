@@ -60,8 +60,8 @@ java -Ddw.prestoCoordinator=http://presto-coordinator-url.com \
 1. Build Airpal
 
     We'll be using [Gradle](https://www.gradle.org/) to build the back-end Java code,
-    and [Browserify](http://browserify.org/) and [Gulp](http://gulpjs.com/),
-    [Node.js](http://nodejs.org/) tools, to build the front-end Javascript code.
+    and [Browserify](http://browserify.org/) and [Gulp](http://gulpjs.com/)&mdash;
+    [Node.js](http://nodejs.org/) tools&mdash;to build the front-end Javascript code.
 
     If you have `node` and `npm` installed locally, and wish to use
     them, simply run:
