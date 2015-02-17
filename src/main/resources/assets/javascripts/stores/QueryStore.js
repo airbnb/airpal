@@ -30,7 +30,7 @@ QueryStore.dispatchToken = AppDispatcher.register(function(payload) {
   switch(action.type) {
 
     case QueryConstants.CREATE_QUERY:
-      QueryApiUtils.add(action.data, { silent: true });
+      QueryApiUtils.createQuery(action.data, { silent: true });
       break;
 
     case QueryConstants.RECEIVED_SINGLE_QUERY:
