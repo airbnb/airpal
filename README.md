@@ -83,7 +83,7 @@ java -Ddw.prestoCoordinator=http://presto-coordinator-url.com \
 
     ```
     java -Duser.timezone=UTC \
-         -cp build/libs/airpal-*-all.jar db migrate reference.yml
+         -cp build/libs/airpal-*-all.jar com.airbnb.airpal.AirpalApplication db migrate reference.yml
     ```
 
 4. Run Airpal.
@@ -91,7 +91,7 @@ java -Ddw.prestoCoordinator=http://presto-coordinator-url.com \
     ```
     java -server \
          -Duser.timezone=UTC \
-         -cp build/libs/airpal-*-all.jar server reference.yml
+         -cp build/libs/airpal-*-all.jar com.airbnb.airpal.AirpalApplication server reference.yml
     ```
 
 5. Visit Airpal.
