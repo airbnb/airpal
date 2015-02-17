@@ -61,7 +61,7 @@ queries run within the tool.
 1. Create a `reference.yml` file to store your configuration options.
 
     Start by copying over the example configuration, `reference.example.yml`.
-    
+
     ```
     cp reference.example.yml reference.yml
     ```
@@ -89,11 +89,10 @@ queries run within the tool.
     now open http://localhost:8081 to use Airpal. Note that you might
     have to change the host, depending on where you deployed it.
 
-*Note* that below, we'll be using a less verbose syntax to execute Airpal. This assumes
-that all of the configuration settings are specified in your `.yml` configuration file,
-and that it's called `reference.yml`.
-If modifying `reference.yml` is undesirable, or you want to override certain settings on the command line,
-you can easily specify them in [the traditional Dropwizard fashion](https://dropwizard.github.io/dropwizard/manual/core.html#configuration) like so:
+*Note:* To override the configuration specified in `reference.yml`, you may
+specify certain settings on the command line in [the traditional Dropwizard
+fashion](https://dropwizard.github.io/dropwizard/manual/core.html#configuration),
+like so:
 
 ```
 java -Ddw.prestoCoordinator=http://presto-coordinator-url.com \
