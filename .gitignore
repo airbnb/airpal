@@ -12,6 +12,8 @@ gradle/
 # IntelliJ files
 *.iml
 .idea/
+*.ipr
+*.iws
 
 # Maven artifacts
 target/
