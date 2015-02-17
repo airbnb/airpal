@@ -1,7 +1,10 @@
-var dest = "./build";
+var isDevelopment = process.env.NODE_ENV === 'development';
+var dest = isDevelopment ? "../../../../build/classes/main/assets/build" : "./build";
 var src = './javascripts';
 
 module.exports = {
+  isDevelopment: isDevelopment,
+
   browserSync: {
     proxy: "localhost:8081",
     files: [
