@@ -18,18 +18,11 @@ target/
 dependency-reduced-pom.xml
 
 # Node.js artifacts
-node_modules/
-bower_components/
-src/main/resources/npm-debug.log
-
-# Ignore Node files
 node_modules
 npm-debug.log
 
-# Personal files
-start.java
-
 # JavaScript Build Artifacts
-src/main/resources/assets/build/plugin.js
-src/main/resources/assets/build/app.js
-src/main/resources/assets/build/app.min.map
+src/main/resources/assets/build/*
+
+# Airpal configuration
+reference.yml

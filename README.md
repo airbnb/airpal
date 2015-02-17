@@ -36,6 +36,59 @@ queries run within the tool.
 
 ## Steps to launch
 
+1. Build Airpal
+
+    We'll be using [Gradle](https://www.gradle.org/) to build the back-end Java code
+    and a [Node.js](http://nodejs.org/)-based build pipeline ([Browserify](http://browserify.org/)
+    and [Gulp](http://gulpjs.com/)) to build the front-end Javascript code.
+
+    If you have `node` and `npm` installed locally, and wish to use
+    them, simply run:
+
+    ```
+    ./gradlew clean shadowJar -Dairpal.useLocalNode
+    ```
+
+    Otherwise, `node` and `npm` will be automatically downloaded for you
+    by running:
+
+    ```
+    ./gradlew clean shadowJar
+    ```
+
+1. Create a MySQL database for Airpal. We recommend you call it `airpal` and will assume that for future steps.
+
+1. Create a `reference.yml` file to store your configuration options.
+
+    Start by copying over the example configuration, `reference.example.yml`.
+    
+    ```
+    cp reference.example.yml reference.yml
+    ```
+    Then edit it to specify your MySQL credentials, and your S3 credentials if
+    using S3 as a storage layer (Airpal defaults to local file storage, for
+    demonstration purposes).
+
+1. Migrate your database.
+
+    ```
+    java -Duser.timezone=UTC \
+         -cp build/libs/airpal-*-all.jar com.airbnb.airpal.AirpalApplication db migrate reference.yml
+    ```
+
+1. Run Airpal.
+
+    ```
+    java -server \
+         -Duser.timezone=UTC \
+         -cp build/libs/airpal-*-all.jar com.airbnb.airpal.AirpalApplication server reference.yml
+    ```
+
+1. Visit Airpal.
+    Assuming you used the default settings in `reference.yml` you can
+    now open http://localhost:8081 to use Airpal. Note that you might
+    have to change the host, depending on where you deployed it.
+
 *Note* that below, we'll be using a less verbose syntax to execute Airpal. This assumes
 that all of the configuration settings are specified in your `.yml` configuration file,
 and that it's called `reference.yml`.
@@ -57,47 +110,6 @@ java -Ddw.prestoCoordinator=http://presto-coordinator-url.com \
      -cp build/libs/airpal-*-all.jar db migrate reference.yml
 ```
 
-1. Build Airpal
-
-    We'll be using [Gradle](https://www.gradle.org/) to build the back-end Java code,
-    and [Browserify](http://browserify.org/) and [Gulp](http://gulpjs.com/)&mdash;[Node.js](http://nodejs.org/)
-    tools&mdash;to build the front-end Javascript code.
-
-    If you have `node` and `npm` installed locally, and wish to use
-    them, simply run:
-
-    ```
-    ./gradlew clean shadowJar -Dairpal.useLocalNode
-    ```
-
-    Otherwise, `node` and `npm` will be automatically downloaded for you
-    by running:
-
-    ```
-    ./gradlew clean shadowJar
-    ```
-
-2. Create a MySQL database for Airpal. We recommend you call it `airpal` and will assume that for future steps.
-
-3. Migrate your database.
-
-    ```
-    java -Duser.timezone=UTC \
-         -cp build/libs/airpal-*-all.jar com.airbnb.airpal.AirpalApplication db migrate reference.yml
-    ```
-
-4. Run Airpal.
-
-    ```
-    java -server \
-         -Duser.timezone=UTC \
-         -cp build/libs/airpal-*-all.jar com.airbnb.airpal.AirpalApplication server reference.yml
-    ```
-
-5. Visit Airpal.
-    Assuming you used the default settings in `reference.yml` you can
-    now open http://localhost:8081 to use Airpal. Note that you might
-    have to change the host, depending on where you deployed it.
 
 ## Compatibility Chart
 
