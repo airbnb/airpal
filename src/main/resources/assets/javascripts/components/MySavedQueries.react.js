@@ -10,7 +10,7 @@ var UserStore   = require('../stores/UserStore'),
 
 function getStateFromStore() {
   return {
-    queries: QueryStore.all()
+    queries: QueryStore.where({ user: UserStore.getCurrentUser().name }, { sort: true })
   };
 }
 
@@ -23,7 +23,6 @@ var MySavedQueries = React.createClass({
 
   componentDidMount: function() {
     QueryStore.addStoreListener('change', this._onChange);
-    UserStore.addStoreListener('change', this._onChange);
 
     // Make an API call to fetch the previous runs
     UserStore.addStoreListener('change', function() {
@@ -37,7 +36,6 @@ var MySavedQueries = React.createClass({
   },
 
   render: function () {
-    console.log(this.state.queries);
     return (
       <table className="table table-condensed table-striped">
         <thead>

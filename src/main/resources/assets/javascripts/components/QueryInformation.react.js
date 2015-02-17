@@ -13,7 +13,7 @@ var QueryInformation = React.createClass({
     return (
       <div className="row spaced query-information-tables">
         <div className="col-sm-12">
-          <TabbedArea defaultActiveKey={2}>
+          <TabbedArea defaultActiveKey={1} animation={false}>
             <TabPane eventKey={1} tab="My runs">
               <MyOwnRuns />
             </TabPane>

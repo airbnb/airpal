@@ -2,8 +2,9 @@
 var React = require('react');
 
 /* Helpers */
-var FQN   = require('../utils/fqn');
-var _     = require('lodash');
+var _       = require('lodash')
+    FQN     = require('../utils/fqn'),
+    Griddle = require('griddle-react');
 
 /* Stores */
 var TableStore = require('../stores/TableStore');
@@ -52,38 +53,24 @@ var DataPreview = React.createClass({
   _renderColumns: function() {
     return (
       <div className="row" className="data-preview data-preview-wrapper">
-        <table className="table table-striped">
-          <thead>{this._renderHeaderRows()}</thead>
-          <tbody>{this._renderBodyRows()}</tbody>
-        </table>
+        <Griddle columns={this._enhancedColumns()} results={this._enhancedData()} />
       </div>
     );
   },
 
-  _renderHeaderRows: function() {
-    if( !this.state.table || !this.state.table.columns ) return;
-
-    var headRows = _.map(this.state.table.columns, function(column, idx) {
-      return (<th key={idx}>{column.name}</th>);
+  _enhancedColumns: function() {
+    return _.map(this.state.table.columns, function(column) {
+      return column.name;
     });
-
-    return ( <tr key="1">{headRows}</tr> );
   },
 
-  _renderBodyRows: function() {
-    if( !this.state.table || !this.state.table.data ) return;
-
-    return _.map(this.state.table.data, function(item, idx) {
-      var elements;
-
-      // Map all the data in the item
-      elements = _.map(item, function(value, key) {
-        return(<td key={key}>{value}</td>);
-      });
-
-      // Return all the elements
-      return ( <tr key={idx}>{elements}</tr> );
-    });
+  _enhancedData: function() {
+    return _.map(this.state.table.data, function(item) {
+      return _.transform(item, function(result, n, key) {
+        var text = _.isBoolean(n) ? n.toString() : n;
+        result[this.state.table.columns[key].name] = text;
+      }.bind(this));
+    }.bind(this));
   },
 
   /* Store events */
