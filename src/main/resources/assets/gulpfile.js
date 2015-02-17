@@ -1,18 +1,14 @@
-var gulp, gutil, source, watchify, browserify, bundler,
-    reactify, paths, uglify, buffer, livereload;
-
-// Require all file dependencies
-gulp        = require('gulp'),
-gutil       = require('gulp-util'),
-source      = require('vinyl-source-stream'),
-buffer      = require('vinyl-buffer'),
-browserify  = require('browserify'),
-reactify    = require('reactify'),
-uglify      = require('gulp-uglify');
+var gulp        = require('gulp');
+var gutil       = require('gulp-util');
+var source      = require('vinyl-source-stream');
+var buffer      = require('vinyl-buffer');
+var browserify  = require('browserify');
+var reactify    = require('reactify');
+var uglify      = require('gulp-uglify');
 
 // Keep track of all paths
-paths = {
-  scripts: ['./js/**/*.js']
+var paths = {
+  scripts: ['./js/**/*.js'],
 };
 
 // Create a "browserify" task
