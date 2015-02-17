@@ -6,8 +6,8 @@ Airpal provides the ability to find tables, see metadata, browse sample rows,
 write and edit queries, then submit queries all in a web interface. Once
 queries are running, users can track query progress and when finished,
 get the results back through the browser as a CSV (download it or share it
-with friends). The results of a query can be used to generate new Hive table
-for subsequent analysis and Airpal maintains a searchable history of all
+with friends). The results of a query can be used to generate a new Hive table
+for subsequent analysis, and Airpal maintains a searchable history of all
 queries run within the tool.
 
 * [Features](#features)
