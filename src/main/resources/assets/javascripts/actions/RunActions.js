@@ -26,6 +26,12 @@ module.exports = {
     });
   },
 
+  disconnect: function() {
+    AppDispatcher.handleViewAction({
+      type: RunConstants.DISCONNECT
+    });
+  },
+
   execute: function(obj) {
     AppDispatcher.handleViewAction({
       type: RunConstants.EXECUTE_RUN,
@@ -51,7 +57,21 @@ module.exports = {
   onMessage: function(data) {
     AppDispatcher.handleServerAction({
       type: RunConstants.ON_SSE_MESSAGE,
+      data: data.job
+    });
+  },
+
+  addRun: function(data) {
+    AppDispatcher.handleServerAction({
+      type: RunConstants.ADD_RUN,
       data: data
     });
-  }
+  },
+
+  addMultipleRuns: function(runs) {
+    AppDispatcher.handleServerAction({
+      type: RunConstants.ADD_MULTIPLE_RUNS,
+      data: runs
+    });
+  },
 };

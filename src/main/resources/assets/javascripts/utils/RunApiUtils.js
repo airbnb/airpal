@@ -20,15 +20,23 @@ module.exports = {
         tmpTable: tmpTable
       }),
 
-      success: function() {
-        console.log('success');
-        console.log(arguments);
-        // RunActions.receivedQuery(query);
-      },
+      success: function(runObject, status, xhr) {
+        RunActions.addRun(runObject);
+      }
+    });
+  },
 
-      error: function(xhr, status, error) {
-        console.log('error');
-        console.log(xhr, status, error);
+  fetch: function(user) {
+    $.ajax({
+      type: 'GET',
+      url: './api/users/' + user.name + '/active-queries',
+      contentType: 'application/json',
+
+      success: function(results, status, xhr) {
+        if ( _.isEmpty(results) ) return;
+
+        // Add each run to the collection
+        RunActions.addMultipleRuns(results);
       }
     });
   }

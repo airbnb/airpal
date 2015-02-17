@@ -15,8 +15,11 @@ var _             = require('lodash');
 
 var RunStore = assign({}, StoreDefaults, EventEmitter.prototype, {
 
-  createOrUpdate: function(data) {
-    console.log(data);
+  // A custom comparator to sort (inverse) on the queryStarted param
+  // @param obj {Object} the model
+  // @return {Integer} the sorted model
+  comparator: function(model) {
+    return -model.queryStarted;
   },
 
   // Creates an SSE connection to the backend to make a real time stream
@@ -73,17 +76,31 @@ RunStore.dispatchToken = AppDispatcher.register(function(payload) {
 
     case RunConstants.USER_WENT_OFFLINE:
       RunStore.close();
-      RunStore.emitChange('offline');
       break;
 
-    case RunConstants.ON_MESSAGE:
-      RunStore.createOrUpdate(action.data);
-      RunStore.emitChange('message');
+    case RunConstants.ADD_MULTIPLE_RUNS:
+      RunStore.add(action.data);
+      RunStore.emitChange('change');
+      break;
+
+    case RunConstants.ADD_RUN:
+      RunStore.add(action.data);
+      RunStore.emitChange('change');
+      break;
+
+    case RunConstants.ON_SSE_MESSAGE:
+      RunStore.update(action.data.uuid, action.data);
+      RunStore.emitChange('change');
       break;
 
     case RunConstants.CONNECT:
       RunStore.connect();
       RunStore.emitChange('connected');
+      break;
+
+    case RunConstants.DISCONNECT:
+      RunStore.close();
+      RunStore.emitChange('disconnected');
       break;
 
     case RunConstants.EXECUTE_RUN:
