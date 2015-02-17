@@ -43,6 +43,10 @@ var TableSearch = React.createClass({
       render: { option: this._renderTableOptions },
       valueField: 'fqn',
       labelField: 'fqn',
+      sortField: [{
+        field: 'usages',
+        direction: 'desc',
+      }],
       searchField: ['fqn', 'tableName', 'schema'],
       plugins: {
         'remove_button': {},
@@ -57,7 +61,9 @@ var TableSearch = React.createClass({
           type: 'GET',
 
           error: function() { callback(); },
-          success: function(res) { callback(res); }
+          success: function(res) {
+            callback(res);
+          }
         });
       },
 
