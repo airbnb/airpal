@@ -1,10 +1,14 @@
 {
   "name": "airpal",
   "version": "0.0.1",
-  "description": "",
+  "description": "Web UI for PrestoDB.",
   "main": "app.js",
   "scripts": {},
   "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/airbnb/airpal.git"
+  },
   "dependencies": {
     "numeral": "1.5.2",
     "lodash": "2.3.0",
@@ -25,5 +29,6 @@
     "reactify": "^0.14.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.0.0"
-  }
+  },
+  "private": true
 }
