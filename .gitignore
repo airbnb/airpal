@@ -28,3 +28,8 @@ npm-debug.log
 
 # Personal files
 start.java
+
+# JavaScript Build Artifacts
+src/main/resources/assets/build/plugin.js
+src/main/resources/assets/build/app.js
+src/main/resources/assets/build/app.min.map
