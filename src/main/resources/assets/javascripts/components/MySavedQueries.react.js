@@ -5,8 +5,8 @@ var React = require('react');
 var QueryApiUtils = require('../utils/QueryApiUtils');
 
 /* Stores */
-var UserStore   = require('../stores/UserStore'),
-    QueryStore  = require('../stores/QueryStore');
+var UserStore   = require('../stores/UserStore');
+var QueryStore  = require('../stores/QueryStore');
 
 function getStateFromStore() {
   return {

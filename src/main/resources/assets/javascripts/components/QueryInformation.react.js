@@ -2,14 +2,14 @@
 var React = require('react');
 
 /* Components */
-var TabbedArea      = require('react-bootstrap').TabbedArea,
-    TabPane         = require('react-bootstrap').TabPane,
-    MyOwnRuns       = require('./MyOwnRuns.react'),
-    MySavedQueries  = require('./MySavedQueries.react');
+var { TabbedArea, TabPane } = require('react-bootstrap');
+var MyOwnRuns          = require('./MyOwnRuns.react');
+var MySavedQueries     = require('./MySavedQueries.react');
+var AllRunningQueries  = require('./AllRunningQueries.react');
 
 var QueryInformation = React.createClass({
   displayName: 'QueryInformation',
-  render: function () {
+  render() {
     return (
       <div className="row spaced query-information-tables">
         <div className="col-sm-12">
@@ -21,7 +21,7 @@ var QueryInformation = React.createClass({
               <MySavedQueries />
             </TabPane>
             <TabPane eventKey={3} tab="All running queries">
-              {/* <AllRunningQueries /> */}
+              <AllRunningQueries />
             </TabPane>
           </TabbedArea>
         </div>
