@@ -2,14 +2,12 @@
  * TableStore
  */
 
-var StoreDefaults   = require('./StoreDefaults');
+var BaseStore   = require('./BaseStore');
 var AppDispatcher   = require('../dispatchers/AppDispatcher');
 var TableConstants  = require('../constants/TableConstants');
 var TableApiUtils   = require('../utils/TableApiUtils');
 
 /* Store helpers */
-var EventEmitter = require('events').EventEmitter;
-var assign = require('object-assign');
 var _ = require('lodash');
 var FQN = require('../utils/fqn');
 
@@ -83,37 +81,39 @@ function _markActive(name) {
   table.active = true;
 }
 
-var TableStore = assign({}, StoreDefaults, EventEmitter.prototype, {
+class TableStoreClass extends BaseStore {
 
   // Get the table by name
   // @param name {string} the table name
   // @return {object/undefined} the table object
-  getByName: function(name) {
-    if( _.isEmpty(_tables) ) return undefined;
+  getByName(name) {
+    if (_.isEmpty(_tables)) return undefined;
     return _.find(_tables, { name: name });
-  },
+  }
 
   // Alias for the getByName method
   // @param name {string} the table name
   // @return {object/undefined} the table object
-  get: function(name) {
-    if( _.isEmpty(_tables) ) return undefined;
+  get(name) {
+    if (_.isEmpty(_tables)) return undefined;
     return this.getByName(name);
-  },
+  }
 
   // Get the active table
   // @return {object/undefined} the active table
-  getActiveTable: function() {
-    if( _.isEmpty(_tables) ) return undefined;
+  getActiveTable() {
+    if (_.isEmpty(_tables)) return undefined;
     return _.find(_tables, { active: true });
-  },
+  }
 
   // Get all tables
   // @return {array} all the current tables
-  all: function() {
+  all() {
     return _tables;
   }
-});
+}
+
+var TableStore = new TableStoreClass();
 
 TableStore.dispatchToken = AppDispatcher.register(function(payload) {
   var action = payload.action;

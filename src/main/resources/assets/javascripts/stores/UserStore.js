@@ -2,14 +2,11 @@
  * UserStore
  */
 
-var StoreDefaults   = require('./StoreDefaults');
+var BaseStore   = require('./BaseStore');
 var AppDispatcher  = require('../dispatchers/AppDispatcher');
 var UserConstants   = require('../constants/UserConstants');
 
-/* Store helpers */
-var EventEmitter  = require('events').EventEmitter;
-var assign        = require('object-assign');
-var _             = require('lodash');
+var _ = require('lodash');
 
 /**
  * User object
@@ -33,17 +30,17 @@ function _addUser(user) {
   _user = user;
 }
 
-var UserStore = assign({}, StoreDefaults, EventEmitter.prototype, {
-
+class UserStoreClass extends BaseStore {
   /**
    * Get the current user
    * @return {object} the user object
    */
-  getCurrentUser: function() {
+  getCurrentUser() {
     return _user;
   }
+}
 
-});
+var UserStore = new UserStoreClass();
 
 UserStore.dispatchToken = AppDispatcher.register(function(payload) {
   var action = payload.action;

@@ -2,7 +2,7 @@
  * QueryStore
  */
 
-var StoreDefaults   = require('./StoreDefaults');
+var BaseStore   = require('./BaseStore');
 var AppDispatcher   = require('../dispatchers/AppDispatcher');
 var QueryConstants  = require('../constants/QueryConstants');
 var QueryApiUtils   = require('../utils/QueryApiUtils');
@@ -13,16 +13,8 @@ var UserStore = require('./UserStore');
 /* Other constants */
 var UserConstants   = require('../constants/UserConstants');
 
-/* Store helpers */
-var EventEmitter = require('events').EventEmitter;
-var assign = require('object-assign');
-var _ = require('lodash');
-
 /* Query store */
-var QueryStore = assign({}, StoreDefaults, EventEmitter.prototype, {
-
-  // Store extentions
-});
+var QueryStore = new BaseStore();
 
 QueryStore.dispatchToken = AppDispatcher.register(function(payload) {
   var action = payload.action;
