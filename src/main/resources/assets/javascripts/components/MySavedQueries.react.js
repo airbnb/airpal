@@ -25,14 +25,12 @@ var MySavedQueries = React.createClass({
     QueryStore.addStoreListener('change', this._onChange);
 
     // Make an API call to fetch the previous runs
-    UserStore.addStoreListener('change', function() {
-      QueryApiUtils.fetchUserQueries(UserStore.getCurrentUser());
-    });
+    UserStore.addStoreListener('change', this._fetchQueries);
   },
 
   componentWillUnmount: function() {
-    QueryStore.removeStoreListener('change');
-    UserStore.removeStoreListener('change');
+    QueryStore.removeStoreListener('change', this._onChange);
+    UserStore.removeStoreListener('change', this._fetchQueries);
   },
 
   render: function () {
@@ -67,7 +65,11 @@ var MySavedQueries = React.createClass({
   /* Store events */
   _onChange: function() {
     this.setState(getStateFromStore());
-  }
+  },
+
+  _fetchQueries() {
+    QueryApiUtils.fetchUserQueries(UserStore.getCurrentUser());
+  },
 });
 
 module.exports = MySavedQueries;

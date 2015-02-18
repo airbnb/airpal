@@ -46,17 +46,15 @@ var RunsTable = React.createClass({
     RunStore.addStoreListener('change', this._onChange);
 
     // Make an API call to fetch the previous runs
-    UserStore.addStoreListener('change', function() {
-      RunApiUtils.fetch(UserStore.getCurrentUser());
-    });
+    UserStore.addStoreListener('change', this._fetchRuns);
   },
 
   componentWillUnmount() {
     RunActions.disconnect(); // Close the SSE connection
 
     // Remove the store listeners
-    RunStore.removeStoreListener('change');
-    UserStore.removeStoreListener('change');
+    RunStore.removeStoreListener('change', this._onChange);
+    UserStore.removeStoreListener('change', this._fetchRuns);
   },
 
   render() {
@@ -91,7 +89,11 @@ var RunsTable = React.createClass({
   /* Store events */
   _onChange() {
     this.setState(this.getStateFromStore());
-  }
+  },
+
+  _fetchRuns() {
+    RunApiUtils.fetch(UserStore.getCurrentUser());
+  },
 });
 
 function getColumns(forCurrentUser) {
