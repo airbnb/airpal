@@ -1,6 +1,7 @@
 /** @jsx React.DOM */
-var React   = require('react'),
-    _       = require('lodash');
+var React   = require('react');
+var _       = require('lodash');
+var moment  = require('moment');
 
 /* Actions */
 var RunActions    = require('../actions/RunActions');
@@ -8,12 +9,12 @@ var RunActions    = require('../actions/RunActions');
 /* ApiUtils */
 var RunApiUtils = require('../utils/RunApiUtils');
 
-/* Components */
-var MyOwnRunsRow = require('./MyOwnRunsRow.react');
-
 /* Stores */
-var RunStore  = require('../stores/RunStore'),
-    UserStore = require('../stores/UserStore');
+var RunStore  = require('../stores/RunStore');
+var UserStore = require('../stores/UserStore');
+
+/* FixedDataTable */
+var { Table, Column } = require('fixed-data-table');
 
 // State actions
 function getStateFromStore() {
@@ -25,15 +26,15 @@ function getStateFromStore() {
 var MyOwnRuns = React.createClass({
   displayName: 'MyOwnQueries',
 
-  getInitialState: function() {
+  getInitialState() {
     return getStateFromStore();
   },
 
-  componentWillMount: function() {
+  componentWillMount() {
     RunActions.connect();
   },
 
-  componentDidMount: function() {
+  componentDidMount() {
     RunStore.addStoreListener('change', this._onChange);
 
     // Make an API call to fetch the previous runs
@@ -42,7 +43,7 @@ var MyOwnRuns = React.createClass({
     });
   },
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     RunActions.disconnect(); // Close the SSE connection
 
     // Remove the store listeners
@@ -50,45 +51,129 @@ var MyOwnRuns = React.createClass({
     UserStore.removeStoreListener('change');
   },
 
-  render: function () {
+  render() {
+    if (this.state.runs.length === 0) {
+      return this.renderEmptyMessage();
+    }
+
     return (
-      <table className="table table-condensed table-striped">
-        <thead>
-          <tr>
-            <th>Query</th>
-            <th>State</th>
-            <th>Started</th>
-            <th>Ended</th>
-            <th>Download</th>
-          </tr>
-        </thead>
-        <tbody>{this.renderChildren()}</tbody>
-      </table>
+      <Table
+        rowHeight={40}
+        rowGetter={this.rowGetter}
+        rowsCount={this.state.runs.length}
+        width={960}
+        maxHeight={1000}
+        headerHeight={40}>
+        <Column
+          label="Query"
+          width={400}
+          dataKey="query"
+          cellRenderer={getRenderer('query')}
+        />
+        <Column
+          label="Status"
+          width={80}
+          dataKey="status"
+          cellRenderer={getRenderer('status')}
+        />
+        <Column
+          label="Started"
+          width={220}
+          dataKey="started"
+          cellRenderer={getRenderer('started')}
+        />
+        <Column
+          label="Duration"
+          width={80}
+          dataKey="duration"
+        />
+        <Column
+          label="Output"
+          width={180}
+          dataKey="output"
+          cellRenderer={getRenderer('output')}
+        />
+      </Table>
     );
   },
 
-  renderChildren: function() {
-    if ( this.state.runs.length > 0 ) {
-      return _.map(this.state.runs, function(model, index) {
-        return (<MyOwnRunsRow key={index} model={model} />);
-      });
-    } else {
-      return this.renderEmptyMessage();
-    }
+  rowGetter(rowIndex) {
+    return formatRun(this.state.runs[rowIndex]);
   },
 
-  renderEmptyMessage: function() {
+  renderEmptyMessage() {
     return (
-      <tr key="1" className="info">
-        <td className="text-center" colSpan="5">No personal running queries</td>
-      </tr>
+      <p className="info text-center">No personal running queries</p>
     );
   },
 
   /* Store events */
-  _onChange: function() {
+  _onChange() {
     this.setState(getStateFromStore());
   }
 });
+
+
+function formatRun(run) {
+  if (!run) return;
+  return {
+    query: run.query,
+    status: run.state,
+    started: run.queryStarted,
+    duration: run.queryStats.elapsedTime,
+    output: run.output && run.output,
+    _run: run,
+  };
+}
+
+
+/**
+ * Wrap each in a `<div >` so FixedDataTable can add classes to it for padding,
+ * etc.
+ */
+function getRenderer(key) {
+  return function wrappedRenderer(cellData, cellDataKey, rowData, rowIndex, columnData, width) {
+    var content = CellRenderers[key](cellData, cellDataKey, rowData, rowIndex, columnData, width);
+    return <div className="text-overflow-ellipsis" style={{width: width}}>{content}</div>;
+  };
+}
+
+var CellRenderers = {
+  query(cellData) {
+    return <code>{cellData}</code>;
+  },
+
+  status(cellData, cellDataKey, rowData, rowIndex, columnData, width) {
+    var run = rowData._run;
+    if (run.state === 'FAILED') {
+      return (<span className="label label-danger">FAILED</span>);
+    } else if (run.state === 'FINISHED') {
+      return (<span className="label label-success">{run.state}</span>);
+    } else {
+      return (<span className="label label-info">{run.state}</span>);
+    }
+  },
+
+  output(cellData, cellDataKey, rowData) {
+    var run = rowData._run;
+    var output = cellData;
+    if (output && output.location) {
+      return (
+        <a href={output.location} target="_blank">
+          Download CSV
+        </a>
+      );
+    } else if (run.state === 'FAILED') {
+      return <span title={run.error.message}>{run.error.message}</span>;
+    }
+  },
+
+  started(cellData) {
+    var m = moment.utc(cellData, 'x');
+    var utc = m.format();
+    var human = m.format('lll');
+    return <span title={utc}>{human} UTC</span>;
+  },
+}
 
 module.exports = MyOwnRuns;

@@ -2,7 +2,10 @@
  * App Bootstrap
  */
 
-var AipalApp = require('./components/AirpalApp.react');
+// Assign to global for compatibility with FixedDataTable.
+Object.assign = require('object-assign');
+
+var AirpalApp = require('./components/AirpalApp.react');
 var React = require('react');
 
 // Export for http://fb.me/react-devtools
@@ -10,6 +13,6 @@ window.React = React;
 
 // Start the main app
 React.render(
-  <AipalApp />,
+  <AirpalApp />,
   document.querySelector('.js-react-app')
 );
