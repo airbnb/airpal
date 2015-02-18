@@ -19,12 +19,20 @@ function fetchPreviewData(table) {
   });
 }
 
+function fetchPartitionData(table) {
+  return $.ajax({
+    type: 'GET',
+    url: table.url + '/partitions'
+  });
+}
+
 module.exports = {
 
   getTableData: function(table) {
-    $.when(fetchColumData(table), fetchPreviewData(table))
-      .then(function(columnArr, dataArr) {
-        TableActions.receivedTableData(table, columnArr[0], dataArr[0]);
+    $.when(fetchColumData(table), fetchPreviewData(table), fetchPartitionData(table))
+      .then(function(columnArr, dataArr, partitionArr) {
+        console.log('for table', table, 'partitionArr', partitionArr);
+        TableActions.receivedTableData(table, columnArr[0], dataArr[0], partitionArr[0]);
       });
   }
 

@@ -25,7 +25,8 @@ function _addTable(table) {
   // Enrich the table with some extra data (active status and url)
   table = _.extend(table, {
     active: true,
-    url: './api/table/' + FQN.schema(table.name) + '/' + FQN.table(table.name)
+    url: './api/table/' + FQN.schema(table.name) + '/' + FQN.table(table.name),
+    partitions: [],
   });
 
   // Add the table to the collection
@@ -36,14 +37,18 @@ function _addTable(table) {
 }
 
 // Updates a table with the new data
-function _updateTableData(table, columns, data) {
+function _updateTableData(table, columns, data, partitions) {
 
   // Get the right table first
   var table = TableStore.getByName(table.name);
   if( table === undefined ) return;
 
   // Add the changed data to the table
-  table = _.extend(table, { columns: columns, data: data });
+  table = _.extend(table, {
+    columns: columns,
+    data: data,
+    partitions: partitions,
+  });
 }
 
 // Removes the table from the collection
@@ -138,7 +143,7 @@ TableStore.dispatchToken = AppDispatcher.register(function(payload) {
       break;
 
     case TableConstants.RECEIVED_TABLE_DATA:
-      _updateTableData(action.table, action.columns, action.data);
+      _updateTableData(action.table, action.columns, action.data, action.partitions);
       TableStore.emitChange('change');
       break;
 

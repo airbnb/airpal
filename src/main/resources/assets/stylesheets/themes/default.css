@@ -11,6 +11,7 @@
  * editor...............The editor that is used to query
  * indicator............Indicates that something is happening
  * selectize-header.....The customized selectize header
+ * selectize-dropdown...The customized body of the dropdown
  * tab-pane.............The customized tab pane
  * user-info............The user information section
  *
@@ -136,15 +137,20 @@
 }
 
 .selectize-header:before,
-.selectize-header:after {
+.selectize-header:after,
+.selectize-dropdown-content:before,
+.selectize-dropdown-content:after {
   content: " ";
   display: table;
 }
 
+.selectize-dropdown-content:after,
 .selectize-header:after {
   clear: both;
 }
 
+.selectize-dropdown-content .col-sm-6,
+.selectize-dropdown-content .col-sm-3,
 .selectize-header > div {
   position: relative;
   float: left;
@@ -153,12 +159,14 @@
   padding-right: 15px;
 }
 
+.selectize-dropdown-content .col-sm-6,
 .selectize-header .row-0,
 .selectize-header-partitions .row-0,
 .selectize-header-partitions .row-1 {
   width: 50%;
 }
 
+.selectize-dropdown-content .col-sm-3,
 .selectize-header .row-1,
 .selectize-header .row-2 {
   width: 25%;
@@ -166,6 +174,16 @@
 
 .selectize-dropdown { overflow: hidden; }
 .selectize-dropdown-content p { margin-bottom: 0; }
+
+/*
+ * Selectize dropdown
+ */
+
+/* Wrap long table names */
+.selectize-dropdown-content .col-name {
+  overflow-x: hidden;
+  word-wrap: break-word;
+}
 
 /**
  * Tab pane

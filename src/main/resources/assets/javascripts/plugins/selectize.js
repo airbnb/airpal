@@ -1255,7 +1255,7 @@ $.extend(Selectize.prototype, {
         return '<div class="option">' + escape(data[field_label]) + '</div>';
       },
       'item': function(data, escape) {
-        return '<div class="item"><span class="item-clickable">' + escape(data[field_label]) + '</span></div>';
+        return '<div class="item">' + escape(data[field_label]) + '</div>';
       },
       'option_create': function(data, escape) {
         return '<div class="create">Add <strong>' + escape(data.input) + '</strong>&hellip;</div>';
@@ -1278,6 +1278,7 @@ $.extend(Selectize.prototype, {
       'item_selected'  : 'onItemSelected',
       'clear'          : 'onClear',
       'option_add'     : 'onOptionAdd',
+      'optionActive'  : 'onOptionActive',
       'option_remove'  : 'onOptionRemove',
       'option_clear'   : 'onOptionClear',
       'dropdown_open'  : 'onDropdownOpen',
