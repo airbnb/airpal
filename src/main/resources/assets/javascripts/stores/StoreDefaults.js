@@ -27,7 +27,7 @@ var StoreDefaults = {
     options || (options = {})
 
     // Return the sorted collection
-    if ( options.sort ) {
+    if (options.sort) {
       return _.sortBy(this.collection, options.sortBy || this.comparator)
     }
     return this.collection;
@@ -47,10 +47,10 @@ var StoreDefaults = {
     options || (options = {})
 
     // Filter the collection
-    results = _.where(this.collection, context);
+    var results = _.where(this.collection, context);
 
     // Sort the result, if asked
-    if ( options.sort ) {
+    if (options.sort) {
       return _.sortBy(results, options.sortBy || this.comparator);
     }
     return results;
