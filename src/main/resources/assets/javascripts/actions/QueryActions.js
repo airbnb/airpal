@@ -8,24 +8,34 @@ var QueryConstants = require('../constants/QueryConstants');
 module.exports = {
 
   // - ViewActions --------------------------------------------------------- //
-  createQuery: function(data) {
+  createQuery(data) {
     AppDispatcher.handleViewAction({
       type: QueryConstants.CREATE_QUERY,
       data: data
     });
   },
 
-  destroyQuery: function(id) {
+  destroyQuery(id) {
     AppDispatcher.handleViewAction({
       type: QueryConstants.DESTROY_QUERY,
       id: id
     });
   },
 
+  /**
+   * Select a query from the history and populate it in the query editor.
+   */
+  selectQuery(query) {
+    AppDispatcher.handleViewAction({
+      type: QueryConstants.SELECT_QUERY,
+      query: query
+    });
+  },
+
   // - ServerActions ------------------------------------------------------- //
 
   // Triggered when a new query is received
-  receivedQuery: function(query) {
+  receivedQuery(query) {
     AppDispatcher.handleServerAction({
       type: QueryConstants.RECEIVED_SINGLE_QUERY,
       query: query
@@ -33,7 +43,7 @@ module.exports = {
   },
 
   // Triggered when a whole bunch of queries is received
-  receivedQueries: function(queries) {
+  receivedQueries(queries) {
     AppDispatcher.handleServerAction({
       type: QueryConstants.RECEIVED_MULTIPLE_QUERIES,
       queries: queries
@@ -41,7 +51,7 @@ module.exports = {
   },
 
   // Triggered when a query is destroyed
-  receivedDestroyedQuery: function(id) {
+  receivedDestroyedQuery(id) {
     AppDispatcher.handleServerAction({
       type: QueryConstants.RECEIVED_DESTROYED_QUERY,
       id: id

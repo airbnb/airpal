@@ -5,6 +5,7 @@ var moment  = require('moment');
 
 /* Actions */
 var RunActions    = require('../actions/RunActions');
+var QueryActions  = require('../actions/QueryActions');
 
 /* ApiUtils */
 var RunApiUtils = require('../utils/RunApiUtils');
@@ -161,13 +162,22 @@ function getRenderer(key) {
   };
 }
 
+function selectQuery(query, e) {
+  e.preventDefault();
+  QueryActions.selectQuery(query);
+}
+
 var CellRenderers = {
   user(cellData) {
     return <span title={cellData}>{cellData}</span>;
   },
 
-  query(cellData) {
-    return <code>{cellData}</code>;
+  query(query) {
+    return (
+      <a href="#" onClick={selectQuery.bind(null, query)}>
+        <code title={query}>{query}</code>
+      </a>
+    );
   },
 
   status(cellData, cellDataKey, rowData, rowIndex, columnData, width) {
@@ -190,6 +200,8 @@ var CellRenderers = {
           Download CSV
         </a>
       );
+    } else if (run.state === 'RUNNING') {
+      return <span>{getProgressFromStats(run.stats)}%</span>;
     } else if (run.state === 'FAILED') {
       return <span title={run.error.message}>{run.error.message}</span>;
     }
@@ -203,5 +215,12 @@ var CellRenderers = {
   },
 }
 
-module.exports = RunsTable;
+function getProgressFromStats(stats) {
+  if (!stats || !stats.totalTasks || stats.totalTasks == 0) {
+    return 0.0;
+  } else {
+    return (stats.completedTasks * 1.0) / (stats.totalTasks * 1.0);
+  }
+}
 
+module.exports = RunsTable;

@@ -14,7 +14,24 @@ var UserStore = require('./UserStore');
 var UserConstants   = require('../constants/UserConstants');
 
 /* Query store */
-var QueryStore = new BaseStore();
+class QueryStoreClass extends BaseStore {
+  constructor() {
+    super();
+
+    this._selectedQuery = null;
+  }
+
+  selectQuery(query) {
+    this._selectedQuery = query;
+    this.emitChange('select');
+  }
+
+  getSelectedQuery() {
+    return this._selectedQuery;
+  }
+}
+
+var QueryStore = new QueryStoreClass();
 
 QueryStore.dispatchToken = AppDispatcher.register(function(payload) {
   var action = payload.action;
@@ -32,6 +49,11 @@ QueryStore.dispatchToken = AppDispatcher.register(function(payload) {
 
     case QueryConstants.RECEIVED_MULTIPLE_QUERIES:
       QueryStore.add(action.queries);
+      QueryStore.emitChange('change');
+      break;
+
+    case QueryConstants.SELECT_QUERY:
+      QueryStore.selectQuery(action.query);
       QueryStore.emitChange('change');
       break;
 
