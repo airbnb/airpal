@@ -43,7 +43,7 @@ var MetaDataPreview = React.createClass({
   _renderEmptyMessage: function() {
     return (
       <div className="alert alert-warning">
-        <p>There is no table selected. Please selected a table to view the meta data.</p>
+        <p>There is no table selected. Please select a table to view the meta data.</p>
       </div>
     )
   },

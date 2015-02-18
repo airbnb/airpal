@@ -45,7 +45,7 @@ var DataPreview = React.createClass({
   _renderEmptyMessage: function() {
     return (
       <div className="alert alert-warning">
-        <p>There is no table selected. Please selected (another) table to view the inner data.</p>
+        <p>There is no table selected. Please select (another) table to view the inner data.</p>
       </div>
     )
   },

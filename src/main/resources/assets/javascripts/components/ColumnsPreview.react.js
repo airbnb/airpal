@@ -72,7 +72,7 @@ var ColumnsPreview = React.createClass({
   _renderEmptyMessage: function() {
     return (
       <div className="alert alert-warning">
-        <p>There are no columns, or there is no table selected. Please selected (another) table.</p>
+        <p>There are no columns, or there is no table selected. Please select (another) table.</p>
       </div>
     )
   },
