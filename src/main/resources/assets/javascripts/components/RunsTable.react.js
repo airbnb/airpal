@@ -143,7 +143,7 @@ function formatRun(run) {
     query: run.query,
     status: run.state,
     started: run.queryStarted,
-    duration: run.queryStats.elapsedTime,
+    duration: run.queryStats && run.queryStats.elapsedTime,
     output: run.output && run.output,
     _run: run,
   };
