@@ -24,7 +24,9 @@ module.exports = {
   getAllQueries: function() {
     $.ajax({
       type: 'GET',
-      url: './api/queries',
+      // TODO: Switch to new, RESTful URL once backend is implemented.
+      // url: './api/queries',
+      url: './api/query/history',
 
       success: function(queries) {
         QueryActions.receivedQueries(queries);
