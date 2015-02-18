@@ -2,29 +2,25 @@
  * RunStore
  */
 
-var StoreDefaults   = require('./StoreDefaults');
+var BaseStore   = require('./BaseStore');
 var AppDispatcher   = require('../dispatchers/AppDispatcher');
 var RunConstants    = require('../constants/RunConstants');
 var RunActions      = require('../actions/RunActions');
 var RunApiUtils     = require('../utils/RunApiUtils');
 
-/* Store helpers */
-var EventEmitter  = require('events').EventEmitter;
-var assign        = require('object-assign');
-var _             = require('lodash');
-
-var RunStore = assign({}, StoreDefaults, EventEmitter.prototype, {
+class RunStoreClass extends BaseStore {
 
   // A custom comparator to sort (inverse) on the queryStarted param
   // @param obj {Object} the model
   // @return {Integer} the sorted model
-  comparator: function(model) {
+  comparator(model) {
+    debugger
     return -model.queryStarted;
-  },
+  }
 
   // Creates an SSE connection to the backend to make a real time stream
   // with the API
-  connect: function() {
+  connect() {
     this.close(); // Close any open connection
 
     // Create a new listener to the API endpoint
@@ -34,36 +30,38 @@ var RunStore = assign({}, StoreDefaults, EventEmitter.prototype, {
     this._eventSource.addEventListener('open', this.onOpen.bind(this));
     this._eventSource.addEventListener('error', this.onError.bind(this));
     this._eventSource.addEventListener('message', this.onMessage.bind(this));
-  },
+  }
 
   // Close the open SSE connect
-  close: function() {
+  close() {
     if (!!this._eventSource && this._eventSource.readyState) {
       this._eventSource.close();
     }
-  },
+  }
 
   // Yeah baby. We're ready to rambo! The SSEConnection has made a connection
   // to the API endpoint and now we should start getting updates (if any runs
   // are running of course).
-  onOpen: function() {
+  onOpen() {
     RunActions.onOpen();
-  },
+  }
 
   // The SSEConnection received an error. Notify the user about this error.
   // @param event {Object} the error object from the API
-  onError: function(event) {
+  onError(event) {
     RunActions.onError(event);
-  },
+  }
 
   // The SSEConnection has received a message from the API. We should notify
   // the application on this.
   // @param event {Object} the event object from the API
-  onMessage: function(event) {
+  onMessage(event) {
     var data = JSON.parse(event.data);
     RunActions.onMessage(data);
   }
-});
+}
+
+var RunStore = new RunStoreClass();
 
 RunStore.dispatchToken = AppDispatcher.register(function(payload) {
   var action = payload.action;
