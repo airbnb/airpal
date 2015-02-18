@@ -5,17 +5,14 @@ var React = require('react');
 var RunActions      = require('../actions/RunActions');
 
 /* Helpers */
-var OverlayMixin    = require('react-bootstrap').OverlayMixin,
-    _               = require('lodash');
+var OverlayMixin    = require('react-bootstrap').OverlayMixin;
+var _               = require('lodash');
 
 /* Editor */
-var ace             = require('brace'),
-    Placeholder     = ace.acequire('ace/placeholder').Placeholder,
-    Range           = ace.acequire('ace/range').Range;
+var ace             = require('brace');
 
 /* Stores */
-var QueryStore      = require('../stores/QueryStore'),
-    RunStore        = require('../stores/RunStore');
+var QueryStore      = require('../stores/QueryStore');
 
 /* Views */
 var QuerySaveModal  = require('./QuerySaveModal.react');
@@ -27,7 +24,7 @@ var QueryEditor = React.createClass({
   displayName: 'QueryEditor',
   mixins: [OverlayMixin],
 
-  componentDidMount: function() {
+  componentDidMount() {
 
     // Create the editor
     this.editor = ace.edit(this.refs.queryEditor.getDOMNode());
@@ -41,19 +38,23 @@ var QueryEditor = React.createClass({
       this.handleChangeSelection, 150, { maxWait: 150 }
     ));
 
-    // Make sure we listen to the add event
     QueryStore.addStoreListener('add', this._hideModal);
+    QueryStore.addStoreListener('select', this._selectQuery);
   },
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     QueryStore.removeStoreListener('add', this._hideModal);
+    QueryStore.removeStoreListener('select', this._selectQuery);
   },
 
-  getInitialState: function() {
-    return { isModalOpen: false, runText: 'query' };
+  getInitialState() {
+    return {
+      isModalOpen: false,
+      runText: 'query',
+    };
   },
 
-  render: function () {
+  render() {
     return (
       <div className="row spaced">
         <div className="col-sm-12">
@@ -70,8 +71,12 @@ var QueryEditor = React.createClass({
                 </pre>
 
                 <div ref="handle" className="editor-resize-handles">
-                  <span className="glyphicon glyphicon-chevron-up editor-resize-handle" onClick={this.handleResizeShrink} title="Shrink Editor"></span>
-                  <span className="glyphicon glyphicon-chevron-down editor-resize-handle" onClick={this.handleResizeGrow} title="Grow Editor"></span>
+                  <span className="glyphicon glyphicon-chevron-up editor-resize-handle"
+                    onClick={this.handleResizeShrink}
+                    title="Shrink Editor"></span>
+                  <span className="glyphicon glyphicon-chevron-down editor-resize-handle"
+                    onClick={this.handleResizeGrow}
+                    title="Grow Editor"></span>
                 </div>
 
               </div>
@@ -84,17 +89,20 @@ var QueryEditor = React.createClass({
           <div className="row">
 
             <div className="col-sm-6">
-              <input ref="customName" type="text" name="custom-name" className="form-control" placeholder="Select a custom table name" />
+              <input ref="customName" type="text" name="custom-name" className="form-control"
+                placeholder="Select a custom table name" />
             </div>
 
             <div className="col-sm-6 text-right">
               <div className="btn-toolbar pull-right">
                 <div className="btn-group">
-                  <button className="btn btn-primary" onClick={this.handleToggle}>Save {this.state.runText}</button>
+                  <button className="btn btn-primary"
+                    onClick={this.handleToggle}>Save {this.state.runText}</button>
                 </div>
 
                 <div className="btn-group">
-                  <button className="btn btn-success" onClick={this.handleRun}>Run {this.state.runText}</button>
+                  <button className="btn btn-success"
+                    onClick={this.handleRun}>Run {this.state.runText}</button>
                 </div>
               </div>
             </div>
@@ -105,28 +113,28 @@ var QueryEditor = React.createClass({
     );
   },
 
-  renderOverlay: function() {
-    if( !this.state.isModalOpen ) return(<span />);
+  renderOverlay() {
+    if (!this.state.isModalOpen) return <span />;
 
     // Render the modal when it's needed
     return (<QuerySaveModal onRequestHide={this.handleToggle} query={this._getQuery()} />);
   },
 
   // - Internal events ----------------------------------------------------- //
-  handleToggle: function () {
+  handleToggle() {
     this.setState({
       isModalOpen: !this.state.isModalOpen
     });
   },
 
-  handleRun: function() {
+  handleRun() {
     RunActions.execute({
       query: this._getQuery(),
       tmpTable: this._getCustomTableName()
     });
   },
 
-  handleChangeSelection: function() {
+  handleChangeSelection() {
     var range = this.editor.selection.getRange();
 
     // Define the text based on the current text range
@@ -137,11 +145,11 @@ var QueryEditor = React.createClass({
     this.setState({ runText: text });
   },
 
-  handleResizeShrink: function($event) {
+  handleResizeShrink($event) {
     this._resizeEditor(-120);
   },
 
-  handleResizeGrow: function($event) {
+  handleResizeGrow($event) {
     this._resizeEditor(120);
   },
 
@@ -149,7 +157,7 @@ var QueryEditor = React.createClass({
 
   // Resizes the editor based on the given pixels
   // @param {integer} the amount of pixels to increase/decrease the editor
-  _resizeEditor: function(pixels) {
+  _resizeEditor(pixels) {
 
     // Get the editor by className
     var $el = $(this.refs.queryEditor.getDOMNode());
@@ -170,11 +178,12 @@ var QueryEditor = React.createClass({
 
   // Retrieves the current query
   // @return {string} the query string
-  _getQuery: function() {
-    var query, range = this.editor.selection.getRange();
+  _getQuery() {
+    var query;
+    var range = this.editor.selection.getRange();
 
     // Define the current query
-    if ( !this._isRangeStartSameAsEnd(range) ) {
+    if (!this._isRangeStartSameAsEnd(range)) {
       query = this.editor.session.getTextRange(range);
     } else {
       query = this.editor.getValue();
@@ -186,14 +195,14 @@ var QueryEditor = React.createClass({
 
   // Retrieves the custom table name
   // @return {string} the custom table name
-  _getCustomTableName: function() {
+  _getCustomTableName() {
     var customTableName = this.refs.customName.getDOMNode().value;
     return !_.isEmpty(customTableName) ? customTableName : null;
   },
 
   // Checks or there is currently something selected
   // @return {boolean} is the start equal to the end of the selection
-  _isRangeStartSameAsEnd: function(range) {
+  _isRangeStartSameAsEnd(range) {
     var start = range.start,
         end   = range.end;
 
@@ -204,8 +213,14 @@ var QueryEditor = React.createClass({
   },
 
   // Hides the modal when a change is triggered
-  _hideModal: function() {
+  _hideModal() {
     this.setState({ isModalOpen: false });
+  },
+
+  // Populate the editor with a given query.
+  _selectQuery() {
+    var selectedQuery = QueryStore.getSelectedQuery();
+    this.editor.setValue(selectedQuery);
   }
 });
 
