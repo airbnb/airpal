@@ -14,7 +14,9 @@ var TableInfo = React.createClass({
     return (
       <section className="row spaced tables-selector-row">
         <div className="col-sm-12">
-          <TabbedArea defaultActiveKey={1} animation={false}>
+        <div className="panel panel-default panel-container">
+        <div className="panel-body">
+          <TabbedArea defaultActiveKey={1} animation={false} bsStyle={'pills'}>
 
             <TabPane eventKey={1} tab="Columns">
               <ColumnsPreview />
@@ -29,6 +31,8 @@ var TableInfo = React.createClass({
             </TabPane>
 
           </TabbedArea>
+        </div>
+        </div>
         </div>
       </section>
     );
