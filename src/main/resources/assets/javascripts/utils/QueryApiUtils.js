@@ -57,20 +57,8 @@ module.exports = {
         // TODO: currently the API only returns the uuid, but I also want the
         // name and the description. So we're merging the uuid into the data
         // object
-        var query = _.extend(data, { uuid: uuid });
+        var query = _.extend({}, data, {uuid: uuid});
         QueryActions.receivedQuery(query);
-      }
-    });
-  },
-
-  updateQuery: function(id, data) {
-    $.ajax({
-      type: 'PATCH',
-      url: './api/queries/' + id,
-      data: data,
-
-      success: function(query) {
-        QueryActions.receivedUpdatedQuery(id, query);
       }
     });
   },

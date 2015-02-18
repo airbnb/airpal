@@ -15,14 +15,6 @@ module.exports = {
     });
   },
 
-  updateQuery: function(id, data) {
-    AppDispatcher.handleViewAction({
-      type: QueryConstants.UPDATE_QUERY,
-      id: id,
-      data: data
-    });
-  },
-
   destroyQuery: function(id) {
     AppDispatcher.handleViewAction({
       type: QueryConstants.DESTROY_QUERY,
@@ -45,15 +37,6 @@ module.exports = {
     AppDispatcher.handleServerAction({
       type: QueryConstants.RECEIVED_MULTIPLE_QUERIES,
       queries: queries
-    });
-  },
-
-  // Triggered when a query is updated
-  receivedUpdatedQuery: function(id, query) {
-    AppDispatcher.handleServerAction({
-      type: QueryConstants.RECEIVED_UPDATED_QUERY,
-      id: id,
-      query: query
     });
   },
 

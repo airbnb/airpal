@@ -43,16 +43,6 @@ QueryStore.dispatchToken = AppDispatcher.register(function(payload) {
       QueryStore.emitChange('change');
       break;
 
-    case QueryConstants.UPDATE_QUERY:
-      QueryApiUtils.updateQuery(action.uuid, action.query);
-      QueryStore.emitChange('change');
-      break;
-
-    case QueryConstants.RECEIVED_UPDATED_QUERY:
-      QueryStore.update(action.uuid, action.query);
-      QueryStore.emitChange('change');
-      break;
-
     default:
       // do nothing
   }
