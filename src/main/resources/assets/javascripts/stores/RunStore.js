@@ -14,7 +14,6 @@ class RunStoreClass extends BaseStore {
   // @param obj {Object} the model
   // @return {Integer} the sorted model
   comparator(model) {
-    debugger
     return -model.queryStarted;
   }
 

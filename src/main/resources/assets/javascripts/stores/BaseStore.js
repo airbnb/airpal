@@ -16,7 +16,7 @@ class BaseStore extends EventEmitter {
 
     // Defines the default comparator for the collection
     // @return {String} the uuid of the model
-    this.comparator = 'uuid';
+    this.comparator || (this.comparator = 'uuid');
   }
 
   /* - Selectors ----------------------------------------------------------- */
