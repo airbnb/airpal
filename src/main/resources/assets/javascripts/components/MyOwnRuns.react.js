@@ -159,7 +159,7 @@ var CellRenderers = {
     var output = cellData;
     if (output && output.location) {
       return (
-        <a href={output.location}>
+        <a href={output.location} target="_blank">
           Download CSV
         </a>
       );
