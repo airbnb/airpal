@@ -46,17 +46,24 @@ var ColumnsPreview = React.createClass({
   _renderColumns: function(collection) {
     var columns;
 
-    // Get all available columns
-    columns = _.map(collection, function(object, idx) {
+    var partitions = _.chain(collection).where({partition: true}).sortBy('name').value(),
+        normalCols = _.chain(collection).where({partition: false}).sortBy('name').value();
 
-      // Capitalize the name of the object
-      var name = this._capitalize(object.name);
+    columns = _.chain(partitions.concat(normalCols)).reduce(function(m, col) {
+      var reuseGroup = (m.length > 0) && (m[m.length - 1].length < 4),
+          group = reuseGroup ? m[m.length - 1] : [],
+          val;
 
-      // Return the template
-      return (
-        <Column key={idx} name={name} type={object.type} />
-      );
-    }.bind(this));
+      group.push(<Column key={col.name} name={col.name} type={col.type} />);
+
+      if (!reuseGroup) {
+        m.push(group);
+      }
+
+      return m;
+    }, []).map(function(col, i) {
+      return (<div className="row" key={'col-row-' + i}>{col}</div>);
+    }).value();
 
     // Render the template
     return (<div>{columns}</div>);

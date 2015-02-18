@@ -20,7 +20,7 @@ var Column = React.createClass({
     // Return the template
     return (
       <div className="col-sm-3">
-        <div className="panel panel-default">
+        <div className="panel panel-default panel-compressed">
 
           <div className="panel-body">
             <strong>{this.props.name} </strong> {value}

@@ -1,0 +1,19 @@
+.panel-compressed {
+  margin-bottom: 10px;
+}
+
+.panel-compressed .panel-body {
+  padding: 4px 6px;
+}
+
+.panel-container {
+}
+
+.panel-container > .panel-body {
+  padding: 6px 15px 0;
+}
+
+.panel-container .panel-body .panel-heading {
+  border-bottom: 1px solid #ddd;
+  padding: 6px 0 6px;
+}
