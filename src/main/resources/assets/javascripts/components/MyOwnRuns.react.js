@@ -9,9 +9,6 @@ var RunActions    = require('../actions/RunActions');
 /* ApiUtils */
 var RunApiUtils = require('../utils/RunApiUtils');
 
-/* Components */
-var MyOwnRunsRow = require('./MyOwnRunsRow.react');
-
 /* Stores */
 var RunStore  = require('../stores/RunStore');
 var UserStore = require('../stores/UserStore');
