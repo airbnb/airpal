@@ -18,28 +18,28 @@ function getStateFromStore() {
 var Header = React.createClass({
   displayName: 'Header',
 
-  getInitialState: function() {
+  getInitialState() {
     return getStateFromStore();
   },
 
-  componentWillMount: function() {
+  componentWillMount() {
     UserApiUtils.getCurrentUser();
   },
 
-  componentDidMount: function() {
+  componentDidMount() {
     UserStore.addStoreListener('add', this._onChange);
   },
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     UserStore.removeStoreListener('add');
   },
 
-  render: function () {
+  render() {
     return (
       <header className="row header-row">
 
         <div className="col-sm-9">
-          <h1>AirPal</h1>
+          <h1>Airpal</h1>
         </div>
 
         <div className="col-sm-3">
@@ -78,7 +78,7 @@ var Header = React.createClass({
   },
 
   /* Store events */
-  _onChange: function() {
+  _onChange() {
     this.setState(getStateFromStore());
   }
 });
