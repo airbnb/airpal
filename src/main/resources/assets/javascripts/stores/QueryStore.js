@@ -19,6 +19,10 @@ class QueryStoreClass extends BaseStore {
     super();
 
     this._selectedQuery = null;
+
+    // Because of a bug, `createdAt` field is null. Just reverse the order
+    // using the negative of the index.
+    this.comparator = (model, index) => -1 * index;
   }
 
   selectQuery(query) {

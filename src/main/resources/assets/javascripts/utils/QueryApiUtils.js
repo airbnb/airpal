@@ -9,39 +9,14 @@ var QueryActions = require('../actions/QueryActions');
 var _ = require('lodash');
 
 module.exports = {
-
-  getQuery: function(id) {
+  fetchSavedQueries() {
     $.ajax({
       type: 'GET',
-      url: './api/queries/' + id,
-
-      success: function(query) {
-        QueryActions.receivedQuery(query);
-      }
-    });
-  },
-
-  getAllQueries: function() {
-    $.ajax({
-      type: 'GET',
-      // TODO: Switch to new, RESTful URL once backend is implemented.
-      // url: './api/queries',
-      url: './api/query/history',
-
-      success: function(queries) {
-        QueryActions.receivedQueries(queries);
-      }
-    });
-  },
-
-  fetchUserQueries: function(user) {
-    $.ajax({
-      type: 'GET',
-      url: './api/users/' + user.name + '/queries',
+      url: './api/query/saved',
       contentType: 'application/json',
 
-      success: function(results, status, xhr) {
-        if ( _.isEmpty(results) ) return;
+      success(results) {
+        if (_.isEmpty(results)) return;
 
         // Add each query to the collection
         QueryActions.receivedQueries(results);
@@ -49,13 +24,13 @@ module.exports = {
     });
   },
 
-  createQuery: function(data) {
+  createQuery(data) {
     $.ajax({
       type: 'POST',
       url: './api/query/saved',
       data: data,
 
-      success: function(uuid) {
+      success(uuid) {
         // TODO: currently the API only returns the uuid, but I also want the
         // name and the description. So we're merging the uuid into the data
         // object
@@ -65,12 +40,12 @@ module.exports = {
     });
   },
 
-  destroyQuery: function(id) {
+  destroyQuery(id) {
     $.ajax({
       type: 'DELETE',
       url: './api/queries/' + id,
 
-      success: function() {
+      success() {
         QueryActions.receivedDestroyedQuery(id);
       }
     });
