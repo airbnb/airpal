@@ -17,6 +17,9 @@ var UserStore = require('../stores/UserStore');
 /* FixedDataTable */
 var { Table, Column } = require('fixed-data-table');
 
+/* Bootstrap */
+var { ProgressBar } = require('react-bootstrap');
+
 // State actions
 function getRuns(forCurrentUser) {
   if (forCurrentUser) {
@@ -98,41 +101,48 @@ var RunsTable = React.createClass({
 });
 
 function getColumns(forCurrentUser) {
+  var i = 0;
   return _.compact([
     (forCurrentUser ? null : <Column
       label="User"
       width={80}
       dataKey="user"
       cellRenderer={getRenderer('user')}
+      key={i++}
     />),
     <Column
       label="Query"
       width={forCurrentUser ? 400 : 320}
       dataKey="query"
       cellRenderer={getRenderer('query')}
+      key={i++}
     />,
     <Column
       label="Status"
       width={80}
       dataKey="status"
       cellRenderer={getRenderer('status')}
+      key={i++}
     />,
     <Column
       label="Started"
       width={220}
       dataKey="started"
       cellRenderer={getRenderer('started')}
+      key={i++}
     />,
     <Column
       label="Duration"
       width={80}
       dataKey="duration"
+      key={i++}
     />,
     <Column
       label="Output"
       width={180}
       dataKey="output"
       cellRenderer={getRenderer('output')}
+      key={i++}
     />,
   ]);
 }
@@ -186,6 +196,8 @@ var CellRenderers = {
       return (<span className="label label-danger">FAILED</span>);
     } else if (run.state === 'FINISHED') {
       return (<span className="label label-success">{run.state}</span>);
+    } else if (run.state === 'QUEUED') {
+      return (<span className="label label-default">{run.state}</span>);
     } else {
       return (<span className="label label-info">{run.state}</span>);
     }
@@ -201,7 +213,7 @@ var CellRenderers = {
         </a>
       );
     } else if (run.state === 'RUNNING') {
-      return <span>{getProgressFromStats(run.stats)}%</span>;
+      return <ProgressBar now={getProgressFromStats(run.queryStats)} />;
     } else if (run.state === 'FAILED') {
       return <span title={run.error.message}>{run.error.message}</span>;
     }
@@ -219,7 +231,7 @@ function getProgressFromStats(stats) {
   if (!stats || !stats.totalTasks || stats.totalTasks == 0) {
     return 0.0;
   } else {
-    return (stats.completedTasks * 1.0) / (stats.totalTasks * 1.0);
+    return Math.max(stats.completedTasks / stats.totalTasks * 100, 3);
   }
 }
 
