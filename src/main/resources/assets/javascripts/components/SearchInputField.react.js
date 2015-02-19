@@ -52,7 +52,6 @@ var SearchInputField = React.createClass({
       closeAfterSelect: true,
       hideSelected: true,
       onChange: function() {
-        console.log('onChange -- closing');
         this.close();
       },
     };
@@ -79,13 +78,6 @@ var SearchInputField = React.createClass({
       }
       this.$selectize.loadedSearches = {};
       this.$selectize.refreshOptions(false);
-      /*
-      var myString = '';
-      for (var i = 0; i < Math.floor(Math.random() * 10000); i++) {
-        myString += 's';
-      }
-      this.$selectize.onSearchChange(myString);
-       */
     }
   },
 

@@ -144,7 +144,6 @@ var TableSearch = React.createClass({
       onItemSelected: function(element) {
         var $el = $(element);
         TableActions.selectTable($(element).data('value'));
-        console.log('itemSelected', element, this, arguments);
       },
 
       onOptionActive: function($activeOption) {
@@ -205,10 +204,8 @@ var TableSearch = React.createClass({
       },
       render: { option: this._renderPartitionOptions },
       load: function(query, callback) {
-        console.log('new load fn is called for', partitions);
         // Call it async consistently
         _.defer(function() {
-          console.log('new load fn is called deferred');
           callback(partitions);
         });
       },
