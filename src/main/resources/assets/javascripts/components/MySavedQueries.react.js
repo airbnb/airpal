@@ -5,12 +5,14 @@ var React = require('react');
 var QueryApiUtils = require('../utils/QueryApiUtils');
 
 /* Stores */
-var UserStore   = require('../stores/UserStore');
-var QueryStore  = require('../stores/QueryStore');
+var QueryStore = require('../stores/QueryStore');
+
+/* Actions */
+var QueryActions = require('../actions/QueryActions');
 
 function getStateFromStore() {
   return {
-    queries: QueryStore.where({ user: UserStore.getCurrentUser().name }, { sort: true })
+    queries: QueryStore.all({sort: true}),
   };
 }
 
@@ -24,34 +26,48 @@ var MySavedQueries = React.createClass({
   componentDidMount() {
     QueryStore.addStoreListener('change', this._onChange);
 
-    // Make an API call to fetch the previous runs
-    UserStore.addStoreListener('change', this._fetchQueries);
+    this._fetchQueries();
   },
 
   componentWillUnmount() {
     QueryStore.removeStoreListener('change', this._onChange);
-    UserStore.removeStoreListener('change', this._fetchQueries);
   },
 
   render() {
     return (
-      <table className="table table-condensed table-striped">
-        <thead>
-          <tr>
-            <th>Query</th>
-            <th>State</th>
-            <th>Started</th>
-            <th>Ended</th>
-            <th>Download</th>
-          </tr>
-        </thead>
-        <tbody>{this.renderChildren()}</tbody>
+      <table className="table">
+        <tbody>
+          {this.renderChildren()}
+        </tbody>
       </table>
     );
   },
 
   renderChildren() {
-    return this.renderEmptyMessage();
+    if (this.state.queries.length === 0) {
+      return this.renderEmptyMessage();
+    } else {
+      return this.state.queries.map((query) => {
+        var queryText = query.queryWithPlaceholders.query;
+        return (
+          <tr key={query.uuid} className="saved-query">
+            <td>
+              <div className="row">
+                <div className="col-md-3">
+                  <h4>{query.name}</h4>
+                  <p>{query.description}</p>
+                </div>
+                <div className="col-md-9">
+                  <pre onClick={this._onSelectQuery.bind(null, queryText)}>
+                  {queryText}
+                  </pre>
+                </div>
+              </div>
+            </td>
+          </tr>
+        );
+      });
+    }
   },
 
   renderEmptyMessage() {
@@ -68,7 +84,11 @@ var MySavedQueries = React.createClass({
   },
 
   _fetchQueries() {
-    QueryApiUtils.fetchUserQueries(UserStore.getCurrentUser());
+    QueryApiUtils.fetchSavedQueries();
+  },
+
+  _onSelectQuery(query) {
+    QueryActions.selectQuery(query);
   },
 });
 

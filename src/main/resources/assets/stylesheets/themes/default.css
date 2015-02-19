@@ -14,6 +14,7 @@
  * selectize-dropdown...The customized body of the dropdown
  * tab-pane.............The customized tab pane
  * user-info............The user information section
+ * saved-query..........The saved query component
  *
  * PLUGINS
  * CodeMirror...........The CSS for the CodeMirror plugin
@@ -201,6 +202,22 @@
 
 .user-info {
   padding-top: 20px;
+}
+
+/**
+ * Saved Query
+ */
+.saved-query {
+
+}
+
+.saved-query pre {
+  cursor: hand;
+  cursor: pointer;
+}
+
+.saved-query pre:hover {
+  opacity: 0.9;
 }
 
 /*------------------------------------*\
