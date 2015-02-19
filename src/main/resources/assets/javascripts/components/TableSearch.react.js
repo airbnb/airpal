@@ -33,11 +33,17 @@ function getStateFromStore() {
   };
 }
 
-function highlightOnlyOption(selectize) {
+function storeContainsItem(itemName) {
+  return !!TableStore.getByName(itemName);
+}
+
+function highlightOnlyOption(selectize, item) {
   var items = selectize.$control.find('.item');
 
   if (items.length == 1) {
     selectize.setActiveItem(items[0]);
+  } else if (!_.isEmpty(item)) {
+    selectize.setActiveItem(item[0]);
   }
 }
 
@@ -133,7 +139,7 @@ var TableSearch = React.createClass({
 
       onItemAdd: function(table, $element) {
         TableActions.addTable({ name: table });
-        highlightOnlyOption(this);
+        highlightOnlyOption(this, $element);
       },
 
       onItemRemove: function(table) {
@@ -147,10 +153,16 @@ var TableSearch = React.createClass({
       },
 
       onOptionActive: function($activeOption) {
+        var itemName = getActiveItemName(this);
+
         if ($activeOption == null) {
-          TableActions.removeTable(getActiveItemName(this));
+          TableActions.unselectTable(itemName)
         } else {
-          TableActions.addTable({ name: getActiveItemName(this) });
+          if (!storeContainsItem(itemName)) {
+            TableActions.unselectTable(itemName);
+          } else {
+            TableActions.selectTable(itemName);
+          }
         }
       },
     });
@@ -166,11 +178,17 @@ var TableSearch = React.createClass({
   },
 
   _renderPartitionOptions: function(item, escape) {
+    var lastUpdatedRepresentation = '';
+
+    if (item.lastUpdated != null) {
+      lastUpdatedRepresentation = moment(new Date(item.lastUpdated)).
+        format('MMM Do YYYY, h:mm:ss a z');
+    }
+
     return (
       '<div class="row">' +
         '<div class="col-sm-6 col-name"><span>' + escape(item.value) + '</span></div>' +
-        '<div class="col-sm-3"><span>' +
-          (item.lastUpdated == null ? '' : escape(item.lastUpdated)) + '</span></div>' +
+        '<div class="col-sm-3"><span>' + lastUpdatedRepresentation + '</span></div>' +
       '</div>'
     );
   },
