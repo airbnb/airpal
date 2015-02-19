@@ -73,11 +73,11 @@ var SearchInputField = React.createClass({
     if (this.props.disabled !== nextProps.disabled) {
       if (!nextProps.disabled) {
         this.$selectize.enable();
+        this.$selectize.loadedSearches = {};
+        this.$selectize.refreshOptions(false);
       } else {
         this.$selectize.disable();
       }
-      this.$selectize.loadedSearches = {};
-      this.$selectize.refreshOptions(false);
     }
   },
 
