@@ -129,6 +129,10 @@ class TableStoreClass extends BaseStore {
   all() {
     return _tables;
   }
+
+  containsTable(name) {
+    return !!TableStore.getByName(name);
+  }
 }
 
 var TableStore = new TableStoreClass();
@@ -171,5 +175,4 @@ TableStore.dispatchToken = AppDispatcher.register(function(payload) {
 
 });
 
-window.TableStore = TableStore;
 module.exports = TableStore;

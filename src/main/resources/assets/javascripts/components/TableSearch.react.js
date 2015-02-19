@@ -33,10 +33,6 @@ function getStateFromStore() {
   };
 }
 
-function storeContainsItem(itemName) {
-  return !!TableStore.getByName(itemName);
-}
-
 function highlightOnlyOption(selectize, item) {
   var items = selectize.$control.find('.item');
 
@@ -158,7 +154,7 @@ var TableSearch = React.createClass({
         if ($activeOption == null) {
           TableActions.unselectTable(itemName)
         } else {
-          if (!storeContainsItem(itemName)) {
+          if (!TableStore.containsTable(itemName)) {
             TableActions.unselectTable(itemName);
           } else {
             TableActions.selectTable(itemName);
@@ -181,7 +177,7 @@ var TableSearch = React.createClass({
     var lastUpdatedRepresentation = '';
 
     if (item.lastUpdated != null) {
-      lastUpdatedRepresentation = moment(new Date(item.lastUpdated)).
+      lastUpdatedRepresentation = moment(item.lastUpdated).
         format('MMM Do YYYY, h:mm:ss a z');
     }
 
