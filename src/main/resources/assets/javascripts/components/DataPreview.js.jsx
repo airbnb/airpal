@@ -1,10 +1,12 @@
 /** @jsx React.DOM */
 var React = require('react');
 
+/* FixedDataTable */
+var { Table, Column } = require('fixed-data-table');
+
 /* Helpers */
-var _       = require('lodash')
-    FQN     = require('../utils/fqn'),
-    Griddle = require('griddle-react');
+var _       = require('lodash');
+var FQN     = require('../utils/fqn');;
 
 /* Stores */
 var TableStore = require('../stores/TableStore');
@@ -14,6 +16,19 @@ function getStateFromStore() {
   return {
     table: TableStore.getActiveTable()
   };
+}
+
+function getColumns(columns) {
+  return columns.map(function(column, i) {
+    return (
+      <Column
+        label={column.name}
+        width={100}
+        dataKey={i}
+        key={i}
+        />
+    );
+  });
 }
 
 var DataPreview = React.createClass({
@@ -52,10 +67,21 @@ var DataPreview = React.createClass({
 
   _renderColumns: function() {
     return (
-      <div className="row" className="data-preview data-preview-wrapper">
-        <Griddle columns={this._enhancedColumns()} results={this._enhancedData()} />
-      </div>
+      <Table
+        rowHeight={40}
+        rowGetter={this.rowGetter}
+        rowsCount={this.state.table.data.length}
+        width={960}
+        maxHeight={250}
+        ownerHeight={250}
+        headerHeight={40}>
+        {getColumns(this.state.table.columns)}
+      </Table>
     );
+  },
+
+  rowGetter: function(rowIndex) {
+    return this.state.table.data[rowIndex];
   },
 
   _enhancedColumns: function() {
