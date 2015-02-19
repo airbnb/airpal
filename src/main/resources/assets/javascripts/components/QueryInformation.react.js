@@ -23,13 +23,13 @@ var QueryInformation = React.createClass({
         <div className="col-sm-12">
           <TabbedArea activeKey={selectedTab} animation={false} onSelect={this._onTabSelect}>
             {/* Lazy-init the child components so they can lazy-fetch their data. */}
-            <TabPane eventKey={1} tab="My runs">
+            <TabPane eventKey={1} tab="My queries">
               {selectedTab === 1 ? <MyOwnRuns /> : null}
             </TabPane>
             <TabPane eventKey={2} tab="My saved queries">
               {selectedTab === 2 ? <MySavedQueries /> : null}
             </TabPane>
-            <TabPane eventKey={3} tab="All running queries">
+            <TabPane eventKey={3} tab="All queries">
               {selectedTab === 3 ? <AllRunningQueries /> : null}
             </TabPane>
           </TabbedArea>

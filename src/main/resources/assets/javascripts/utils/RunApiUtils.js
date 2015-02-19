@@ -26,13 +26,28 @@ module.exports = {
     });
   },
 
-  fetch: function(user) {
+  fetchForUser: function(user) {
     $.ajax({
       type: 'GET',
       url: './api/users/' + user.name + '/active-queries',
       contentType: 'application/json',
 
       success: function(results, status, xhr) {
+        if ( _.isEmpty(results) ) return;
+
+        // Add each run to the collection
+        RunActions.addMultipleRuns(results);
+      }
+    });
+  },
+
+  fetchHistory: function() {
+    $.ajax({
+      type: 'GET',
+      url: './api/query/history',
+      contentType: 'application/json',
+
+      success: function(results) {
         if ( _.isEmpty(results) ) return;
 
         // Add each run to the collection

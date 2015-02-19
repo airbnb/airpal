@@ -6,6 +6,9 @@ var BaseStore   = require('./BaseStore');
 var AppDispatcher  = require('../dispatchers/AppDispatcher');
 var UserConstants   = require('../constants/UserConstants');
 
+/* ApiUtils */
+var RunApiUtils = require('../utils/RunApiUtils');
+
 var _ = require('lodash');
 
 /**
@@ -53,6 +56,9 @@ UserStore.dispatchToken = AppDispatcher.register(function(payload) {
       // Emit the other changes
       UserStore.emitChange('add');
       UserStore.emitChange('change');
+
+      // Now fetch queries for that user.
+      RunApiUtils.fetchForUser(UserStore.getCurrentUser());
       break;
 
     default:

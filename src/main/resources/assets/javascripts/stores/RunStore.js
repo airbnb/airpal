@@ -10,6 +10,12 @@ var RunApiUtils     = require('../utils/RunApiUtils');
 
 class RunStoreClass extends BaseStore {
 
+  constructor() {
+    super();
+
+    this._hasFetchedHistory = false;
+  }
+
   // A custom comparator to sort (inverse) on the queryStarted param
   // @param obj {Object} the model
   // @return {Integer} the sorted model
@@ -57,6 +63,13 @@ class RunStoreClass extends BaseStore {
   onMessage(event) {
     var data = JSON.parse(event.data);
     RunActions.onMessage(data);
+  }
+
+  ensureFetchedHistory() {
+    if (this._hasFetchedHistory) return;
+    this._hasFetchedHistory = true;
+
+    RunApiUtils.fetchHistory();
   }
 }
 
