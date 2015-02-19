@@ -227,7 +227,22 @@
  */
 
 .query-information .tab-pane {
-  max-height: 400px;
+  max-height: 420px;
+}
+
+.query-information-table-tab {
+  /**
+   * Because we hard-code the height of tabs containing tables,
+   * remove the scrollbar.
+   */
+  overflow-y: visible;
+}
+
+.query-information .table {
+  /**
+   * Remove horizontal scrollbar.
+   */
+  width: 99.9%;
 }
 
 
