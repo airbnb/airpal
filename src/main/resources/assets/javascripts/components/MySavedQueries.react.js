@@ -17,23 +17,23 @@ function getStateFromStore() {
 var MySavedQueries = React.createClass({
   displayName: 'MySavedQueries',
 
-  getInitialState: function() {
+  getInitialState() {
     return getStateFromStore();
   },
 
-  componentDidMount: function() {
+  componentDidMount() {
     QueryStore.addStoreListener('change', this._onChange);
 
     // Make an API call to fetch the previous runs
     UserStore.addStoreListener('change', this._fetchQueries);
   },
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     QueryStore.removeStoreListener('change', this._onChange);
     UserStore.removeStoreListener('change', this._fetchQueries);
   },
 
-  render: function () {
+  render() {
     return (
       <table className="table table-condensed table-striped">
         <thead>
@@ -50,11 +50,11 @@ var MySavedQueries = React.createClass({
     );
   },
 
-  renderChildren: function() {
+  renderChildren() {
     return this.renderEmptyMessage();
   },
 
-  renderEmptyMessage: function() {
+  renderEmptyMessage() {
     return (
       <tr key="1" className="info">
         <td className="text-center" colSpan="5">No saved queries</td>
@@ -63,7 +63,7 @@ var MySavedQueries = React.createClass({
   },
 
   /* Store events */
-  _onChange: function() {
+  _onChange() {
     this.setState(getStateFromStore());
   },
 
