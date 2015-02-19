@@ -7,12 +7,8 @@ var moment  = require('moment');
 var RunActions    = require('../actions/RunActions');
 var QueryActions  = require('../actions/QueryActions');
 
-/* ApiUtils */
-var RunApiUtils = require('../utils/RunApiUtils');
-
 /* Stores */
 var RunStore  = require('../stores/RunStore');
-var UserStore = require('../stores/UserStore');
 
 /* FixedDataTable */
 var { Table, Column } = require('fixed-data-table');
@@ -21,9 +17,9 @@ var { Table, Column } = require('fixed-data-table');
 var { ProgressBar } = require('react-bootstrap');
 
 // State actions
-function getRuns(forCurrentUser) {
-  if (forCurrentUser) {
-    return RunStore.where({user: UserStore.getCurrentUser().name}, {sort: true})
+function getRuns(user) {
+  if (user) {
+    return RunStore.where({user: user}, {sort: true})
   } else {
     return RunStore.all({sort: true});
   }
@@ -34,7 +30,7 @@ var RunsTable = React.createClass({
 
   getStateFromStore() {
     return {
-      runs: getRuns(this.props.forCurrentUser),
+      runs: getRuns(this.props.user),
     };
   },
 
@@ -42,15 +38,12 @@ var RunsTable = React.createClass({
     return this.getStateFromStore();
   },
 
-  componentWillMount() {
-    RunActions.connect();
-  },
-
   componentDidMount() {
-    RunStore.addStoreListener('change', this._onChange);
+    // Have to defer this, otherwise get weird error about not being able to
+    // dispatch while another dispatch is in progress.
+    _.defer(() => RunActions.connect());
 
-    // Make an API call to fetch the previous runs
-    UserStore.addStoreListener('change', this._fetchRuns);
+    RunStore.addStoreListener('change', this._onChange);
   },
 
   componentWillUnmount() {
@@ -58,7 +51,6 @@ var RunsTable = React.createClass({
 
     // Remove the store listeners
     RunStore.removeStoreListener('change', this._onChange);
-    UserStore.removeStoreListener('change', this._fetchRuns);
   },
 
   render() {
@@ -75,7 +67,7 @@ var RunsTable = React.createClass({
         maxHeight={250}
         ownerHeight={250}
         headerHeight={40}>
-        {getColumns(this.props.forCurrentUser)}
+        {getColumns(this.props.user != null)}
       </Table>
     );
   },
@@ -93,10 +85,6 @@ var RunsTable = React.createClass({
   /* Store events */
   _onChange() {
     this.setState(this.getStateFromStore());
-  },
-
-  _fetchRuns() {
-    RunApiUtils.fetch(UserStore.getCurrentUser());
   },
 });
 
