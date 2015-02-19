@@ -48,8 +48,37 @@ var SearchInputField = React.createClass({
       create:       false,
       openOnFocus:  true,
       preload:      'focus',
-      loadThrottle: 1000
+      loadThrottle: 1000,
+      closeAfterSelect: true,
+      hideSelected: true,
+      onChange: function() {
+        this.close();
+      },
     };
+  },
+
+  componentWillReceiveProps: function(nextProps) {
+    var nextSelectizeOpts = nextProps.selectizeOptions();
+
+    if (this.props.placeholder !== nextProps.placeholder) {
+      this.$selectize.
+        $control_input.
+        attr('placeholder', nextProps.placeholder).
+        data('grow', true).
+        trigger('update');
+    }
+
+    this.$selectize.settings.load = nextSelectizeOpts.load;
+
+    if (this.props.disabled !== nextProps.disabled) {
+      if (!nextProps.disabled) {
+        this.$selectize.enable();
+      } else {
+        this.$selectize.disable();
+      }
+      this.$selectize.loadedSearches = {};
+      this.$selectize.refreshOptions(false);
+    }
   },
 
   // Enables the selectize plugin

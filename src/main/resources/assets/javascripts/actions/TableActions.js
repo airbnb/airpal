@@ -30,12 +30,13 @@ module.exports = {
   },
 
   // - ServerActions ------------------------------------------------------- //
-  receivedTableData: function(table, columns, data) {
+  receivedTableData: function(table, columns, data, partitions) {
     AppDispatcher.handleServerAction({
       type: TableConstants.RECEIVED_TABLE_DATA,
       table: table,
       columns: columns,
-      data: data
+      data: data,
+      partitions: partitions,
     });
   }
 
