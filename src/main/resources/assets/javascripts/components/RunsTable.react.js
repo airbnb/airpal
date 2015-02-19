@@ -4,7 +4,6 @@ var _       = require('lodash');
 var moment  = require('moment');
 
 /* Actions */
-var RunActions    = require('../actions/RunActions');
 var QueryActions  = require('../actions/QueryActions');
 
 /* Stores */
@@ -39,16 +38,10 @@ var RunsTable = React.createClass({
   },
 
   componentDidMount() {
-    // Have to defer this, otherwise get weird error about not being able to
-    // dispatch while another dispatch is in progress.
-    _.defer(() => RunActions.connect());
-
     RunStore.addStoreListener('change', this._onChange);
   },
 
   componentWillUnmount() {
-    RunActions.disconnect(); // Close the SSE connection
-
     // Remove the store listeners
     RunStore.removeStoreListener('change', this._onChange);
   },
@@ -64,8 +57,8 @@ var RunsTable = React.createClass({
         rowGetter={this.rowGetter}
         rowsCount={this.state.runs.length}
         width={960}
-        maxHeight={250}
-        ownerHeight={250}
+        maxHeight={400}
+        ownerHeight={400}
         headerHeight={40}>
         {getColumns(this.props.user != null)}
       </Table>

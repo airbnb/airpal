@@ -13,15 +13,17 @@ var QueryStore = require('../stores/QueryStore');
 var QuerySaveModal = React.createClass({
   displayName: 'QuerySaveModal',
 
-  componentDidMount: function() {
+  componentDidMount() {
+    this.refs.name.getDOMNode().focus();
+
     QueryStore.addStoreListener('create', this._disableSubmitButton);
   },
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     QueryStore.removeStoreListener('create', this._disableSubmitButton);
   },
 
-  render: function () {
+  render() {
     return (
       <Modal {...this.props} title="Save a new query">
         <div className="modal-body">
@@ -58,7 +60,7 @@ var QuerySaveModal = React.createClass({
     );
   },
 
-  handleSaveRequest: function(event) {
+  handleSaveRequest(event) {
     event.preventDefault();
 
     // Extract the data from the view and pass the data to the
@@ -80,7 +82,7 @@ var QuerySaveModal = React.createClass({
 
   // - Internal helpers --------------------------------------------------- //
   // Makes sure the submit button is disabled
-  _disableSubmitButton: function() {
+  _disableSubmitButton() {
     var button = this.refs.submitButton.getDOMNode();
     button.setAttribute('disabled', true);
   }

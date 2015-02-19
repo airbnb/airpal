@@ -1,6 +1,9 @@
 /** @jsx React.DOM */
 var React = require('react');
 
+/* Actions */
+var RunActions    = require('../actions/RunActions');
+
 /* Components */
 var { TabbedArea, TabPane } = require('react-bootstrap');
 var MyOwnRuns          = require('./MyOwnRuns.react');
@@ -16,10 +19,18 @@ var QueryInformation = React.createClass({
     };
   },
 
+  componentDidMount() {
+    RunActions.connect();
+  },
+
+  componentWillUnmount() {
+    RunActions.disconnect();
+  },
+
   render() {
     var {selectedTab} = this.state;
     return (
-      <div className="row spaced query-information-tables">
+      <div className="row spaced query-information">
         <div className="col-sm-12">
           <TabbedArea activeKey={selectedTab} animation={false} onSelect={this._onTabSelect}>
             {/* Lazy-init the child components so they can lazy-fetch their data. */}

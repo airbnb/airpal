@@ -15,6 +15,7 @@
  * tab-pane.............The customized tab pane
  * user-info............The user information section
  * saved-query..........The saved query component
+ * query-information....The queries tabs
  *
  * PLUGINS
  * CodeMirror...........The CSS for the CodeMirror plugin
@@ -207,6 +208,7 @@
 /**
  * Saved Query
  */
+
 .saved-query {
 
 }
@@ -217,8 +219,17 @@
 }
 
 .saved-query pre:hover {
-  opacity: 0.9;
+  opacity: 0.8;
 }
+
+/**
+ * Query Information
+ */
+
+.query-information .tab-pane {
+  max-height: 400px;
+}
+
 
 /*------------------------------------*\
     #PLUGINS

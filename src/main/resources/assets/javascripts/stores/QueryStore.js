@@ -33,6 +33,10 @@ class QueryStoreClass extends BaseStore {
   getSelectedQuery() {
     return this._selectedQuery;
   }
+
+  destroyQuery(uuid) {
+    QueryApiUtils.destroyQuery(uuid);
+  }
 }
 
 var QueryStore = new QueryStoreClass();
@@ -60,6 +64,14 @@ QueryStore.dispatchToken = AppDispatcher.register(function(payload) {
       QueryStore.selectQuery(action.query);
       QueryStore.emitChange('change');
       break;
+
+    case QueryConstants.DESTROY_QUERY:
+      QueryStore.destroyQuery(action.uuid);
+      QueryStore.emitChange('change');
+
+    case QueryConstants.RECEIVED_DESTROYED_QUERY:
+      QueryStore.remove(action.uuid);
+      QueryStore.emitChange('change');
 
     default:
       // do nothing

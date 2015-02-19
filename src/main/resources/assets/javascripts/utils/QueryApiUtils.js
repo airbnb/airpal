@@ -33,21 +33,28 @@ module.exports = {
       success(uuid) {
         // TODO: currently the API only returns the uuid, but I also want the
         // name and the description. So we're merging the uuid into the data
-        // object
-        var query = _.extend({}, data, {uuid: uuid});
+        // object  We also have to reformat to match the nested structure of
+        // the `queryWithPlaceholders` object.
+        var query = {
+          uuid: uuid,
+          name: data.name,
+          description: data.description,
+          queryWithPlaceholders: {
+            query: data.query,
+          },
+        };
         QueryActions.receivedQuery(query);
       }
     });
   },
 
-  destroyQuery(id) {
+  destroyQuery(uuid) {
     $.ajax({
       type: 'DELETE',
-      url: './api/queries/' + id,
-
-      success() {
-        QueryActions.receivedDestroyedQuery(id);
-      }
+      url: './api/query/saved/' + uuid,
     });
+
+    // Optimistically update.
+    _.defer(() => QueryActions.receivedDestroyedQuery(uuid));
   }
 };

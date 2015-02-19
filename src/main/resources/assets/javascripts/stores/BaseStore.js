@@ -99,7 +99,7 @@ class BaseStore extends EventEmitter {
   // Updates a model based on the uuid and the new object data
   // @param uuid {String} the uuid of the model
   // @param changedObject {Object} the updated run
-  // @return {Object} the run store
+  // @return {Object} the store
   update(uuid, changedObject, options) {
     options || (options = {})
 
@@ -116,6 +116,28 @@ class BaseStore extends EventEmitter {
     // Emit the update event, unless the silent param is given
     if (options.silent) return this;
     this.emitChange('update');
+    return this;
+  }
+
+  // Removes a model from the collection
+  // @param uuid {String} the uuid of the model
+  // @param options {?Object}
+  // @return {Object} the store
+  remove(uuid, options) {
+    options || (options = {})
+
+    // Find the correct entry and update it with the new info
+    var index = _.findIndex(this.collection, { uuid: uuid });
+
+    if (index !== -1) {
+      // Remove the old object
+      this.collection.splice(index, 1);
+
+      // Emit the update event, unless the silent param is given
+      if (options.silent) return this;
+      this.emitChange('remove');
+    }
+
     return this;
   }
 

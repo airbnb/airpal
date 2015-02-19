@@ -9,6 +9,10 @@ var QueryStore = require('../stores/QueryStore');
 
 /* Actions */
 var QueryActions = require('../actions/QueryActions');
+var RunActions = require('../actions/RunActions');
+
+/* Components */
+var { Button, ButtonToolbar } = require('react-bootstrap');
 
 function getStateFromStore() {
   return {
@@ -59,8 +63,16 @@ var MySavedQueries = React.createClass({
                 </div>
                 <div className="col-md-9">
                   <pre onClick={this._onSelectQuery.bind(null, queryText)}>
-                  {queryText}
+                  {truncate(queryText, 750)}
                   </pre>
+                  <ButtonToolbar className="pull-right">
+                    <Button bsSize="xsmall" onClick={this._deleteQuery.bind(null, query.uuid)}>
+                      Delete
+                    </Button>
+                    <Button bsSize="xsmall" bsStyle="primary" onClick={this._runQuery.bind(null, queryText)}>
+                      Run
+                    </Button>
+                  </ButtonToolbar>
                 </div>
               </div>
             </td>
@@ -72,13 +84,12 @@ var MySavedQueries = React.createClass({
 
   renderEmptyMessage() {
     return (
-      <tr key="1" className="info">
-        <td className="text-center" colSpan="5">No saved queries</td>
+      <tr className="info">
+        <td className="text-center" colSpan="1">No saved queries</td>
       </tr>
     );
   },
 
-  /* Store events */
   _onChange() {
     this.setState(getStateFromStore());
   },
@@ -90,6 +101,23 @@ var MySavedQueries = React.createClass({
   _onSelectQuery(query) {
     QueryActions.selectQuery(query);
   },
+
+  _runQuery(queryText) {
+    QueryActions.selectQuery(queryText);
+    RunActions.execute({query: queryText});
+  },
+
+  _deleteQuery(uuid) {
+    QueryActions.destroyQuery(uuid);
+  },
 });
+
+function truncate(text, length) {
+  var output = text || '';
+  if (output.length > length) {
+    output = output.slice(0, length) + '...';
+  }
+  return output;
+}
 
 module.exports = MySavedQueries;

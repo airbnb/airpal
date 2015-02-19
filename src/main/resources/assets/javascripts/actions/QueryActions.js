@@ -15,10 +15,10 @@ module.exports = {
     });
   },
 
-  destroyQuery(id) {
+  destroyQuery(uuid) {
     AppDispatcher.handleViewAction({
       type: QueryConstants.DESTROY_QUERY,
-      id: id
+      uuid: uuid
     });
   },
 
@@ -51,10 +51,10 @@ module.exports = {
   },
 
   // Triggered when a query is destroyed
-  receivedDestroyedQuery(id) {
+  receivedDestroyedQuery(uuid) {
     AppDispatcher.handleServerAction({
       type: QueryConstants.RECEIVED_DESTROYED_QUERY,
-      id: id
+      uuid: uuid
     });
   }
 
