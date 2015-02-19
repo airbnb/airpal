@@ -29,6 +29,13 @@ module.exports = {
     });
   },
 
+  unselectTable: function(name) {
+    AppDispatcher.handleViewAction({
+      type: TableConstants.UNSELECT_TABLE,
+      name: name
+    });
+  },
+
   // - ServerActions ------------------------------------------------------- //
   receivedTableData: function(table, columns, data, partitions) {
     AppDispatcher.handleServerAction({

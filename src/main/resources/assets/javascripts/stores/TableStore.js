@@ -17,7 +17,9 @@ var _tables = [];
 // Adds the table to the collection
 // @param {object} the table object
 function _addTable(table) {
-  if( TableStore.getByName(table.name) !== undefined ) return;
+  if (TableStore.getByName(table.name) !== undefined) {
+    return;
+  }
 
   // Unmark the whole collection
   _unMarkActiveTables();
@@ -54,6 +56,8 @@ function _updateTableData(table, columns, data, partitions) {
 // Removes the table from the collection
 // @param {string} the table name
 function _removeTable(name) {
+  var table;
+
   if( TableStore.getByName(name) === undefined ) return;
 
   // Remove the table from the collection
@@ -68,11 +72,12 @@ function _removeTable(name) {
 
 // Marks all tables as inactive
 function _unMarkActiveTables() {
-  table = TableStore.getActiveTable();
-  if( !table ) return;
-
-  // Change the active state of the table
-  table.active = false;
+  TableStore.all().forEach(function(table) {
+    if (table.active) {
+      // Change the active state of the table
+      table.active = false;
+    }
+  });
 }
 
 // Marks a table as active
@@ -82,8 +87,16 @@ function _markActive(name) {
   _unMarkActiveTables()
 
   // Mark the table as active
-  table = TableStore.getByName(name);
+  var table = TableStore.getByName(name);
   table.active = true;
+}
+
+function _unmarkActive(name) {
+  var table = TableStore.getByName(name);
+  if (table === undefined) {
+    return;
+  }
+  table.active = false;
 }
 
 class TableStoreClass extends BaseStore {
@@ -116,6 +129,10 @@ class TableStoreClass extends BaseStore {
   all() {
     return _tables;
   }
+
+  containsTable(name) {
+    return !!TableStore.getByName(name);
+  }
 }
 
 var TableStore = new TableStoreClass();
@@ -139,6 +156,11 @@ TableStore.dispatchToken = AppDispatcher.register(function(payload) {
 
     case TableConstants.SELECT_TABLE:
       _markActive(action.name);
+      TableStore.emitChange('select');
+      break;
+
+    case TableConstants.UNSELECT_TABLE:
+      _unmarkActive(action.name);
       TableStore.emitChange('select');
       break;
 
