@@ -5,13 +5,13 @@
 var keyMirror = require('keymirror');
 
 module.exports = keyMirror({
-
   // View constants
   USER_WENT_ONLINE:       null,
   USER_WENT_OFFLINE:      null,
   CONNECT:                null,
   DISCONNECT:             null,
   EXECUTE_RUN:            null,
+  KILL_RUN:               null,
 
   // Server constants
   ON_SSE_OPEN:            null,

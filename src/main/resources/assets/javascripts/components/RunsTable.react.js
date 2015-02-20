@@ -4,7 +4,8 @@ var _       = require('lodash');
 var moment  = require('moment');
 
 /* Actions */
-var QueryActions  = require('../actions/QueryActions');
+var QueryActions = require('../actions/QueryActions');
+var RunActions   = require('../actions/RunActions');
 
 /* Stores */
 var RunStore  = require('../stores/RunStore');
@@ -181,6 +182,10 @@ function selectQuery(query, e) {
   QueryActions.selectQuery(query);
 }
 
+function killRun(uuid) {
+  RunActions.kill(uuid);
+}
+
 var CellRenderers = {
   user(cellData) {
     return <span title={cellData}>{cellData}</span>;
@@ -217,7 +222,16 @@ var CellRenderers = {
         </a>
       );
     } else if (run.state === 'RUNNING') {
-      return <ProgressBar now={getProgressFromStats(run.queryStats)} />;
+      return (
+        <div>
+          <ProgressBar now={getProgressFromStats(run.queryStats)}
+            style={{marginRight: 20}}/>
+          <span className="glyphicon glyphicon-remove text-danger"
+            title="Kill query"
+            style={{position: 'absolute', right: 8, top: 10, cursor: 'pointer'}}
+            onClick={killRun.bind(null, run.uuid)}></span>
+        </div>
+        );
     } else if (run.state === 'FAILED') {
       return <span title={run.error.message}>{run.error.message}</span>;
     }

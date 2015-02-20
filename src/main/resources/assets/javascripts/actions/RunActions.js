@@ -40,6 +40,13 @@ module.exports = {
     });
   },
 
+  kill: function(uuid) {
+    AppDispatcher.handleViewAction({
+      type: RunConstants.KILL_RUN,
+      uuid: uuid,
+    });
+  },
+
   // - ServerActions ------------------------------------------------------- //
   onOpen: function() {
     AppDispatcher.handleServerAction({
