@@ -202,7 +202,7 @@ var TableSearch = React.createClass({
       preload: 'focus',
       openOnFocus: true,
       valueField: 'value',
-      labelField: 'fqn',
+      labelField: 'value',
       searchField: [
         'value',
       ],
