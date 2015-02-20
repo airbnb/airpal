@@ -5,9 +5,7 @@ import io.airlift.units.DataSize;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.util.Duration;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.secnod.dropwizard.shiro.ShiroConfiguration;
 
@@ -79,12 +77,6 @@ public class AirpalConfiguration extends Configuration
     @Setter
     @JsonProperty
     @NotNull
-    private HiveMetastoreConfiguration metaStoreConfiguration;
-
-    @Getter
-    @Setter
-    @JsonProperty
-    @NotNull
     private List<URI> airpalHosts;
 
     @Getter
@@ -117,33 +109,4 @@ public class AirpalConfiguration extends Configuration
     @JsonProperty
     @NotNull
     private boolean useS3 = false;
-
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class HiveMetastoreConfiguration
-    {
-        @Getter
-        @Setter
-        @JsonProperty
-        @NotNull
-        private String driverName;
-
-        @Getter
-        @Setter
-        @JsonProperty
-        @NotNull
-        private String connectionUrl;
-
-        @Getter
-        @Setter
-        @JsonProperty
-        @NotNull
-        private String userName;
-
-        @Getter
-        @Setter
-        @JsonProperty
-        @NotNull
-        private String password;
-    }
 }
