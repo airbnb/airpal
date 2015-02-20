@@ -57,12 +57,7 @@ public class S3FilePersistor
         final long fileSize = file.length();
         final ObjectMetadata objectMetaData = new ObjectMetadata();
         objectMetaData.setContentLength(fileSize);
-
-        if (fileSize <= maxSizeForTextView) {
-            objectMetaData.setContentType(MediaType.PLAIN_TEXT_UTF_8.toString());
-        } else {
-            objectMetaData.setContentType(MediaType.CSV_UTF_8.toString());
-        }
+        objectMetaData.setContentType(MediaType.CSV_UTF_8.toString());
 
         PutObjectRequest putRequest = new PutObjectRequest(outputBucket,
                 outputKey,

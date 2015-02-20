@@ -7,7 +7,9 @@ import com.google.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
@@ -29,6 +31,7 @@ public class FilesResource
 
     @GET
     @Path("/{fileName}")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response getFile(@PathParam("fileName") String fileName)
     {
         final File file = fileStore.get(fileName);
