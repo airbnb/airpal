@@ -71,6 +71,10 @@ class RunStoreClass extends BaseStore {
 
     RunApiUtils.fetchHistory();
   }
+
+  kill(uuid) {
+    RunApiUtils.kill(uuid);
+  }
 }
 
 var RunStore = new RunStoreClass();
@@ -116,6 +120,10 @@ RunStore.dispatchToken = AppDispatcher.register(function(payload) {
     case RunConstants.EXECUTE_RUN:
       RunApiUtils.execute(action.query, action.tmpTable);
       RunStore.emitChange('execute');
+      break;
+
+    case RunConstants.KILL_RUN:
+      RunStore.kill(action.uuid);
       break;
 
     default:

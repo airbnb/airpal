@@ -9,7 +9,7 @@ var RunActions = require('../actions/RunActions');
 var _ = require('lodash');
 
 module.exports = {
-  execute: function(query, tmpTable) {
+  execute(query, tmpTable) {
     $.ajax({
       type: 'PUT',
       url: './api/execute',
@@ -20,19 +20,19 @@ module.exports = {
         tmpTable: tmpTable
       }),
 
-      success: function(runObject, status, xhr) {
+      success(runObject, status, xhr) {
         RunActions.addRun(runObject);
       }
     });
   },
 
-  fetchForUser: function(user) {
+  fetchForUser(user) {
     $.ajax({
       type: 'GET',
       url: './api/users/' + user.name + '/active-queries',
       contentType: 'application/json',
 
-      success: function(results, status, xhr) {
+      success(results, status, xhr) {
         if ( _.isEmpty(results) ) return;
 
         // Add each run to the collection
@@ -41,18 +41,30 @@ module.exports = {
     });
   },
 
-  fetchHistory: function() {
+  fetchHistory() {
     $.ajax({
       type: 'GET',
       url: './api/query/history',
       contentType: 'application/json',
 
-      success: function(results) {
+      success(results) {
         if ( _.isEmpty(results) ) return;
 
         // Add each run to the collection
         RunActions.addMultipleRuns(results);
       }
     });
-  }
+  },
+
+  kill(uuid) {
+    $.ajax({
+      type: 'DELETE',
+      url: './api/queries/' + uuid,
+      contentType: 'application/json',
+
+      success() {
+        // Just let the SSE handle updates.
+      }
+    });
+  },
 };

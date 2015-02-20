@@ -1,10 +1,12 @@
 /** @jsx React.DOM */
-var React   = require('react');
+var React   = require('react/addons');
 var _       = require('lodash');
 var moment  = require('moment');
+var cx      = React.addons.classSet;
 
 /* Actions */
-var QueryActions  = require('../actions/QueryActions');
+var QueryActions = require('../actions/QueryActions');
+var RunActions   = require('../actions/RunActions');
 
 /* Stores */
 var RunStore  = require('../stores/RunStore');
@@ -80,7 +82,7 @@ var RunsTable = React.createClass({
   },
 
   rowGetter(rowIndex) {
-    return formatRun(this.state.runs[rowIndex]);
+    return formatRun(this.state.runs[rowIndex], this.props.user);
   },
 
   renderEmptyMessage() {
@@ -151,7 +153,7 @@ function getColumns(forCurrentUser) {
   ]);
 }
 
-function formatRun(run) {
+function formatRun(run, currentUser) {
   if (!run) return;
   return {
     user: run.user,
@@ -161,6 +163,7 @@ function formatRun(run) {
     duration: run.queryStats && run.queryStats.elapsedTime,
     output: run.output && run.output,
     _run: run,
+    _currentUser: currentUser,
   };
 }
 
@@ -179,6 +182,10 @@ function getRenderer(key) {
 function selectQuery(query, e) {
   e.preventDefault();
   QueryActions.selectQuery(query);
+}
+
+function killRun(uuid) {
+  RunActions.kill(uuid);
 }
 
 var CellRenderers = {
@@ -209,6 +216,8 @@ var CellRenderers = {
 
   output(cellData, cellDataKey, rowData) {
     var run = rowData._run;
+    var currentUser = rowData._currentUser;
+    var killable = currentUser && currentUser === run.user;
     var output = cellData;
     if (output && output.location) {
       return (
@@ -217,7 +226,19 @@ var CellRenderers = {
         </a>
       );
     } else if (run.state === 'RUNNING') {
-      return <ProgressBar now={getProgressFromStats(run.queryStats)} />;
+      return (
+        <div className={cx({
+          'runs-table-progress': true,
+          'runs-table-progress-killable': killable,
+        })}>
+          <ProgressBar now={getProgressFromStats(run.queryStats)} />
+          {killable ?
+            <span className="glyphicon glyphicon-remove text-danger"
+              title="Kill query"
+              onClick={killRun.bind(null, run.uuid)}></span>
+          : null}
+        </div>
+        );
     } else if (run.state === 'FAILED') {
       return <span title={run.error.message}>{run.error.message}</span>;
     }
