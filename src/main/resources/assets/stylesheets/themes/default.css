@@ -10,6 +10,7 @@
  * COMPONENTS
  * editor...............The editor that is used to query
  * indicator............Indicates that something is happening
+ * selectize-indicator..Indicator for a selectize element
  * selectize-header.....The customized selectize header
  * selectize-dropdown...The customized body of the dropdown
  * tab-pane.............The customized tab pane
@@ -128,6 +129,21 @@
 @keyframes spin {
   from { transform:rotate(0deg); }
   to { transform:rotate(360deg); }
+}
+
+/**
+ * Selectize indicator
+ */
+
+.selectize-container {
+  position: relative;
+}
+
+.selectize-indicator {
+  position: absolute;
+  z-index: 1;
+  right: 8px;
+  top: 10px;
 }
 
 /**

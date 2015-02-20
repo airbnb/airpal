@@ -47,21 +47,21 @@ function highlightOnlyOption(selectize, item) {
 var TableSearch = React.createClass({
   displayName: 'TableSearch',
 
-  componentDidMount: function() {
+  componentDidMount() {
     TableStore.addStoreListener('select', this._onChange);
     TableStore.addStoreListener('change', this._onChange);
   },
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     TableStore.removeStoreListener('select');
     TableStore.removeStoreListener('change');
   },
 
-  getInitialState: function() {
+  getInitialState() {
     return getStateFromStore();
   },
 
-  render: function() {
+  render() {
     var partitionPlaceholder;
     var partitionsDisabled = true;
 
@@ -105,7 +105,7 @@ var TableSearch = React.createClass({
   },
 
   /* - Selectize options --------------------------------------------------- */
-  tableSelectizeOptions: function() {
+  tableSelectizeOptions() {
     return _.extend({}, commonSelectizeOptions, {
       preload: true,
       render: { option: this._renderTableOptions },
@@ -123,34 +123,34 @@ var TableSearch = React.createClass({
         },
       },
 
-      load: function(query, callback) {
+      load(query, callback) {
         $.ajax({
           url: './api/table',
           type: 'GET',
 
-          error: function() { callback(); },
-          success: function(res) {
+          error() { callback(); },
+          success(res) {
             callback(res);
           }
         });
       },
 
-      onItemAdd: function(table, $element) {
+      onItemAdd(table, $element) {
         TableActions.addTable({ name: table });
         highlightOnlyOption(this, $element);
       },
 
-      onItemRemove: function(table) {
+      onItemRemove(table) {
         TableActions.removeTable(table);
         highlightOnlyOption(this);
       },
 
-      onItemSelected: function(element) {
+      onItemSelected(element) {
         var $el = $(element);
         TableActions.selectTable($(element).data('value'));
       },
 
-      onOptionActive: function($activeOption) {
+      onOptionActive($activeOption) {
         var itemName = getActiveItemName(this);
 
         if ($activeOption == null) {
@@ -166,7 +166,7 @@ var TableSearch = React.createClass({
     });
   },
 
-  _renderTableOptions: function(item, escape) {
+  _renderTableOptions(item, escape) {
     return (
       '<div class="row">' +
         '<div class="col-sm-6 col-name"><span>' + escape(item.fqn) + '</span></div>' +
@@ -175,7 +175,7 @@ var TableSearch = React.createClass({
     );
   },
 
-  _renderPartitionOptions: function(item, escape) {
+  _renderPartitionOptions(item, escape) {
     var lastUpdatedRepresentation = '';
 
     if (item.lastUpdated != null) {
@@ -191,7 +191,7 @@ var TableSearch = React.createClass({
     );
   },
 
-  partitionSelectizeOptions: function() {
+  partitionSelectizeOptions() {
     var partitions = [];
     if (!_.isEmpty(this.state.table)) {
       partitions = this.state.table.partitions;
@@ -219,7 +219,7 @@ var TableSearch = React.createClass({
         },
       },
       render: { option: this._renderPartitionOptions },
-      load: function(query, callback) {
+      load(query, callback) {
         // Call it async consistently
         _.defer(function() {
           callback(partitions);
@@ -228,7 +228,7 @@ var TableSearch = React.createClass({
     });
   },
 
-  _onChange: function() {
+  _onChange() {
     this.setState(getStateFromStore());
   },
 });

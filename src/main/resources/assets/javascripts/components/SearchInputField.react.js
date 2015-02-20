@@ -12,7 +12,13 @@ var SearchInputField = React.createClass({
     selectizeOptions: React.PropTypes.func.isRequired
   },
 
-  componentDidMount: function() {
+  getInitialState() {
+    return {
+      loading: true,
+    };
+  },
+
+  componentDidMount() {
 
     // Define the input for this component
     this.input = this.refs.selectize.getDOMNode();
@@ -26,24 +32,35 @@ var SearchInputField = React.createClass({
     // Define the $selectize instance
     this.$selectize = this.$input[0].selectize;
 
+    this.$selectize.on('load', () => {
+      this.setState({loading: false});
+    });
+
     // Check or the editor is disabled
     if(this.props.disabled) {
       this._disable();
     }
   },
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     this.$selectize.destroy();
   },
 
-  render: function () {
+  render() {
     return (
-      <input ref="selectize" type="text" placeholder={this.props.placeholder} />
+      <div className="selectize-container">
+        <div>
+          <input ref="selectize" type="text" placeholder={this.props.placeholder} />
+        </div>
+        {this.state.loading ?
+          <span className="glyphicon glyphicon-repeat indicator-spinner selectize-indicator"></span>
+        : null}
+      </div>
     );
   },
 
   /* Internal Helpers ------------------------------------------------------ */
-  _defaultSelectizeOptions: function() {
+  _defaultSelectizeOptions() {
     return {
       create:       false,
       openOnFocus:  true,
@@ -51,13 +68,13 @@ var SearchInputField = React.createClass({
       loadThrottle: 1000,
       closeAfterSelect: true,
       hideSelected: true,
-      onChange: function() {
+      onChange() {
         this.close();
       },
     };
   },
 
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps(nextProps) {
     var nextSelectizeOpts = nextProps.selectizeOptions();
 
     if (this.props.placeholder !== nextProps.placeholder) {
@@ -82,14 +99,14 @@ var SearchInputField = React.createClass({
   },
 
   // Enables the selectize plugin
-  enable: function() { return this._enable(); }, // Alias for internal function
-  _enable: function() {
+  enable() { return this._enable(); }, // Alias for internal function
+  _enable() {
     this.$selectize.enable();
   },
 
   // Disables the selectize plugin
-  disable: function() { return this._disable(); }, // Alias for internal function
-  _disable: function() {
+  disable() { return this._disable(); }, // Alias for internal function
+  _disable() {
     this.$selectize.disable();
   }
 });
