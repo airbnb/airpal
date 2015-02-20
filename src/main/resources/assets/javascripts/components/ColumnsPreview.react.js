@@ -1,16 +1,22 @@
 /** @jsx React.DOM */
-var React = require('react');
 
-/* Components */
+/**
+ * Dependencies
+ */
+var React = require('react');
+var _ = require('lodash');
+
+/**
+ * Components
+ */
 var Column = require('./Column.react');
 
-/* Helpers */
-var _     = require('lodash');
-
-/* Stores */
+/**
+ * Stores
+ */
 var TableStore = require('../stores/TableStore');
 
-// State actions
+
 function getStateFromStore() {
   return {
     table: TableStore.getActiveTable()
@@ -20,39 +26,32 @@ function getStateFromStore() {
 var ColumnsPreview = React.createClass({
   displayName: 'Columns',
 
-  getInitialState: function() {
+  getInitialState() {
     return getStateFromStore();
   },
 
-  componentDidMount: function() {
+  componentDidMount() {
     TableStore.addStoreListener('select', this._onChange);
     TableStore.addStoreListener('change', this._onChange);
   },
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     TableStore.removeStoreListener('select');
     TableStore.removeStoreListener('change');
   },
 
-  render: function () {
-    if( this.state.table && this.state.table.columns ) {
-      return this._renderColumns(this.state.table.columns);
-    } else {
-      return this._renderEmptyMessage();
-    }
+  _onChange() {
+    this.setState(getStateFromStore());
   },
 
-  /* Internal Helpers ------------------------------------------------------- */
-  _renderColumns: function(collection) {
-    var columns;
+  _renderColumns(collection) {
+    var partitions = _.chain(collection).where({partition: true}).sortBy('name').value();
+    var normalCols = _.chain(collection).where({partition: false}).sortBy('name').value();
 
-    var partitions = _.chain(collection).where({partition: true}).sortBy('name').value(),
-        normalCols = _.chain(collection).where({partition: false}).sortBy('name').value();
-
-    columns = _.chain(partitions.concat(normalCols)).reduce(function(m, col) {
-      var reuseGroup = (m.length > 0) && (m[m.length - 1].length < 4),
-          group = reuseGroup ? m[m.length - 1] : [],
-          val;
+    var columns = _.chain(partitions.concat(normalCols)).reduce(function(m, col) {
+      var reuseGroup = (m.length > 0) && (m[m.length - 1].length < 4);
+      var group = reuseGroup ? m[m.length - 1] : [];
+      var val;
 
       group.push(<Column key={col.name} name={col.name} type={col.type} />);
 
@@ -69,7 +68,7 @@ var ColumnsPreview = React.createClass({
     return (<div>{columns}</div>);
   },
 
-  _renderEmptyMessage: function() {
+  _renderEmptyMessage() {
     return (
       <div className="alert alert-warning">
         <p>There are no columns, or there is no table selected. Please select (another) table.</p>
@@ -77,14 +76,17 @@ var ColumnsPreview = React.createClass({
     )
   },
 
-  _capitalize: function(string) {
+  _capitalize(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   },
 
-  /* Store events */
-  _onChange: function() {
-    this.setState(getStateFromStore());
-  }
+  render() {
+    if( this.state.table && this.state.table.columns ) {
+      return this._renderColumns(this.state.table.columns);
+    } else {
+      return this._renderEmptyMessage();
+    }
+  },
 });
 
 module.exports = ColumnsPreview;
