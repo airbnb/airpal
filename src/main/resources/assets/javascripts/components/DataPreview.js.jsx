@@ -77,9 +77,6 @@ var DataPreview = React.createClass({
   },
 
   _renderColumns() {
-    var columnWidths = this.state.table.columns.map(function(column, i) {
-    });
-
     return (
       <div>
         {/*

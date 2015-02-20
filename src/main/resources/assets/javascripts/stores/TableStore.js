@@ -50,9 +50,7 @@ function _updateTableData(table, columns, data, partitions) {
     columns: columns,
     data: data,
     partitions: partitions,
-    columnWidths: columns.map(function(column, i) {
-      return 120;
-    }),
+    columnWidths: columns.map(() => 120),
   });
 }
 
