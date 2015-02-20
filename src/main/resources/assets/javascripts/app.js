@@ -5,7 +5,7 @@
 // Assign to global for compatibility with FixedDataTable.
 Object.assign = require('object-assign');
 
-var AirpalApp = require('./components/AirpalApp.react');
+var AirpalApp = require('./components/AirpalApp');
 var React = require('react');
 
 // Export for http://fb.me/react-devtools

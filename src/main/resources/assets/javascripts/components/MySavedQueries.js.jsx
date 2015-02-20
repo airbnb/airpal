@@ -57,11 +57,11 @@ var MySavedQueries = React.createClass({
           <tr key={query.uuid} className="saved-query">
             <td>
               <div className="row">
-                <div className="col-md-3">
+                <div className="col-md-12">
                   <h4>{query.name}</h4>
                   <p>{query.description}</p>
                 </div>
-                <div className="col-md-9">
+                <div className="col-md-12">
                   <pre onClick={this._onSelectQuery.bind(null, queryText)}>
                   {truncate(queryText, 750)}
                   </pre>
