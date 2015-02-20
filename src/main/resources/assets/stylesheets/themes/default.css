@@ -16,6 +16,7 @@
  * user-info............The user information section
  * saved-query..........The saved query component
  * query-information....The queries tabs
+ * runs-table...........The RunsTable component
  *
  * PLUGINS
  * CodeMirror...........The CSS for the CodeMirror plugin
@@ -245,6 +246,24 @@
   width: 99.9%;
 }
 
+/**
+ * RunsTable
+ */
+
+.runs-table-progress .progress {
+  margin-right: 20px;
+}
+
+.runs-table-progress .glyphicon-remove {
+  position: absolute;
+  top: 10px;
+  right: 8px;
+  cursor: pointer;
+}
+
+.runs-table-progress .glyphicon-remove:hover {
+  opacity: 0.8;
+}
 
 /*------------------------------------*\
     #PLUGINS

@@ -223,12 +223,10 @@ var CellRenderers = {
       );
     } else if (run.state === 'RUNNING') {
       return (
-        <div>
-          <ProgressBar now={getProgressFromStats(run.queryStats)}
-            style={{marginRight: 20}}/>
+        <div className="runs-table-progress">
+          <ProgressBar now={getProgressFromStats(run.queryStats)} />
           <span className="glyphicon glyphicon-remove text-danger"
             title="Kill query"
-            style={{position: 'absolute', right: 8, top: 10, cursor: 'pointer'}}
             onClick={killRun.bind(null, run.uuid)}></span>
         </div>
         );
