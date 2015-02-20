@@ -1,16 +1,25 @@
 /** @jsx React.DOM */
+
+/**
+ * Dependencies
+ */
 var React = require('react');
 
-/* Actions */
-var RunActions    = require('../actions/RunActions');
+/**
+ * Actions
+ */
+var RunActions = require('../actions/RunActions');
 
-/* Components */
-var ConnectionErrors  = require('./ConnectionErrors.react'),
-    Header            = require('./Header.react'),
-    TableSearch       = require('./TableSearch.react'),
-    TableInfo         = require('./TableInfo.react'),
-    QueryEditor       = require('./QueryEditor.react'),
-    QueryInformation  = require('./QueryInformation.react');
+/**
+ * Components
+ */
+var ConnectionErrors = require('./ConnectionErrors.react');
+var Header = require('./Header.react');
+var TableSearch = require('./TableSearch.react');
+var TableInfo = require('./TableInfo.react');
+var QueryEditor = require('./QueryEditor.react');
+var QueryInformation = require('./QueryInformation.react');
+
 
 var AirpalApp = React.createClass({
   displayName: 'AirpalApp',
@@ -19,8 +28,8 @@ var AirpalApp = React.createClass({
 
     // Add event listeners to the window to detect online/offline changes
     // for the user
-    window.addEventListener('online',   function() { RunActions.wentOnline(); });
-    window.addEventListener('offline',  function() { RunActions.wentOffline(); });
+    window.addEventListener('online', RunActions.wentOnline);
+    window.addEventListener('offline', RunActions.wentOffline);
   },
 
   render: function () {
