@@ -11,6 +11,7 @@ var TableActions = require('../actions/TableActions');
 var TableStore = require('../stores/TableStore');
 
 var _ = require('lodash');
+var moment = require('moment');
 
 var commonSelectizeOptions = {
   closeAfterSelect: true,
