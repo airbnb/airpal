@@ -54,7 +54,7 @@ var ColumnsPreview = React.createClass({
           group = reuseGroup ? m[m.length - 1] : [],
           val;
 
-      group.push(<Column key={col.name} name={col.name} type={col.type} />);
+      group.push(<Column key={col.name} name={col.name} type={col.type} partition={col.partition} />);
 
       if (!reuseGroup) {
         m.push(group);

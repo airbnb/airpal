@@ -13,17 +13,14 @@ var Column = React.createClass({
   },
 
   render: function () {
-
-    // Define the output value
-    var value = this.props.partition ? '(Partition)' : '(' + this.props.type + ')';
-
     // Return the template
     return (
       <div className="col-sm-3">
         <div className="panel panel-default panel-compressed">
 
           <div className="panel-body">
-            <strong>{this.props.name} </strong> {value}
+            <strong>{this.props.name}</strong> ({this.props.type}) {
+              this.props.partition ? '(Partition)' : null}
           </div>
 
         </div>
