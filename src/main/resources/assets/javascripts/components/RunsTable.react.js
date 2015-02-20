@@ -34,16 +34,24 @@ var RunsTable = React.createClass({
   },
 
   getInitialState() {
-    return this.getStateFromStore();
+    return _.extend({
+      width: 960
+    }, this.getStateFromStore());
   },
 
   componentDidMount() {
     RunStore.addStoreListener('change', this._onChange);
+
+    $(window).on('resize', this._onResize);
+
+    this.recomputeWidth();
   },
 
   componentWillUnmount() {
     // Remove the store listeners
     RunStore.removeStoreListener('change', this._onChange);
+
+    $(window).off('resize', this._onResize);
   },
 
   render() {
@@ -52,16 +60,22 @@ var RunsTable = React.createClass({
     }
 
     return (
-      <Table
-        rowHeight={40}
-        rowGetter={this.rowGetter}
-        rowsCount={this.state.runs.length}
-        width={960}
-        maxHeight={400}
-        ownerHeight={400}
-        headerHeight={40}>
-        {getColumns(this.props.user != null)}
-      </Table>
+      <div>
+        {/*
+          Need to make sure to wrap `Table` in a parent element so we can
+          compute the natural width of the component.
+        */}
+        <Table
+          rowHeight={40}
+          rowGetter={this.rowGetter}
+          rowsCount={this.state.runs.length}
+          width={this.state.width}
+          maxHeight={400}
+          ownerHeight={400}
+          headerHeight={40}>
+          {getColumns(this.props.user != null)}
+        </Table>
+      </div>
     );
   },
 
@@ -74,6 +88,15 @@ var RunsTable = React.createClass({
       <p className="info text-center">No queries to show</p>
     );
   },
+
+  recomputeWidth() {
+    var width = $(this.getDOMNode()).innerWidth();
+    this.setState({width});
+  },
+
+  _onResize: _.debounce(function(e) {
+    this.recomputeWidth();
+  }, 100),
 
   /* Store events */
   _onChange() {
