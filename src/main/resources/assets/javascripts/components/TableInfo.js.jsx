@@ -10,33 +10,40 @@ var TabbedArea      = require('react-bootstrap').TabbedArea,
 
 var TableInfo = React.createClass({
   displayName: 'TableInfo',
-  render: function () {
+
+  getInitialState() {
+    return {
+      selectedTab: 1,
+    };
+  },
+
+  render() {
+    var {selectedTab} = this.state;
     return (
       <section className="row spaced tables-selector-row">
         <div className="col-sm-12">
         <div className="panel panel-default panel-container">
         <div className="panel-body">
-          <TabbedArea defaultActiveKey={1} animation={false} bsStyle={'pills'}>
-
+          <TabbedArea activeKey={selectedTab} animation={false} bsStyle={'pills'} onSelect={this._onTabSelect}>
+            {/* Lazy-init the child components so they can lazy-fetch their data. */}
             <TabPane eventKey={1} tab="Columns">
-              <ColumnsPreview />
+              {selectedTab === 1 ? <ColumnsPreview /> : null}
             </TabPane>
 
             <TabPane eventKey={2} tab="Data Preview">
-              <DataPreview />
+              {selectedTab === 2 ? <DataPreview /> : null}
             </TabPane>
-
-            <TabPane eventKey={3} tab="Meta data">
-              <MetaDataPreview />
-            </TabPane>
-
           </TabbedArea>
         </div>
         </div>
         </div>
       </section>
     );
-  }
+  },
+
+  _onTabSelect(selectedTab) {
+    this.setState({selectedTab});
+  },
 });
 
 module.exports = TableInfo;

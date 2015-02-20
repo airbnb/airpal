@@ -50,6 +50,9 @@ function _updateTableData(table, columns, data, partitions) {
     columns: columns,
     data: data,
     partitions: partitions,
+    columnWidths: columns.map(function(column, i) {
+      return 120;
+    }),
   });
 }
 
@@ -99,6 +102,15 @@ function _unmarkActive(name) {
   table.active = false;
 }
 
+function _setActiveTableColumnWidth(col, width) {
+  var table = TableStore.getActiveTable();
+  if (table === undefined) {
+    return;
+  }
+
+  table.columnWidths[col] = width;
+}
+
 class TableStoreClass extends BaseStore {
 
   // Get the table by name
@@ -122,6 +134,16 @@ class TableStoreClass extends BaseStore {
   getActiveTable() {
     if (_.isEmpty(_tables)) return undefined;
     return _.find(_tables, { active: true });
+  }
+
+  getActiveTableColumnWidths() {
+    var activeTable = this.getActiveTable();
+
+    if (!activeTable) {
+      return null;
+    }
+
+    return activeTable.columnWidths;
   }
 
   // Get all tables
@@ -166,6 +188,11 @@ TableStore.dispatchToken = AppDispatcher.register(function(payload) {
 
     case TableConstants.RECEIVED_TABLE_DATA:
       _updateTableData(action.table, action.columns, action.data, action.partitions);
+      TableStore.emitChange('change');
+      break;
+
+    case TableConstants.SET_TABLE_COLUMN_WIDTH:
+      _setActiveTableColumnWidth(action.columnIdx, action.width);
       TableStore.emitChange('change');
       break;
 

@@ -11,8 +11,13 @@ var FQN     = require('../utils/fqn');;
 /* Stores */
 var TableStore = require('../stores/TableStore');
 
+/* Actions */
+var TableActions = require('../actions/TableActions');
+
 /* Mixins */
 var UpdateWidthMixin = require('../mixins/UpdateWidthMixin');
+
+var isColumnResizing = false;
 
 // State actions
 function getStateFromStore() {
@@ -21,14 +26,15 @@ function getStateFromStore() {
   };
 }
 
-function getColumns(columns) {
+function getColumns(columns, widths) {
   return columns.map(function(column, i) {
     return (
       <Column
         label={column.name}
-        width={120}
+        width={widths[i]}
         dataKey={i}
         key={i}
+        isResizable={true}
         />
     );
   });
@@ -49,8 +55,8 @@ var DataPreview = React.createClass({
   },
 
   componentWillUnmount() {
-    TableStore.removeStoreListener('select');
-    TableStore.removeStoreListener('change');
+    TableStore.removeStoreListener('select', this._onChange);
+    TableStore.removeStoreListener('change', this._onChange);
   },
 
   render() {
@@ -71,6 +77,9 @@ var DataPreview = React.createClass({
   },
 
   _renderColumns() {
+    var columnWidths = this.state.table.columns.map(function(column, i) {
+    });
+
     return (
       <div>
         {/*
@@ -84,8 +93,10 @@ var DataPreview = React.createClass({
           width={this.state.width}
           maxHeight={230}
           ownerHeight={230}
-          headerHeight={40}>
-          {getColumns(this.state.table.columns)}
+          headerHeight={40}
+          isColumnResizing={isColumnResizing}
+          onColumnResizeEndCallback={this._onColumnResizeEndCallback}>
+          {getColumns(this.state.table.columns, this.state.table.columnWidths)}
         </Table>
       </div>
     );
@@ -113,7 +124,12 @@ var DataPreview = React.createClass({
   /* Store events */
   _onChange() {
     this.setState(getStateFromStore());
-  }
+  },
+
+  _onColumnResizeEndCallback(newColumnWidth, dataKey) {
+    isColumnResizing = false;
+    TableActions.setTableColumnWidth(dataKey, newColumnWidth);
+  },
 });
 
 module.exports = DataPreview;
