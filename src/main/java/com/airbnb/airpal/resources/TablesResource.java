@@ -1,7 +1,6 @@
 package com.airbnb.airpal.resources;
 
 import com.airbnb.airpal.core.AirpalUser;
-import com.airbnb.airpal.core.hive.HiveTableUpdatedCache;
 import com.airbnb.airpal.core.store.usage.UsageStore;
 import com.airbnb.airpal.presto.PartitionedTable;
 import com.airbnb.airpal.presto.Table;
@@ -28,6 +27,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -44,7 +44,6 @@ public class TablesResource
     private final ColumnCache columnCache;
     private final PreviewTableCache previewTableCache;
     private final UsageStore usageStore;
-    private final HiveTableUpdatedCache updateCache;
     private final String defaultCatalog;
 
     @Inject
@@ -53,14 +52,12 @@ public class TablesResource
             final ColumnCache columnCache,
             final PreviewTableCache previewTableCache,
             final UsageStore usageStore,
-            final HiveTableUpdatedCache updatedCache,
             @Named("default-catalog") final String defaultCatalog)
     {
         this.schemaCache = schemaCache;
         this.columnCache = columnCache;
         this.previewTableCache = previewTableCache;
         this.usageStore = usageStore;
-        this.updateCache = updatedCache;
         this.defaultCatalog = defaultCatalog;
     }
 
@@ -85,7 +82,7 @@ public class TablesResource
 
         final List<Table> tables = builder.build();
         final Map<Table, Long> allUsages = usageStore.getUsages(tables);
-        final Map<PartitionedTable, DateTime> updateMap = updateCache.getAllPresent(tables);
+        final Map<PartitionedTable, DateTime> updateMap = Collections.emptyMap();
 
         return Response.ok(createTablesWithMetaData(tables, allUsages, updateMap)).build();
     }
@@ -143,7 +140,7 @@ public class TablesResource
     }
 
     @Data
-    private static class PartitionedTableWithMetaData
+    public static class PartitionedTableWithMetaData
     {
         @JsonProperty
         private final String schema;
@@ -231,7 +228,7 @@ public class TablesResource
             for (Object value : partition.getValues()) {
                 PartitionedTable partitionedTable = table.withPartitionName(
                         HivePartition.getPartitionId(partition.getName(), value));
-                DateTime updatedAt = updateCache.get(partitionedTable);
+                DateTime updatedAt = null;
 
                 partitionItems.add(new HivePartitionItem(partition.getName(), partition.getType(), value, updatedAt));
             }

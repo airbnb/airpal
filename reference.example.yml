@@ -18,9 +18,6 @@ server:
     - type: http
       port: 8082
 
-metaStoreConfiguration:
-  driverName: com.mysql.jdbc.Driver
-
 shiro:
   iniConfigs: ["classpath:shiro_allow_all.ini"]
 

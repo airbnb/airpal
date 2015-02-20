@@ -120,7 +120,7 @@ var TableSearch = React.createClass({
       plugins: {
         'remove_button': {},
         'header': {
-          headers: ['Table', 'Usages', 'Last Updated']
+          headers: ['Table', 'Usages in Airpal']
         },
       },
 
@@ -186,8 +186,9 @@ var TableSearch = React.createClass({
 
     return (
       '<div class="row">' +
-        '<div class="col-sm-6 col-name"><span>' + escape(item.value) + '</span></div>' +
-        '<div class="col-sm-3"><span>' + lastUpdatedRepresentation + '</span></div>' +
+        '<div class="col-sm-6 col-name"><span>' +
+          escape(item.name + '=' + item.value) +
+        '</span></div>' +
       '</div>'
     );
   },
@@ -212,12 +213,6 @@ var TableSearch = React.createClass({
       ],
       plugins: {
         'remove_button': {},
-        'header': {
-          headers: [
-            'Partition',
-            'Last Updated'
-          ]
-        },
       },
       render: { option: this._renderPartitionOptions },
       load(query, callback) {

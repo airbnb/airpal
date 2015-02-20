@@ -2,27 +2,25 @@ package com.airbnb.airpal.modules;
 
 import com.airbnb.airlift.http.client.OldJettyHttpClient;
 import com.airbnb.airpal.AirpalConfiguration;
+import com.airbnb.airpal.api.output.PersistentJobOutputFactory;
 import com.airbnb.airpal.api.output.builders.OutputBuilderFactory;
 import com.airbnb.airpal.api.output.persistors.CSVPersistorFactory;
 import com.airbnb.airpal.api.output.persistors.PersistorFactory;
 import com.airbnb.airpal.core.AirpalUserFactory;
-import com.airbnb.airpal.api.output.PersistentJobOutputFactory;
 import com.airbnb.airpal.core.execution.ExecutionClient;
 import com.airbnb.airpal.core.health.PrestoHealthCheck;
-import com.airbnb.airpal.core.hive.HiveTableUpdatedCache;
 import com.airbnb.airpal.core.store.files.ExpiringFileStore;
-import com.airbnb.airpal.core.store.jobs.ActiveJobsStore;
-import com.airbnb.airpal.core.store.usage.CachingUsageStore;
-import com.airbnb.airpal.core.store.jobs.InMemoryActiveJobsStore;
 import com.airbnb.airpal.core.store.history.JobHistoryStore;
 import com.airbnb.airpal.core.store.history.JobHistoryStoreDAO;
+import com.airbnb.airpal.core.store.jobs.ActiveJobsStore;
+import com.airbnb.airpal.core.store.jobs.InMemoryActiveJobsStore;
 import com.airbnb.airpal.core.store.queries.QueryStore;
 import com.airbnb.airpal.core.store.queries.QueryStoreDAO;
+import com.airbnb.airpal.core.store.usage.CachingUsageStore;
 import com.airbnb.airpal.core.store.usage.SQLUsageStore;
 import com.airbnb.airpal.core.store.usage.UsageStore;
 import com.airbnb.airpal.presto.ClientSessionFactory;
 import com.airbnb.airpal.presto.QueryInfoClient;
-import com.airbnb.airpal.presto.Table;
 import com.airbnb.airpal.presto.metadata.ColumnCache;
 import com.airbnb.airpal.presto.metadata.PreviewTableCache;
 import com.airbnb.airpal.presto.metadata.SchemaCache;
@@ -71,6 +69,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static com.airbnb.airpal.presto.QueryRunner.QueryRunnerFactory;
@@ -232,6 +231,14 @@ public class AirpalModule extends AbstractModule
     }
 
     @Singleton
+    @Named("hive")
+    @Provides
+    public ScheduledExecutorService provideTableCacheUpdater()
+    {
+        return Executors.newSingleThreadScheduledExecutor();
+    }
+
+    @Singleton
     @Named("sse")
     @Provides
     public ExecutorService provideSSEExecutorService()
@@ -275,32 +282,6 @@ public class AirpalModule extends AbstractModule
         UsageStore delegate = new SQLUsageStore(config.getUsageWindow(), dbi);
 
         return new CachingUsageStore(delegate, io.dropwizard.util.Duration.minutes(6));
-    }
-
-    @Singleton
-    @Provides
-    public HiveTableUpdatedCache provideHiveTableUpdatedCache(@Named("presto") ExecutorService executorService)
-    {
-        AirpalConfiguration.HiveMetastoreConfiguration metastoreConfiguration = config.getMetaStoreConfiguration();
-
-        final HiveTableUpdatedCache updatedCache = new HiveTableUpdatedCache(
-                io.dropwizard.util.Duration.hours(1),
-                metastoreConfiguration.getDriverName(),
-                metastoreConfiguration.getConnectionUrl(),
-                metastoreConfiguration.getUserName(),
-                metastoreConfiguration.getPassword(),
-                executorService);
-
-        executorService.submit(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                updatedCache.getAll(Collections.<Table>emptyList());
-            }
-        });
-
-        return updatedCache;
     }
 
     @Provides
