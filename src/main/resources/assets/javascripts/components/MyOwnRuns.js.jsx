@@ -2,7 +2,7 @@
 var React   = require('react');
 
 /* Components */
-var RunsTable = require('./RunsTable.react');
+var RunsTable = require('./RunsTable');
 
 /* Stores */
 var UserStore = require('../stores/UserStore');

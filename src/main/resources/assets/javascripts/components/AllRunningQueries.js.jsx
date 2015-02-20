@@ -5,7 +5,7 @@ var React = require('react');
 var RunStore = require('../stores/RunStore');
 
 /* Components */
-var RunsTable = require('./RunsTable.react');
+var RunsTable = require('./RunsTable');
 
 var AllRunningQueries = React.createClass({
   displayName: 'AllRunningQueries',

@@ -5,12 +5,12 @@ var React = require('react');
 var RunActions    = require('../actions/RunActions');
 
 /* Components */
-var ConnectionErrors  = require('./ConnectionErrors.react'),
-    Header            = require('./Header.react'),
-    TableSearch       = require('./TableSearch.react'),
-    TableInfo         = require('./TableInfo.react'),
-    QueryEditor       = require('./QueryEditor.react'),
-    QueryInformation  = require('./QueryInformation.react');
+var ConnectionErrors  = require('./ConnectionErrors'),
+    Header            = require('./Header'),
+    TableSearch       = require('./TableSearch'),
+    TableInfo         = require('./TableInfo'),
+    QueryEditor       = require('./QueryEditor'),
+    QueryInformation  = require('./QueryInformation');
 
 var AirpalApp = React.createClass({
   displayName: 'AirpalApp',

@@ -18,6 +18,8 @@ module.exports = {
     // Enable source maps
     debug: true,
 
+    extensions: ['.js.jsx'],
+
     // A separate bundle will be generated for each
     // bundle config in the list below
     bundleConfigs: [{
@@ -42,7 +44,7 @@ module.exports = {
       'specs/support'
     ],
     moduleFileExtensions: [
-      'js', 'json', 'react'
+      'js', 'json', 'jsx'
     ]
   }
 };

@@ -15,7 +15,7 @@ var ace             = require('brace');
 var QueryStore      = require('../stores/QueryStore');
 
 /* Views */
-var QuerySaveModal  = require('./QuerySaveModal.react');
+var QuerySaveModal  = require('./QuerySaveModal');
 
 require('brace/theme/monokai');
 require('brace/mode/sql');

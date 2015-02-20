@@ -2,7 +2,7 @@
 var React = require('react');
 
 /* Components */
-var Column = require('./Column.react');
+var Column = require('./Column');
 
 /* Helpers */
 var _     = require('lodash');
