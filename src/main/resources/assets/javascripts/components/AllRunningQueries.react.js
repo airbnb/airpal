@@ -1,10 +1,18 @@
 /** @jsx React.DOM */
+
+/**
+ * Dependencies
+ */
 var React = require('react');
 
-/* Stores */
+/**
+ * Stores
+ */
 var RunStore = require('../stores/RunStore');
 
-/* Components */
+/**
+ * Components
+ */
 var RunsTable = require('./RunsTable.react');
 
 var AllRunningQueries = React.createClass({
@@ -16,7 +24,7 @@ var AllRunningQueries = React.createClass({
 
   render() {
     return <RunsTable />;
-  },
+  }
 });
 
 module.exports = AllRunningQueries;

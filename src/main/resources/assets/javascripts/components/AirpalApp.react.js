@@ -24,15 +24,14 @@ var QueryInformation = require('./QueryInformation.react');
 var AirpalApp = React.createClass({
   displayName: 'AirpalApp',
 
-  componentDidMount: function() {
-
-    // Add event listeners to the window to detect online/offline changes
-    // for the user
+  componentDidMount() {
+    // Add event listeners to the window to
+    // detect online/offline changes for the user
     window.addEventListener('online', RunActions.wentOnline);
     window.addEventListener('offline', RunActions.wentOffline);
   },
 
-  render: function () {
+  render() {
     return (
       <div className="airpal-app">
         <ConnectionErrors />
