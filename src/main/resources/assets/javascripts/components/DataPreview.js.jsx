@@ -11,6 +11,9 @@ var FQN     = require('../utils/fqn');;
 /* Stores */
 var TableStore = require('../stores/TableStore');
 
+/* Mixins */
+var UpdateWidthMixin = require('../mixins/UpdateWidthMixin');
+
 // State actions
 function getStateFromStore() {
   return {
@@ -23,7 +26,7 @@ function getColumns(columns) {
     return (
       <Column
         label={column.name}
-        width={100}
+        width={120}
         dataKey={i}
         key={i}
         />
@@ -34,21 +37,23 @@ function getColumns(columns) {
 var DataPreview = React.createClass({
   displayName: 'DataPreview',
 
-  getInitialState: function() {
+  mixins: [UpdateWidthMixin],
+
+  getInitialState() {
     return getStateFromStore();
   },
 
-  componentDidMount: function() {
+  componentDidMount() {
     TableStore.addStoreListener('select', this._onChange);
     TableStore.addStoreListener('change', this._onChange);
   },
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     TableStore.removeStoreListener('select');
     TableStore.removeStoreListener('change');
   },
 
-  render: function () {
+  render() {
     if( this.state.table && this.state.table.data ) {
       return this._renderColumns();
     } else {
@@ -57,7 +62,7 @@ var DataPreview = React.createClass({
   },
 
   /* Internal Helpers ------------------------------------------------------- */
-  _renderEmptyMessage: function() {
+  _renderEmptyMessage() {
     return (
       <div className="alert alert-warning">
         <p>There is no table selected. Please select (another) table to view the inner data.</p>
@@ -65,32 +70,38 @@ var DataPreview = React.createClass({
     )
   },
 
-  _renderColumns: function() {
+  _renderColumns() {
     return (
-      <Table
-        rowHeight={40}
-        rowGetter={this.rowGetter}
-        rowsCount={this.state.table.data.length}
-        width={960}
-        maxHeight={250}
-        ownerHeight={250}
-        headerHeight={40}>
-        {getColumns(this.state.table.columns)}
-      </Table>
+      <div>
+        {/*
+          Need to make sure to wrap `Table` in a parent element so we can
+          compute the natural width of the component.
+        */}
+        <Table
+          rowHeight={40}
+          rowGetter={this.rowGetter}
+          rowsCount={this.state.table.data.length}
+          width={this.state.width}
+          maxHeight={230}
+          ownerHeight={230}
+          headerHeight={40}>
+          {getColumns(this.state.table.columns)}
+        </Table>
+      </div>
     );
   },
 
-  rowGetter: function(rowIndex) {
+  rowGetter(rowIndex) {
     return this.state.table.data[rowIndex];
   },
 
-  _enhancedColumns: function() {
+  _enhancedColumns() {
     return _.map(this.state.table.columns, function(column) {
       return column.name;
     });
   },
 
-  _enhancedData: function() {
+  _enhancedData() {
     return _.map(this.state.table.data, function(item) {
       return _.transform(item, function(result, n, key) {
         var text = _.isBoolean(n) ? n.toString() : n;
@@ -100,7 +111,7 @@ var DataPreview = React.createClass({
   },
 
   /* Store events */
-  _onChange: function() {
+  _onChange() {
     this.setState(getStateFromStore());
   }
 });
