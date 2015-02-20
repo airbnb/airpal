@@ -30,8 +30,8 @@ var ColumnsPreview = React.createClass({
   },
 
   componentWillUnmount: function() {
-    TableStore.removeStoreListener('select');
-    TableStore.removeStoreListener('change');
+    TableStore.removeStoreListener('select', this._onChange);
+    TableStore.removeStoreListener('change', this._onChange);
   },
 
   render: function () {

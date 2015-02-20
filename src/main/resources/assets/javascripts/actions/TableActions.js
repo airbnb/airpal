@@ -29,6 +29,14 @@ module.exports = {
     });
   },
 
+  setTableColumnWidth: function(columnIdx, width) {
+    AppDispatcher.handleViewAction({
+      type: TableConstants.SET_TABLE_COLUMN_WIDTH,
+      columnIdx: columnIdx,
+      width: width
+    });
+  },
+
   unselectTable: function(name) {
     AppDispatcher.handleViewAction({
       type: TableConstants.UNSELECT_TABLE,

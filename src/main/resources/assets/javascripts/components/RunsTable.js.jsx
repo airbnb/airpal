@@ -17,6 +17,9 @@ var { Table, Column } = require('fixed-data-table');
 /* Bootstrap */
 var { ProgressBar } = require('react-bootstrap');
 
+/* Mixins */
+var UpdateWidthMixin = require('../mixins/UpdateWidthMixin');
+
 // State actions
 function getRuns(user) {
   if (user) {
@@ -29,6 +32,8 @@ function getRuns(user) {
 var RunsTable = React.createClass({
   displayName: 'RunsTable',
 
+  mixins: [UpdateWidthMixin],
+
   getStateFromStore() {
     return {
       runs: getRuns(this.props.user),
@@ -36,24 +41,16 @@ var RunsTable = React.createClass({
   },
 
   getInitialState() {
-    return _.extend({
-      width: 960
-    }, this.getStateFromStore());
+    return this.getStateFromStore();
   },
 
   componentDidMount() {
     RunStore.addStoreListener('change', this._onChange);
-
-    $(window).on('resize', this._onResize);
-
-    this.recomputeWidth();
   },
 
   componentWillUnmount() {
     // Remove the store listeners
     RunStore.removeStoreListener('change', this._onChange);
-
-    $(window).off('resize', this._onResize);
   },
 
   render() {
@@ -90,15 +87,6 @@ var RunsTable = React.createClass({
       <p className="info text-center">No queries to show</p>
     );
   },
-
-  recomputeWidth() {
-    var width = $(this.getDOMNode()).innerWidth();
-    this.setState({width});
-  },
-
-  _onResize: _.debounce(function(e) {
-    this.recomputeWidth();
-  }, 100),
 
   /* Store events */
   _onChange() {

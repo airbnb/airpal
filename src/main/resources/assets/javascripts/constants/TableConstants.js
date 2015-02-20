@@ -10,4 +10,5 @@ module.exports = keyMirror({
   SELECT_TABLE: null,
   RECEIVED_TABLE_DATA: null,
   UNSELECT_TABLE: null,
+  SET_TABLE_COLUMN_WIDTH: null,
 });

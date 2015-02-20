@@ -1,13 +1,23 @@
 /** @jsx React.DOM */
 var React = require('react');
 
+/* FixedDataTable */
+var { Table, Column } = require('fixed-data-table');
+
 /* Helpers */
-var _       = require('lodash')
-    FQN     = require('../utils/fqn'),
-    Griddle = require('griddle-react');
+var _       = require('lodash');
+var FQN     = require('../utils/fqn');;
 
 /* Stores */
 var TableStore = require('../stores/TableStore');
+
+/* Actions */
+var TableActions = require('../actions/TableActions');
+
+/* Mixins */
+var UpdateWidthMixin = require('../mixins/UpdateWidthMixin');
+
+var isColumnResizing = false;
 
 // State actions
 function getStateFromStore() {
@@ -16,24 +26,40 @@ function getStateFromStore() {
   };
 }
 
+function getColumns(columns, widths) {
+  return columns.map(function(column, i) {
+    return (
+      <Column
+        label={column.name}
+        width={widths[i]}
+        dataKey={i}
+        key={i}
+        isResizable={true}
+        />
+    );
+  });
+}
+
 var DataPreview = React.createClass({
   displayName: 'DataPreview',
 
-  getInitialState: function() {
+  mixins: [UpdateWidthMixin],
+
+  getInitialState() {
     return getStateFromStore();
   },
 
-  componentDidMount: function() {
+  componentDidMount() {
     TableStore.addStoreListener('select', this._onChange);
     TableStore.addStoreListener('change', this._onChange);
   },
 
-  componentWillUnmount: function() {
-    TableStore.removeStoreListener('select');
-    TableStore.removeStoreListener('change');
+  componentWillUnmount() {
+    TableStore.removeStoreListener('select', this._onChange);
+    TableStore.removeStoreListener('change', this._onChange);
   },
 
-  render: function () {
+  render() {
     if( this.state.table && this.state.table.data ) {
       return this._renderColumns();
     } else {
@@ -42,7 +68,7 @@ var DataPreview = React.createClass({
   },
 
   /* Internal Helpers ------------------------------------------------------- */
-  _renderEmptyMessage: function() {
+  _renderEmptyMessage() {
     return (
       <div className="alert alert-warning">
         <p>There is no table selected. Please select (another) table to view the inner data.</p>
@@ -50,21 +76,40 @@ var DataPreview = React.createClass({
     )
   },
 
-  _renderColumns: function() {
+  _renderColumns() {
     return (
-      <div className="row" className="data-preview data-preview-wrapper">
-        <Griddle columns={this._enhancedColumns()} results={this._enhancedData()} />
+      <div>
+        {/*
+          Need to make sure to wrap `Table` in a parent element so we can
+          compute the natural width of the component.
+        */}
+        <Table
+          rowHeight={40}
+          rowGetter={this.rowGetter}
+          rowsCount={this.state.table.data.length}
+          width={this.state.width}
+          maxHeight={230}
+          ownerHeight={230}
+          headerHeight={40}
+          isColumnResizing={isColumnResizing}
+          onColumnResizeEndCallback={this._onColumnResizeEndCallback}>
+          {getColumns(this.state.table.columns, this.state.table.columnWidths)}
+        </Table>
       </div>
     );
   },
 
-  _enhancedColumns: function() {
+  rowGetter(rowIndex) {
+    return this.state.table.data[rowIndex];
+  },
+
+  _enhancedColumns() {
     return _.map(this.state.table.columns, function(column) {
       return column.name;
     });
   },
 
-  _enhancedData: function() {
+  _enhancedData() {
     return _.map(this.state.table.data, function(item) {
       return _.transform(item, function(result, n, key) {
         var text = _.isBoolean(n) ? n.toString() : n;
@@ -74,9 +119,14 @@ var DataPreview = React.createClass({
   },
 
   /* Store events */
-  _onChange: function() {
+  _onChange() {
     this.setState(getStateFromStore());
-  }
+  },
+
+  _onColumnResizeEndCallback(newColumnWidth, dataKey) {
+    isColumnResizing = false;
+    TableActions.setTableColumnWidth(dataKey, newColumnWidth);
+  },
 });
 
 module.exports = DataPreview;
