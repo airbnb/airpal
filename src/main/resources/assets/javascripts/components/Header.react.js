@@ -54,15 +54,7 @@ var Header = React.createClass({
 
             <div className="col-sm-6">
               <p>
-                <strong>Access Level &nbsp;</strong>
-
-                <a href="https://airbnb.hackpad.com/Airpal-9FiIU3O2BJ1#:h=Access-Levels" target="_blank"
-                  data-toggle="tooltip" data-placement="bottom" title="For more info about the access rights, see the HackPad">
-                  <span className="glyphicon glyphicon-info-sign"></span>
-                </a>
-
-                <br />
-
+                <strong>Access Level &nbsp;</strong><br />
                 <span className="user-permissions">
                   {this.state.user.executionPermissions.accessLevel}
                 </span>
