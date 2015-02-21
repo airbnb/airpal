@@ -49,7 +49,7 @@
     "jest-cli": "^0.2.0",
     "minifyify": "^4.4.0",
     "pretty-hrtime": "~0.2.1",
-    "react-tools": "~0.12"
+    "react-tools": "~0.12",
     "reactify": "^0.17.1",
     "require-dir": "^0.1.0",
     "vinyl-source-stream": "~0.1.1",
@@ -65,7 +65,7 @@
     "keymirror": "^0.1.0",
     "moment": "^2.9.0",
     "object-assign": "^2.0.0",
-    "react": "~0.12",
+    "react": "~0.12"
   },
   "scripts": {
     "test": "jest"
