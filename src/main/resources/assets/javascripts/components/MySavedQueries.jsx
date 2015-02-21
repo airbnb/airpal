@@ -58,8 +58,8 @@ var MySavedQueries = React.createClass({
               <p>{query.description}</p>
             </div>
             <div className="col-md-12">
-              <pre className="" onClick={this._onSelectQuery.bind(null, queryText)}>
-              {truncate(queryText, 750)}
+              <pre onClick={this._onSelectQuery.bind(null, queryText)}>
+                {truncate(queryText, 750)}
               </pre>
               <ButtonToolbar className="pull-right">
                 <Button bsSize="xsmall" onClick={this._deleteQuery.bind(null, query.uuid)}>
