@@ -1,10 +1,6 @@
-var React = require('react');
-
-/* Stores */
-var UserStore = require('../stores/UserStore');
-
-/* Utils */
-var UserApiUtils = require('../utils/UserApiUtils');
+import React from "react";
+import UserStore from "../stores/UserStore";
+import UserApiUtils from "../utils/UserApiUtils";
 
 // State actions
 function getStateFromStore() {
@@ -13,8 +9,7 @@ function getStateFromStore() {
   };
 }
 
-/* Header component */
-var Header = React.createClass({
+let Header = React.createClass({
   displayName: 'Header',
 
   getInitialState() {
@@ -74,4 +69,4 @@ var Header = React.createClass({
   }
 });
 
-module.exports = Header;
+export default Header;

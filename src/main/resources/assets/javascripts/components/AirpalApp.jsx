@@ -1,19 +1,15 @@
-var React = require('react');
+import React from "react";
+import RunActions from "../actions/RunActions";
+import ConnectionErrors from "./ConnectionErrors.jsx";
+import Header from "./Header.jsx";
+import TableExplorer from "./TableExplorer.jsx";
+import QueryHistory from "./QueryHistory.jsx";
+import QueryEditor from "./QueryEditor.jsx";
 
-/* Actions */
-var RunActions    = require('../actions/RunActions');
-
-/* Components */
-var ConnectionErrors = require('./ConnectionErrors.jsx');
-var Header = require('./Header.jsx');
-var TableExplorer = require('./TableExplorer.jsx');
-var QueryHistory = require('./QueryHistory.jsx');
-var QueryEditor = require('./QueryEditor.jsx');
-
-var AirpalApp = React.createClass({
+let AirpalApp = React.createClass({
   displayName: 'AirpalApp',
 
-  componentDidMount: function() {
+  componentDidMount() {
 
     // Add event listeners to the window to detect online/offline changes
     // for the user
@@ -21,7 +17,7 @@ var AirpalApp = React.createClass({
     window.addEventListener('offline',  function() { RunActions.wentOffline(); });
   },
 
-  render: function () {
+  render() {
     return (
       <div className="airpal-app">
         <ConnectionErrors />
@@ -34,4 +30,4 @@ var AirpalApp = React.createClass({
   }
 });
 
-module.exports = AirpalApp;
+export default AirpalApp;

@@ -11,7 +11,7 @@ let AllRunningQueries = React.createClass({
 
   render() {
     return <RunsTable />;
-  },
+  }
 });
 
 export default AllRunningQueries;

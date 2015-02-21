@@ -21,20 +21,17 @@ let QueryApiUtils = {
     $.ajax({
       type: 'POST',
       url: './api/query/saved',
-      data: data,
+      data,
 
       success(uuid) {
-        // TODO: currently the API only returns the uuid, but I also want the
-        // name and the description. So we're merging the uuid into the data
-        // object  We also have to reformat to match the nested structure of
-        // the `queryWithPlaceholders` object.
         let query = {
-          uuid: uuid,
+          uuid,
           name: data.name,
           description: data.description,
+
           queryWithPlaceholders: {
-            query: data.query,
-          },
+            query: data.query
+          }
         };
         QueryActions.receivedQuery(query);
       }
@@ -44,7 +41,7 @@ let QueryApiUtils = {
   destroyQuery(uuid) {
     $.ajax({
       type: 'DELETE',
-      url: './api/query/saved/' + uuid,
+      url: `./api/query/saved/${uuid}`
     });
 
     // Optimistically update.

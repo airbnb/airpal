@@ -1,12 +1,8 @@
-var React = require('react');
+import React from "react";
+import QueryActions from "../actions/QueryActions";
+let Modal = require('react-bootstrap').Modal;
 
-/* Actions */
-var QueryActions = require('../actions/QueryActions');
-
-/* Helpers */
-var Modal = require('react-bootstrap').Modal;
-
-var QuerySaveModal = React.createClass({
+let QuerySaveModal = React.createClass({
   displayName: 'QuerySaveModal',
 
   componentDidMount() {
@@ -53,10 +49,7 @@ var QuerySaveModal = React.createClass({
   handleSaveRequest(event) {
     event.preventDefault();
 
-    // Extract the data from the view and pass the data to the
-    // view action to create a new query
-    var name = this.refs['name'].getDOMNode().value,
-        description = this.refs['description'].getDOMNode().value;
+    let name = this.refs['name'].getDOMNode().value, description = this.refs['description'].getDOMNode().value;
     if ( name == '' ) return;
 
     // Start the "saving process"
@@ -65,10 +58,10 @@ var QuerySaveModal = React.createClass({
     // Send the data await
     QueryActions.createQuery({
       query: this.props.query,
-      name: name,
-      description: description
+      name,
+      description
     });
   }
 });
 
-module.exports = QuerySaveModal;
+export default QuerySaveModal;

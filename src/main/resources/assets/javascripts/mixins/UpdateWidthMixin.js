@@ -1,16 +1,16 @@
 'use strict';
 
-var _ = require('lodash');
+import _ from "lodash";
 
 /**
  * Mixin to update the `width` state based on the DOM element's width whenever
  * the window is resized.
  */
 
-module.exports = {
+export default {
   getInitialState() {
     return {
-      width: 960,
+      width: 960
     };
   },
 
@@ -34,7 +34,9 @@ module.exports = {
   },
 
   recomputeWidth() {
-    var width = $(this.getDOMNode()).innerWidth();
-    this.setState({width});
-  },
+    let width = $(this.getDOMNode()).innerWidth();
+    this.setState({
+      width
+    });
+  }
 };

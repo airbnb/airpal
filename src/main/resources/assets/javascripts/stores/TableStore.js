@@ -13,12 +13,15 @@ class TableStore {
   }
 
   getByName() {
-    if (_.isEmpty(this.tables)) return undefined;
-    return _.find(this.tables, { name: name });
+    if (_.isEmpty(this.tables)) {
+      return undefined;
+    }
+
+    return _.find(this.tables, { name });
   }
 
   unmarkActiveTables() {
-    this.tables.forEach(function(table) {
+    this.tables.forEach((table) => {
       if (table.active) {
         // Change the active state of the table
         table.active = false;
@@ -30,9 +33,11 @@ class TableStore {
 
   unmarkActive(name) {
     let table = this.getByName(name);
+
     if (table === undefined) {
       return;
     }
+
     table.active = false;
 
     this.activeTable = null;
@@ -60,7 +65,7 @@ class TableStore {
     // Enrich the table with some extra data (active status and url)
     table = _.extend(table, {
       active: true,
-      url: './api/table/' + FQN.schema(table.name) + '/' + FQN.table(table.name),
+      url: `./api/table/${FQN.schema(table.name)}/${FQN.table(table.name)}`,
       partitions: [],
     });
 
@@ -74,10 +79,12 @@ class TableStore {
   onRemoveTable(name) {
     let table;
 
-    if (this.getByName(name) === undefined) return;
+    if (this.getByName(name) === undefined) {
+      return;
+    }
 
     // Remove the table from the collection
-    this.tables = _.reject(this.tables, { name: name });
+    this.tables = _.reject(this.tables, { name });
 
     // Check or we can make an other table active
     if (this.tables.length > 0) {
@@ -97,7 +104,10 @@ class TableStore {
   onReceivedTableData({ table, columns, data, partitions }) {
     // Get the right table first
     let table = this.getByName(table.name);
-    if (table === undefined) return;
+
+    if (table === undefined) {
+      return;
+    }
 
     // Add the changed data to the table
     table = _.extend(table, {
@@ -110,6 +120,7 @@ class TableStore {
 
   onSetTableColumnWidth({ columnIdx, width }) {
     let table = this.activeTable;
+
     if (table === undefined) {
       return;
     }
@@ -123,6 +134,7 @@ class TableStore {
 
   static containsTable(name) {
     let { tables } = this.getState();
+
     return !!_.find(tables, { name: name });
   }
 }

@@ -2,7 +2,7 @@
  * TableApiUtils
  */
 
-var TableActions = require('../actions/TableActions');
+import TableActions from "../actions/TableActions";
 
 // Fetch the column data
 function fetchColumData(table) {
@@ -26,13 +26,11 @@ function fetchPartitionData(table) {
   });
 }
 
-module.exports = {
-
-  getTableData: function(table) {
+export default {
+  getTableData(table) {
     $.when(fetchColumData(table), fetchPreviewData(table), fetchPartitionData(table))
       .then(function(columnArr, dataArr, partitionArr) {
         TableActions.receivedTableData(table, columnArr[0], dataArr[0], partitionArr[0]);
       });
   }
-
 };

@@ -1,23 +1,16 @@
-var React = require('react');
+import React from "react";
+import SearchInputField from "./SearchInputField.jsx";
+import TableActions from "../actions/TableActions";
+import TableStore from "../stores/TableStore";
+import _ from "lodash";
+import moment from "moment";
 
-/* Components */
-var SearchInputField = require('./SearchInputField.jsx');
-
-/* Actions */
-var TableActions = require('../actions/TableActions');
-
-/* Stores */
-var TableStore = require('../stores/TableStore');
-
-var _ = require('lodash');
-var moment = require('moment');
-
-var commonSelectizeOptions = {
-  closeAfterSelect: true,
+let commonSelectizeOptions = {
+  closeAfterSelect: true
 };
 
 function getActiveItemName(selectize) {
-  var activeItems = selectize.$activeItems;
+  let activeItems = selectize.$activeItems;
 
   if (!!activeItems && !!activeItems.length) {
     return $(activeItems[0]).data('value');
@@ -29,12 +22,12 @@ function getActiveItemName(selectize) {
 // State actions
 function getStateFromStore() {
   return {
-    table: TableStore.getActiveTable(),
+    table: TableStore.getActiveTable()
   };
 }
 
 function highlightOnlyOption(selectize, item) {
-  var items = selectize.$control.find('.item');
+  let items = selectize.$control.find('.item');
 
   if (items.length == 1) {
     selectize.setActiveItem(items[0]);
@@ -43,8 +36,7 @@ function highlightOnlyOption(selectize, item) {
   }
 }
 
-/* Header component */
-var TableSearch = React.createClass({
+let TableSearch = React.createClass({
   displayName: 'TableSearch',
 
   componentDidMount() {
@@ -60,8 +52,8 @@ var TableSearch = React.createClass({
   },
 
   render() {
-    var partitionPlaceholder;
-    var partitionsDisabled = true;
+    let partitionPlaceholder;
+    let partitionsDisabled = true;
 
     if (_.isEmpty(this.state.table)) {
       partitionPlaceholder = "No table selected";
@@ -101,27 +93,35 @@ var TableSearch = React.createClass({
   tableSelectizeOptions() {
     return _.extend({}, commonSelectizeOptions, {
       preload: true,
-      render: { option: this._renderTableOptions },
+
+      render: {
+        option: this._renderTableOptions
+      },
+
       valueField: 'fqn',
       labelField: 'fqn',
+
       sortField: [{
         field: 'usages',
-        direction: 'desc',
+        direction: 'desc'
       }],
+
       searchField: ['fqn', 'tableName', 'schema'],
+
       plugins: {
         'remove_button': {},
+
         'header': {
           headers: ['Table', 'Usages in Airpal']
-        },
+        }
       },
 
       load(query, callback) {
         $.ajax({
           url: './api/table',
           type: 'GET',
-
           error() { callback(); },
+
           success(res) {
             callback(res);
           }
@@ -129,7 +129,9 @@ var TableSearch = React.createClass({
       },
 
       onItemAdd(table, $element) {
-        TableActions.addTable({ name: table });
+        TableActions.addTable({
+          name: table
+        });
         highlightOnlyOption(this, $element);
       },
 
@@ -139,12 +141,12 @@ var TableSearch = React.createClass({
       },
 
       onItemSelected(element) {
-        var $el = $(element);
+        let $el = $(element);
         TableActions.selectTable($(element).data('value'));
       },
 
       onOptionActive($activeOption) {
-        var itemName = getActiveItemName(this);
+        let itemName = getActiveItemName(this);
 
         if ($activeOption == null) {
           TableActions.unselectTable(itemName)
@@ -155,7 +157,7 @@ var TableSearch = React.createClass({
             TableActions.selectTable(itemName);
           }
         }
-      },
+      }
     });
   },
 
@@ -169,7 +171,7 @@ var TableSearch = React.createClass({
   },
 
   _renderPartitionOptions(item, escape) {
-    var lastUpdatedRepresentation = '';
+    let lastUpdatedRepresentation = '';
 
     if (item.lastUpdated != null) {
       lastUpdatedRepresentation = moment(item.lastUpdated).
@@ -186,7 +188,7 @@ var TableSearch = React.createClass({
   },
 
   partitionSelectizeOptions() {
-    var partitions = [];
+    let partitions = [];
     if (!_.isEmpty(this.state.table)) {
       partitions = this.state.table.partitions;
     }
@@ -196,29 +198,42 @@ var TableSearch = React.createClass({
       openOnFocus: true,
       valueField: 'value',
       labelField: 'value',
+
       searchField: [
         'value',
       ],
+
       sortField: [
-        {field: 'value', direction: 'desc'},
-        {field: 'name', direction: 'asc'}
+        {
+          field: 'value',
+          direction: 'desc'
+        },
+        {
+          field: 'name',
+          direction: 'asc'
+        }
       ],
+
       plugins: {
-        'remove_button': {},
+        'remove_button': {}
       },
-      render: { option: this._renderPartitionOptions },
+
+      render: {
+        option: this._renderPartitionOptions
+      },
+
       load(query, callback) {
         // Call it async consistently
         _.defer(function() {
           callback(partitions);
         });
-      },
+      }
     });
   },
 
   _onChange() {
     this.setState(getStateFromStore());
-  },
+  }
 });
 
-module.exports = TableSearch;
+export default TableSearch;

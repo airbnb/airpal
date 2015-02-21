@@ -1,18 +1,14 @@
-var React   = require('react');
-
-/* Components */
-var RunsTable = require('./RunsTable.jsx');
-
-/* Stores */
-var UserStore = require('../stores/UserStore');
+import React from "react";
+import RunsTable from "./RunsTable.jsx";
+import UserStore from "../stores/UserStore";
 
 function getStateFromStore() {
   return {
-    user: UserStore.getCurrentUser(),
+    user: UserStore.getCurrentUser()
   };
 }
 
-var MyOwnRuns = React.createClass({
+let MyOwnRuns = React.createClass({
   displayName: 'MyOwnRuns',
 
   getInitialState() {
@@ -28,7 +24,7 @@ var MyOwnRuns = React.createClass({
   },
 
   render() {
-    var user = this.state.user;
+    let user = this.state.user;
     if (user.name === 'unknown') {
       // Still loading user...
       return <span className="glyphicon glyphicon-repeat indicator-spinner"></span>;
@@ -39,7 +35,7 @@ var MyOwnRuns = React.createClass({
 
   _onChange() {
     this.setState(getStateFromStore());
-  },
+  }
 });
 
-module.exports = MyOwnRuns;
+export default MyOwnRuns;

@@ -64,4 +64,4 @@ let ConnectionErrors = React.createClass({
   }
 });
 
-module.exports = ConnectionErrors;
+export default ConnectionErrors;

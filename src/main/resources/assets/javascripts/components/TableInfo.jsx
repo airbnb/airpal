@@ -1,23 +1,20 @@
-var React = require('react');
+import React from "react";
+import ColumnsPreview from "./ColumnsPreview.jsx";
+import DataPreview from "./DataPreview.jsx";
+import MetaDataPreview from "./MetaDataPreview.jsx";
+let TabbedArea      = require('react-bootstrap').TabbedArea, TabPane         = require('react-bootstrap').TabPane;
 
-/* Component */
-var TabbedArea      = require('react-bootstrap').TabbedArea,
-    TabPane         = require('react-bootstrap').TabPane,
-    ColumnsPreview  = require('./ColumnsPreview.jsx'),
-    DataPreview     = require('./DataPreview.jsx'),
-    MetaDataPreview = require('./MetaDataPreview.jsx');
-
-var TableInfo = React.createClass({
+let TableInfo = React.createClass({
   displayName: 'TableInfo',
 
   getInitialState() {
     return {
-      selectedTab: 1,
+      selectedTab: 1
     };
   },
 
   render() {
-    var {selectedTab} = this.state;
+    let {selectedTab} = this.state;
     return (
       <section className="row tables-selector-row">
         <div className="col-sm-12">
@@ -42,8 +39,10 @@ var TableInfo = React.createClass({
   },
 
   _onTabSelect(selectedTab) {
-    this.setState({selectedTab});
-  },
+    this.setState({
+      selectedTab
+    });
+  }
 });
 
-module.exports = TableInfo;
+export default TableInfo;

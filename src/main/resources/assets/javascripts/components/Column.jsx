@@ -1,9 +1,7 @@
-var React = require('react');
+import React from "react";
+import _ from "lodash";
 
-/* Helpers */
-var _     = require('lodash');
-
-var Column = React.createClass({
+let Column = React.createClass({
   displayName: 'Column',
 
   propTypes: {
@@ -11,7 +9,7 @@ var Column = React.createClass({
     type: React.PropTypes.string.isRequired
   },
 
-  render: function () {
+  render() {
     // Return the template
     return (
       <div className="col-sm-3">
@@ -28,4 +26,4 @@ var Column = React.createClass({
   }
 });
 
-module.exports = Column;
+export default Column;

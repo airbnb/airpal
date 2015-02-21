@@ -1,7 +1,7 @@
 /**
  * FQN
  */
-var _ = require('lodash');
+import _ from "lodash";
 
 function validFqnPart(part) {
   return _.isString(part) && !_.isEmpty(part);
@@ -15,7 +15,7 @@ function getParts(fqn) {
 }
 
 function schema(fqn) {
-  var parts = getParts(fqn);
+  let parts = getParts(fqn);
 
   if (parts && parts.length) {
     return parts[0];
@@ -25,7 +25,7 @@ function schema(fqn) {
 }
 
 function table(fqn) {
-  var parts = getParts(fqn);
+  let parts = getParts(fqn);
 
   if (parts && parts.length) {
     return parts[1];
@@ -38,9 +38,9 @@ function toFqn(schema, table) {
   return [schema, table].join('.');
 }
 
-module.exports = {
-  validFqnPart: validFqnPart,
-  schema: schema,
-  table: table,
-  toFqn: toFqn
+export default {
+  validFqnPart,
+  schema,
+  table,
+  toFqn
 };

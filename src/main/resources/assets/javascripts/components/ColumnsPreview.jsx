@@ -1,13 +1,7 @@
-var React = require('react');
-
-/* Components */
-var Column = require('./Column.jsx');
-
-/* Helpers */
-var _     = require('lodash');
-
-/* Stores */
-var TableStore = require('../stores/TableStore');
+import React from "react";
+import Column from "./Column.jsx";
+import _ from "lodash";
+import TableStore from "../stores/TableStore";
 
 // State actions
 function getStateFromStore() {
@@ -16,22 +10,22 @@ function getStateFromStore() {
   };
 }
 
-var ColumnsPreview = React.createClass({
+let ColumnsPreview = React.createClass({
   displayName: 'Columns',
 
-  getInitialState: function() {
+  getInitialState() {
     return getStateFromStore();
   },
 
-  componentDidMount: function() {
+  componentDidMount() {
     TableStore.listen('change', this._onChange);
   },
 
-  componentWillUnmount: function() {
+  componentWillUnmount() {
     TableStore.unlisten('change', this._onChange);
   },
 
-  render: function () {
+  render() {
     if( this.state.table && this.state.table.columns ) {
       return this._renderColumns(this.state.table.columns);
     } else {
@@ -40,16 +34,18 @@ var ColumnsPreview = React.createClass({
   },
 
   /* Internal Helpers ------------------------------------------------------- */
-  _renderColumns: function(collection) {
-    var columns;
+  _renderColumns(collection) {
+    let columns;
 
-    var partitions = _.chain(collection).where({partition: true}).sortBy('name').value(),
-        normalCols = _.chain(collection).where({partition: false}).sortBy('name').value();
+    let partitions = _.chain(collection).where({
+          partition: true
+        }).sortBy('name').value(),
+        normalCols = _.chain(collection).where({
+          partition: false
+        }).sortBy('name').value();
 
     columns = _.chain(partitions.concat(normalCols)).reduce(function(m, col) {
-      var reuseGroup = (m.length > 0) && (m[m.length - 1].length < 4),
-          group = reuseGroup ? m[m.length - 1] : [],
-          val;
+      let reuseGroup = (m.length > 0) && (m[m.length - 1].length < 4), group = reuseGroup ? m[m.length - 1] : [], val;
 
       group.push(
         <Column
@@ -76,7 +72,7 @@ var ColumnsPreview = React.createClass({
     return (<div className="columns-container">{columns}</div>);
   },
 
-  _renderEmptyMessage: function() {
+  _renderEmptyMessage() {
     return (
       <div className="text-center">
         <p>Please select a table.</p>
@@ -84,14 +80,14 @@ var ColumnsPreview = React.createClass({
     )
   },
 
-  _capitalize: function(string) {
+  _capitalize(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   },
 
   /* Store events */
-  _onChange: function() {
+  _onChange() {
     this.setState(getStateFromStore());
   }
 });
 
-module.exports = ColumnsPreview;
+export default ColumnsPreview;

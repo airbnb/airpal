@@ -1,6 +1,6 @@
 import alt from '../alt';
 
-let QueryApiUtils = require('../utils/QueryApiUtils');
+import QueryApiUtils from '../utils/QueryApiUtils';
 
 class QueryActions {
   constructor() {

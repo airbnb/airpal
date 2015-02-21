@@ -1,22 +1,11 @@
-var React = require('react');
-
-/* FixedDataTable */
-var { Table, Column } = require('fixed-data-table');
-
-/* Helpers */
-var _       = require('lodash');
-var FQN     = require('../utils/fqn');;
-
-/* Stores */
-var TableStore = require('../stores/TableStore');
-
-/* Actions */
-var TableActions = require('../actions/TableActions');
-
-/* Mixins */
-var UpdateWidthMixin = require('../mixins/UpdateWidthMixin');
-
-var isColumnResizing = false;
+import React from "react";
+import { Table, Column } from "fixed-data-table";
+import _ from "lodash";
+import FQN from "../utils/fqn";
+import TableStore from "../stores/TableStore";
+import TableActions from "../actions/TableActions";
+import UpdateWidthMixin from "../mixins/UpdateWidthMixin";
+let isColumnResizing = false;
 
 // State actions
 function getStateFromStore() {
@@ -48,9 +37,8 @@ function getColumns(columns, widths) {
   });
 }
 
-var DataPreview = React.createClass({
+let DataPreview = React.createClass({
   displayName: 'DataPreview',
-
   mixins: [UpdateWidthMixin],
 
   getInitialState() {
@@ -85,10 +73,6 @@ var DataPreview = React.createClass({
   _renderColumns() {
     return (
       <div>
-        {/*
-          Need to make sure to wrap `Table` in a parent element so we can
-          compute the natural width of the component.
-        */}
         <Table
           rowHeight={40}
           rowGetter={this.rowGetter}
@@ -118,7 +102,7 @@ var DataPreview = React.createClass({
   _enhancedData() {
     return _.map(this.state.table.data, function(item) {
       return _.transform(item, function(result, n, key) {
-        var text = _.isBoolean(n) ? n.toString() : n;
+        let text = _.isBoolean(n) ? n.toString() : n;
         result[this.state.table.columns[key].name] = text;
       }.bind(this));
     }.bind(this));
@@ -132,7 +116,7 @@ var DataPreview = React.createClass({
   _onColumnResizeEndCallback(newColumnWidth, dataKey) {
     isColumnResizing = false;
     TableActions.setTableColumnWidth(dataKey, newColumnWidth);
-  },
+  }
 });
 
-module.exports = DataPreview;
+export default DataPreview;

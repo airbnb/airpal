@@ -2,10 +2,12 @@
  * App Bootstrap
  */
 
-// Assign to global for compatibility with FixedDataTable.
-Object.assign = require('object-assign');
+import assign from 'object-assign';
 
-var AirpalApp = require('./components/AirpalApp.jsx');
+// Assign to global for compatibility with FixedDataTable.
+Object.assign = Object.assign || assign;
+
+import AirpalApp from './components/AirpalApp.jsx';
 import React from 'react';
 
 // Start the main app
