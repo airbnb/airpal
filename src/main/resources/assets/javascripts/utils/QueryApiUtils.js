@@ -1,14 +1,7 @@
-/**
- * QueryApiUtils
- */
+import QueryActions from '../actions/QueryActions';
+import _ from 'lodash';
 
-/* Actions */
-var QueryActions = require('../actions/QueryActions');
-
-/* Helpers */
-var _ = require('lodash');
-
-module.exports = {
+let QueryApiUtils = {
   fetchSavedQueries() {
     $.ajax({
       type: 'GET',
@@ -35,7 +28,7 @@ module.exports = {
         // name and the description. So we're merging the uuid into the data
         // object  We also have to reformat to match the nested structure of
         // the `queryWithPlaceholders` object.
-        var query = {
+        let query = {
           uuid: uuid,
           name: data.name,
           description: data.description,
@@ -58,3 +51,5 @@ module.exports = {
     _.defer(() => QueryActions.receivedDestroyedQuery(uuid));
   }
 };
+
+export default QueryApiUtils;

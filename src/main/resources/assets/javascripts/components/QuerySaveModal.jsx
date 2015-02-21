@@ -6,20 +6,11 @@ var QueryActions = require('../actions/QueryActions');
 /* Helpers */
 var Modal = require('react-bootstrap').Modal;
 
-/* Stores */
-var QueryStore = require('../stores/QueryStore');
-
 var QuerySaveModal = React.createClass({
   displayName: 'QuerySaveModal',
 
   componentDidMount() {
     this.refs.name.getDOMNode().focus();
-
-    QueryStore.addStoreListener('create', this._disableSubmitButton);
-  },
-
-  componentWillUnmount() {
-    QueryStore.removeStoreListener('create', this._disableSubmitButton);
   },
 
   render() {
@@ -77,13 +68,6 @@ var QuerySaveModal = React.createClass({
       name: name,
       description: description
     });
-  },
-
-  // - Internal helpers --------------------------------------------------- //
-  // Makes sure the submit button is disabled
-  _disableSubmitButton() {
-    var button = this.refs.submitButton.getDOMNode();
-    button.setAttribute('disabled', true);
   }
 });
 

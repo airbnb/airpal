@@ -1,7 +1,7 @@
 var React = require('react');
 
 /* Components */
-var Column = require('./Column');
+var Column = require('./Column.jsx');
 
 /* Helpers */
 var _     = require('lodash');

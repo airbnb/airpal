@@ -5,9 +5,9 @@ var RunActions    = require('../actions/RunActions');
 
 /* Components */
 var { TabbedArea, TabPane } = require('react-bootstrap');
-var MyOwnRuns          = require('./MyOwnRuns');
-var MySavedQueries     = require('./MySavedQueries');
-var AllRunningQueries  = require('./AllRunningQueries');
+var MyOwnRuns          = require('./MyOwnRuns.jsx');
+var MySavedQueries     = require('./MySavedQueries.jsx');
+var AllRunningQueries  = require('./AllRunningQueries.jsx');
 
 var QueryInformation = React.createClass({
   displayName: 'QueryInformation',

@@ -1,6 +1,6 @@
 var React = require('react');
 
-var QueryInformation = require('./QueryInformation');
+var QueryInformation = require('./QueryInformation.jsx');
 
 var QueryHistory = React.createClass({
   render() {

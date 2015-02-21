@@ -3,9 +3,9 @@ var React = require('react');
 /* Component */
 var TabbedArea      = require('react-bootstrap').TabbedArea,
     TabPane         = require('react-bootstrap').TabPane,
-    ColumnsPreview  = require('./ColumnsPreview'),
-    DataPreview     = require('./DataPreview'),
-    MetaDataPreview = require('./MetaDataPreview');
+    ColumnsPreview  = require('./ColumnsPreview.jsx'),
+    DataPreview     = require('./DataPreview.jsx'),
+    MetaDataPreview = require('./MetaDataPreview.jsx');
 
 var TableInfo = React.createClass({
   displayName: 'TableInfo',

@@ -1,7 +1,7 @@
 var React = require('react');
 
 /* Components */
-var SearchInputField = require('./SearchInputField');
+var SearchInputField = require('./SearchInputField.jsx');
 
 /* Actions */
 var TableActions = require('../actions/TableActions');

@@ -5,10 +5,10 @@ var RunApiUtils = require('../utils/RunApiUtils');
 class UserStore {
   constructor() {
     this.user = UserStore.getDefaultUser();
-    this.bindAction(UserActions.receivedUserInfo, this.onReceivedUserInfo);
+    this.bindAction(UserActions.receivedCurrentUser, this.onReceivedCurrentUser);
   }
 
-  onReceivedUserInfo(user) {
+  onReceivedCurrentUser(user) {
     this.user = user;
 
     // Now fetch queries for that user.

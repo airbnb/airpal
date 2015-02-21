@@ -1,82 +1,41 @@
-/**
- * QueryStore
- */
+import alt from '../alt'
+import FluxCollection from '../utils/FluxCollection'
+import QueryActions from '../actions/QueryActions'
 
-var BaseStore   = require('./BaseStore');
-var AppDispatcher   = require('../dispatchers/AppDispatcher');
-var QueryConstants  = require('../constants/QueryConstants');
-var QueryApiUtils   = require('../utils/QueryApiUtils');
-
-/* Other stores */
-var UserStore = require('./UserStore');
-
-/* Other constants */
-var UserConstants   = require('../constants/UserConstants');
-
-/* Query store */
-class QueryStoreClass extends BaseStore {
+class QueryStore {
   constructor() {
-    super();
+    this.bindActions(QueryActions);
 
-    this._selectedQuery = null;
+    this.selectedQuery = null;
 
-    // Because of a bug, `createdAt` field is null. Just reverse the order
-    // using the negative of the index.
-    this.comparator = (model, index) => -1 * index;
+    this.collection = new FluxCollection({
+      comparator: (model, index) => -1 * index
+    });
   }
 
-  selectQuery(query) {
-    this._selectedQuery = query;
-    this.emitChange('select');
+  onSelectQuery(query) {
+    this.selectedQuery = query;
   }
 
-  getSelectedQuery() {
-    return this._selectedQuery;
+  onReceivedQuery(query) {
+    this.collection.add(query);
   }
 
-  destroyQuery(uuid) {
-    QueryApiUtils.destroyQuery(uuid);
+  onReceivedQueries(queries) {
+    this.collection.add(queries);
+  }
+
+  onReceiveDestroyedQuery(uuid) {
+    this.collection.remove(uuid);
+  }
+
+  static getSelectedQuery() {
+    return this.getState().selectedQuery;
+  }
+
+  static getCollection() {
+    return this.getState().collection;
   }
 }
 
-var QueryStore = new QueryStoreClass();
-
-QueryStore.dispatchToken = AppDispatcher.register(function(payload) {
-  var action = payload.action;
-
-  switch(action.type) {
-
-    case QueryConstants.CREATE_QUERY:
-      QueryApiUtils.createQuery(action.data, { silent: true });
-      break;
-
-    case QueryConstants.RECEIVED_SINGLE_QUERY:
-      QueryStore.add(action.query)
-      QueryStore.emitChange('change');
-      break;
-
-    case QueryConstants.RECEIVED_MULTIPLE_QUERIES:
-      QueryStore.add(action.queries);
-      QueryStore.emitChange('change');
-      break;
-
-    case QueryConstants.SELECT_QUERY:
-      QueryStore.selectQuery(action.query);
-      QueryStore.emitChange('change');
-      break;
-
-    case QueryConstants.DESTROY_QUERY:
-      QueryStore.destroyQuery(action.uuid);
-      QueryStore.emitChange('change');
-
-    case QueryConstants.RECEIVED_DESTROYED_QUERY:
-      QueryStore.remove(action.uuid);
-      QueryStore.emitChange('change');
-
-    default:
-      // do nothing
-  }
-
-});
-
-module.exports = QueryStore;
+export default alt.createStore(QueryStore, 'QueryStore');

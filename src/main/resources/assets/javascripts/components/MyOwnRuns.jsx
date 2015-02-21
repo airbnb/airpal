@@ -1,7 +1,7 @@
 var React   = require('react');
 
 /* Components */
-var RunsTable = require('./RunsTable');
+var RunsTable = require('./RunsTable.jsx');
 
 /* Stores */
 var UserStore = require('../stores/UserStore');
@@ -20,11 +20,11 @@ var MyOwnRuns = React.createClass({
   },
 
   componentDidMount() {
-    UserStore.addStoreListener('change', this._onChange);
+    UserStore.listen(this._onChange);
   },
 
   componentWillUnmount() {
-    UserStore.removeStoreListener('change', this._onChange);
+    UserStore.unlisten(this._onChange);
   },
 
   render() {

@@ -1,7 +1,7 @@
 var React = require('react');
 
-var TableInfo = require('./TableInfo');
-var TableSearch = require('./TableSearch');
+var TableInfo = require('./TableInfo.jsx');
+var TableSearch = require('./TableSearch.jsx');
 
 var TableExplorer = React.createClass({
   displayName: 'TableExplorer',

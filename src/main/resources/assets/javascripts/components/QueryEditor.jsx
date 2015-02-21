@@ -14,7 +14,7 @@ var ace             = require('brace');
 var QueryStore      = require('../stores/QueryStore');
 
 /* Views */
-var QuerySaveModal  = require('./QuerySaveModal');
+var QuerySaveModal  = require('./QuerySaveModal.jsx');
 
 require('brace/theme/monokai');
 require('brace/mode/sql');
@@ -37,13 +37,13 @@ var QueryEditor = React.createClass({
       this.handleChangeSelection, 150, { maxWait: 150 }
     ));
 
-    QueryStore.addStoreListener('add', this._hideModal);
-    QueryStore.addStoreListener('select', this._selectQuery);
+    QueryStore.listen(this._selectQuery);
+    QueryStore.listen(this._hideModal);
   },
 
   componentWillUnmount() {
-    QueryStore.removeStoreListener('add', this._hideModal);
-    QueryStore.removeStoreListener('select', this._selectQuery);
+    QueryStore.unlisten(this._selectQuery);
+    QueryStore.listen(this._hideModal);
   },
 
   getInitialState() {

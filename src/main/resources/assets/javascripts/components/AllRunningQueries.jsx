@@ -1,16 +1,12 @@
-var React = require('react');
+import React from 'react';
 
-/* Stores */
-var RunStore = require('../stores/RunStore');
+import RunActions from '../actions/RunActions';
 
-/* Components */
-var RunsTable = require('./RunsTable');
+import RunsTable from './RunsTable.jsx';
 
-var AllRunningQueries = React.createClass({
-  displayName: 'AllRunningQueries',
-
+let AllRunningQueries = React.createClass({
   componentWillMount() {
-    RunStore.ensureFetchedHistory();
+    RunActions.fetchHistory();
   },
 
   render() {
@@ -18,4 +14,4 @@ var AllRunningQueries = React.createClass({
   },
 });
 
-module.exports = AllRunningQueries;
+export default AllRunningQueries;

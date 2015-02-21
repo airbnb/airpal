@@ -22,9 +22,9 @@ var UpdateWidthMixin = require('../mixins/UpdateWidthMixin');
 // State actions
 function getRuns(user) {
   if (user) {
-    return RunStore.where({user: user}, {sort: true})
+    return RunStore.getCollection().where({user: user}, {sort: true})
   } else {
-    return RunStore.all({sort: true});
+    return RunStore.getCollection().all({sort: true});
   }
 }
 
@@ -44,12 +44,11 @@ var RunsTable = React.createClass({
   },
 
   componentDidMount() {
-    RunStore.addStoreListener('change', this._onChange);
+    RunStore.listen(this._onChange);
   },
 
   componentWillUnmount() {
-    // Remove the store listeners
-    RunStore.removeStoreListener('change', this._onChange);
+    RunStore.unlisten(this._onChange);
   },
 
   render() {

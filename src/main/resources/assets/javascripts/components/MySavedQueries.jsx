@@ -15,7 +15,7 @@ var { Button, ButtonToolbar } = require('react-bootstrap');
 
 function getStateFromStore() {
   return {
-    queries: QueryStore.all({sort: true}),
+    queries: QueryStore.getCollection().all({sort: true}),
   };
 }
 
@@ -27,12 +27,12 @@ var MySavedQueries = React.createClass({
   },
 
   componentDidMount() {
-    QueryStore.addStoreListener('change', this._onChange);
+    QueryStore.listen(this._onChange);
     this._fetchQueries();
   },
 
   componentWillUnmount() {
-    QueryStore.removeStoreListener('change', this._onChange);
+    QueryStore.unlisten(this._onChange);
   },
 
   render() {
