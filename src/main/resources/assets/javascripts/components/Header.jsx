@@ -26,11 +26,11 @@ var Header = React.createClass({
   },
 
   componentDidMount() {
-    UserStore.addStoreListener('add', this._onChange);
+    UserStore.listen(this._onChange);
   },
 
   componentWillUnmount() {
-    UserStore.removeStoreListener('add');
+    UserStore.unlisten(this._onChange);
   },
 
   render() {

@@ -1,70 +1,34 @@
-/**
- * UserStore
- */
-
-var BaseStore   = require('./BaseStore');
-var AppDispatcher  = require('../dispatchers/AppDispatcher');
-var UserConstants   = require('../constants/UserConstants');
-
-/* ApiUtils */
+var alt = require('../alt');
+var UserActions = require('../actions/UserActions');
 var RunApiUtils = require('../utils/RunApiUtils');
 
-var _ = require('lodash');
-
-/**
- * User object
- */
-var defaultUser = {
-  name: 'unknown',
-  executionPermissions: {
-    accessLevel: 'default',
-    canCreateCsv: false,
-    canCreateTable: false
+class UserStore {
+  constructor() {
+    this.user = UserStore.getDefaultUser();
+    this.bindAction(UserActions.receivedUserInfo, this.onReceivedUserInfo);
   }
-};
 
-var _user = _.extend({}, defaultUser);
+  onReceivedUserInfo(user) {
+    this.user = user;
 
-/**
- * Adds the user to the user object
- * @param {object} raw user object
- */
-function _addUser(user) {
-  _user = user;
-}
+    // Now fetch queries for that user.
+    RunApiUtils.fetchForUser(this.user);
+  }
 
-class UserStoreClass extends BaseStore {
-  /**
-   * Get the current user
-   * @return {object} the user object
-   */
-  getCurrentUser() {
-    return _user;
+  static getDefaultUser() {
+    return {
+      name: 'unknown',
+      executionPermissions: {
+        accessLevel: 'default',
+        canCreateCsv: false,
+        canCreateTable: false
+      }
+    };
+  }
+
+  static getCurrentUser() {
+    return this.getState().user;
   }
 }
 
-var UserStore = new UserStoreClass();
-
-UserStore.dispatchToken = AppDispatcher.register(function(payload) {
-  var action = payload.action;
-
-  switch(action.type) {
-
-    case UserConstants.RECEIVED_USER_INFO:
-      _addUser(action.user);
-
-      // Emit the other changes
-      UserStore.emitChange('add');
-      UserStore.emitChange('change');
-
-      // Now fetch queries for that user.
-      RunApiUtils.fetchForUser(UserStore.getCurrentUser());
-      break;
-
-    default:
-      // do nothing
-  }
-
-});
-
-module.exports = UserStore;
+module.exports = alt.createStore(UserStore, 'UserStore');
