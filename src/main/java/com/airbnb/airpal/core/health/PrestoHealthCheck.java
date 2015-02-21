@@ -53,7 +53,7 @@ public class PrestoHealthCheck extends HealthCheck
                                     result = Iterables.getFirst(results, invalidValue);
                                     assert(result != null);
                                     assert(result.size() == 1);
-                                    assert(result.get(0) == 1);
+                                    assert((int)result.get(0) == 1);
                                 }
                                 client.advance();
                             }
