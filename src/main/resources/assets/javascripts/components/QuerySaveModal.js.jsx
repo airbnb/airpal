@@ -26,7 +26,7 @@ var QuerySaveModal = React.createClass({
   render() {
     return (
       <Modal {...this.props} title="Save a new query">
-        <div className="modal-body">
+        <div className="modal-body query-save-modal">
           <form className="form-horizontal" action="#" onSubmit={this.handleSaveRequest}>
 
             <pre>{this.props.query}</pre>

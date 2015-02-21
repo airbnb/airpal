@@ -18,6 +18,7 @@
  * saved-query..........The saved query component
  * query-information....The queries tabs
  * runs-table...........The RunsTable component
+ * query-save-modal.....The QuerySaveModal
  *
  * PLUGINS
  * CodeMirror...........The CSS for the CodeMirror plugin
@@ -279,4 +280,13 @@
 
 .runs-table-progress .glyphicon-remove:hover {
   opacity: 0.8;
+}
+
+/**
+ * QuerySaveModal
+ */
+
+.query-save-modal pre {
+  min-height: 100px;
+  max-height: 300px;
 }
