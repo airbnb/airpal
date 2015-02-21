@@ -21,13 +21,11 @@ var MetaDataPreview = React.createClass({
   },
 
   componentDidMount: function() {
-    TableStore.addStoreListener('select', this._onChange);
-    TableStore.addStoreListener('change', this._onChange);
+    TableStore.listen('change', this._onChange);
   },
 
   componentWillUnmount: function() {
-    TableStore.removeStoreListener('select', this._onChange);
-    TableStore.removeStoreListener('change', this._onChange);
+    TableStore.unlisten('change', this._onChange);
   },
 
   render: function () {

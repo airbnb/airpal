@@ -1,58 +1,22 @@
-/*
- * TableActions
- */
+import alt from '../alt';
 
-var AppDispatcher = require('../dispatchers/AppDispatcher');
-var TableConstants = require('../constants/TableConstants');
-
-module.exports = {
-
-  // - ViewActions --------------------------------------------------------- //
-  addTable: function(table) {
-    AppDispatcher.handleViewAction({
-      type: TableConstants.ADD_TABLE,
-      table: table
-    });
-  },
-
-  removeTable: function(name) {
-    AppDispatcher.handleViewAction({
-      type: TableConstants.REMOVE_TABLE,
-      name: name
-    });
-  },
-
-  selectTable: function(name) {
-    AppDispatcher.handleViewAction({
-      type: TableConstants.SELECT_TABLE,
-      name: name
-    });
-  },
-
-  setTableColumnWidth: function(columnIdx, width) {
-    AppDispatcher.handleViewAction({
-      type: TableConstants.SET_TABLE_COLUMN_WIDTH,
-      columnIdx: columnIdx,
-      width: width
-    });
-  },
-
-  unselectTable: function(name) {
-    AppDispatcher.handleViewAction({
-      type: TableConstants.UNSELECT_TABLE,
-      name: name
-    });
-  },
-
-  // - ServerActions ------------------------------------------------------- //
-  receivedTableData: function(table, columns, data, partitions) {
-    AppDispatcher.handleServerAction({
-      type: TableConstants.RECEIVED_TABLE_DATA,
-      table: table,
-      columns: columns,
-      data: data,
-      partitions: partitions,
-    });
+class TableActions {
+  constructor() {
+    this.generateActions(
+      'addTable',
+      'removeTable',
+      'selectTable',
+      'unselectTable'
+    );
   }
 
-};
+  setTableColumnWidth(columnIdx, width) {
+    this.dispatch({ columnIdx, width });
+  }
+
+  receivedTableData(table, columns, data, partitions) {
+    this.dispatch({ table, columns, data, partitions });
+  }
+}
+
+export default alt.createActions(TableActions);

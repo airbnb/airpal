@@ -48,13 +48,11 @@ var TableSearch = React.createClass({
   displayName: 'TableSearch',
 
   componentDidMount() {
-    TableStore.addStoreListener('select', this._onChange);
-    TableStore.addStoreListener('change', this._onChange);
+    TableStore.listen('change', this._onChange);
   },
 
   componentWillUnmount() {
-    TableStore.removeStoreListener('select');
-    TableStore.removeStoreListener('change');
+    TableStore.unlisten('change');
   },
 
   getInitialState() {
