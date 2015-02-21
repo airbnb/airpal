@@ -63,11 +63,18 @@ var DataPreview = React.createClass({
     if( this.state.table && this.state.table.data ) {
       return this._renderColumns();
     } else {
-      return null;
+      return this._renderEmptyMessage();
     }
   },
 
   /* Internal Helpers ------------------------------------------------------- */
+  _renderEmptyMessage() {
+    return (
+      <div className="text-center">
+        <p>Please select a table.</p>
+      </div>
+    )
+  },
 
   _renderColumns() {
     return (

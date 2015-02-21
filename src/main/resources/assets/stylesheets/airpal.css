@@ -26,3 +26,11 @@
   border-radius: 0;
   margin-bottom: 0;
 }
+
+.table-search-row .panel-body {
+  padding-bottom: 0;
+}
+
+.tables-selector-row .panel-body {
+  padding-top: 0;
+}

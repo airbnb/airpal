@@ -26,7 +26,6 @@ var TableInfo = React.createClass({
             <TabbedArea
               activeKey={selectedTab}
               animation={false}
-              bsStyle={'pills'}
               onSelect={this._onTabSelect}>
                 {/* Lazy-init the child components so they can lazy-fetch their data. */}
                 <TabPane eventKey={1} tab="Columns">

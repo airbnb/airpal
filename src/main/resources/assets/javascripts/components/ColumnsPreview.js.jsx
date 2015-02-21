@@ -38,7 +38,7 @@ var ColumnsPreview = React.createClass({
     if( this.state.table && this.state.table.columns ) {
       return this._renderColumns(this.state.table.columns);
     } else {
-      return null;
+      return this._renderEmptyMessage();
     }
   },
 
@@ -54,7 +54,13 @@ var ColumnsPreview = React.createClass({
           group = reuseGroup ? m[m.length - 1] : [],
           val;
 
-      group.push(<Column key={col.name} name={col.name} type={col.type} partition={col.partition} />);
+      group.push(
+        <Column
+          key={col.name}
+          name={col.name}
+          type={col.type}
+          partition={col.partition} />
+      );
 
       if (!reuseGroup) {
         m.push(group);
@@ -62,11 +68,23 @@ var ColumnsPreview = React.createClass({
 
       return m;
     }, []).map(function(col, i) {
-      return (<div className="row" key={'col-row-' + i}>{col}</div>);
+      return (
+        <div className="row" key={'col-row-'+i}>
+          {col}
+        </div>
+      );
     }).value();
 
     // Render the template
     return (<div>{columns}</div>);
+  },
+
+  _renderEmptyMessage: function() {
+    return (
+      <div className="text-center">
+        <p>Please select a table.</p>
+      </div>
+    )
   },
 
   _capitalize: function(string) {
