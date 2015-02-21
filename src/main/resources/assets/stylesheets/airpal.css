@@ -17,3 +17,12 @@
   border-bottom: 1px solid #ddd;
   padding: 6px 0 6px;
 }
+
+.editor-container {
+  position: relative;
+}
+
+.editor-container .ace_editor {
+  border-radius: 0;
+  margin-bottom: 0;
+}

@@ -63,23 +63,22 @@ var QueryEditor = React.createClass({
             <div className="panel-heading">
               <h3 className="panel-title">Query editor</h3>
             </div>
-            <div className="panel-body">
-              <div ref="queryContainer" className="col-sm-12 editor-container spaced">
 
-                <pre ref="queryEditor" className="editor">
-                  SELECT COUNT(1) FROM users
-                </pre>
-
-                <div ref="handle" className="editor-resize-handles">
-                  <span className="glyphicon glyphicon-chevron-up editor-resize-handle"
-                    onClick={this.handleResizeShrink}
-                    title="Shrink Editor"></span>
-                  <span className="glyphicon glyphicon-chevron-down editor-resize-handle"
-                    onClick={this.handleResizeGrow}
-                    title="Grow Editor"></span>
-                </div>
+            <div ref="queryContainer" className="editor-container clearfix">
+              <pre ref="queryEditor" className="editor">
+                SELECT COUNT(1) FROM users
+              </pre>
+              <div ref="handle" className="editor-resize-handles">
+                <span className="glyphicon glyphicon-chevron-up editor-resize-handle"
+                  onClick={this.handleResizeShrink}
+                  title="Shrink Editor"></span>
+                <span className="glyphicon glyphicon-chevron-down editor-resize-handle"
+                  onClick={this.handleResizeGrow}
+                  title="Grow Editor"></span>
               </div>
+            </div>
 
+            <div className="panel-body">
               <div className="col-sm-12">
                 <div className="row">
 
