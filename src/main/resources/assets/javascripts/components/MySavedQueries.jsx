@@ -39,11 +39,9 @@ var MySavedQueries = React.createClass({
 
   render() {
     return (
-      <table className="table">
-        <tbody>
-          {this.renderChildren()}
-        </tbody>
-      </table>
+      <div className='panel-body'>
+        {this.renderChildren()}
+      </div>
     );
   },
 
@@ -54,29 +52,25 @@ var MySavedQueries = React.createClass({
       return this.state.queries.map((query) => {
         var queryText = query.queryWithPlaceholders.query;
         return (
-          <tr key={query.uuid} className="saved-query">
-            <td>
-              <div className="row">
-                <div className="col-md-12">
-                  <h4>{query.name}</h4>
-                  <p>{query.description}</p>
-                </div>
-                <div className="col-md-12">
-                  <pre onClick={this._onSelectQuery.bind(null, queryText)}>
-                  {truncate(queryText, 750)}
-                  </pre>
-                  <ButtonToolbar className="pull-right">
-                    <Button bsSize="xsmall" onClick={this._deleteQuery.bind(null, query.uuid)}>
-                      Delete
-                    </Button>
-                    <Button bsSize="xsmall" bsStyle="primary" onClick={this._runQuery.bind(null, queryText)}>
-                      Run
-                    </Button>
-                  </ButtonToolbar>
-                </div>
-              </div>
-            </td>
-          </tr>
+          <div className='row'>
+            <div className="col-md-12">
+              <h4>{query.name}</h4>
+              <p>{query.description}</p>
+            </div>
+            <div className="col-md-12">
+              <pre className="" onClick={this._onSelectQuery.bind(null, queryText)}>
+              {truncate(queryText, 750)}
+              </pre>
+              <ButtonToolbar className="pull-right">
+                <Button bsSize="xsmall" onClick={this._deleteQuery.bind(null, query.uuid)}>
+                  Delete
+                </Button>
+                <Button bsSize="xsmall" bsStyle="primary" onClick={this._runQuery.bind(null, queryText)}>
+                  Run
+                </Button>
+              </ButtonToolbar>
+            </div>
+          </div>
         );
       });
     }
