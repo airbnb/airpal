@@ -29,7 +29,6 @@ var MySavedQueries = React.createClass({
 
   componentDidMount() {
     QueryStore.addStoreListener('change', this._onChange);
-
     this._fetchQueries();
   },
 
@@ -62,11 +61,16 @@ var MySavedQueries = React.createClass({
                 {truncate(queryText, 750)}
               </pre>
               <ButtonToolbar className="pull-right">
-                <Button bsSize="xsmall" onClick={this._deleteQuery.bind(null, query.uuid)}>
-                  Delete
+                <Button
+                  bsSize="xsmall"
+                  onClick={this._deleteQuery.bind(null, query.uuid)}>
+                    Delete
                 </Button>
-                <Button bsSize="xsmall" bsStyle="primary" onClick={this._runQuery.bind(null, queryText)}>
-                  Run
+                <Button
+                  bsSize="xsmall"
+                  bsStyle="primary"
+                  onClick={this._runQuery.bind(null, queryText)}>
+                    Run
                 </Button>
               </ButtonToolbar>
             </div>
@@ -79,7 +83,9 @@ var MySavedQueries = React.createClass({
   renderEmptyMessage() {
     return (
       <tr className="info">
-        <td className="text-center" colSpan="1">No saved queries</td>
+        <td className="text-center" colSpan="1">
+          No saved queries
+        </td>
       </tr>
     );
   },
