@@ -96,6 +96,10 @@ var SearchInputField = React.createClass({
         this.$selectize.disable();
       }
     }
+
+    if (this.props.disabled) {
+      this.$selectize.clear();
+    }
   },
 
   // Enables the selectize plugin
