@@ -54,7 +54,13 @@ var ColumnsPreview = React.createClass({
           group = reuseGroup ? m[m.length - 1] : [],
           val;
 
-      group.push(<Column key={col.name} name={col.name} type={col.type} partition={col.partition} />);
+      group.push(
+        <Column
+          key={col.name}
+          name={col.name}
+          type={col.type}
+          partition={col.partition} />
+      );
 
       if (!reuseGroup) {
         m.push(group);
@@ -62,7 +68,11 @@ var ColumnsPreview = React.createClass({
 
       return m;
     }, []).map(function(col, i) {
-      return (<div className="row" key={'col-row-' + i}>{col}</div>);
+      return (
+        <div className="row" key={'col-row-'+i}>
+          {col}
+        </div>
+      );
     }).value();
 
     // Render the template
@@ -71,8 +81,8 @@ var ColumnsPreview = React.createClass({
 
   _renderEmptyMessage: function() {
     return (
-      <div className="alert alert-warning">
-        <p>There are no columns, or there is no table selected. Please select (another) table.</p>
+      <div className="text-center">
+        <p>Please select a table.</p>
       </div>
     )
   },

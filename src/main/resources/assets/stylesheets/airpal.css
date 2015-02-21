@@ -17,3 +17,20 @@
   border-bottom: 1px solid #ddd;
   padding: 6px 0 6px;
 }
+
+.editor-container {
+  position: relative;
+}
+
+.editor-container .ace_editor {
+  border-radius: 0;
+  margin-bottom: 0;
+}
+
+.table-search-row .panel-body {
+  padding-bottom: 0;
+}
+
+.tables-selector-row .panel-body {
+  padding-top: 0;
+}

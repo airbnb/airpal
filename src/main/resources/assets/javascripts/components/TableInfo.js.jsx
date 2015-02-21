@@ -20,22 +20,23 @@ var TableInfo = React.createClass({
   render() {
     var {selectedTab} = this.state;
     return (
-      <section className="row spaced tables-selector-row">
+      <section className="row tables-selector-row">
         <div className="col-sm-12">
-        <div className="panel panel-default panel-container">
-        <div className="panel-body">
-          <TabbedArea activeKey={selectedTab} animation={false} bsStyle={'pills'} onSelect={this._onTabSelect}>
-            {/* Lazy-init the child components so they can lazy-fetch their data. */}
-            <TabPane eventKey={1} tab="Columns">
-              {selectedTab === 1 ? <ColumnsPreview /> : null}
-            </TabPane>
+          <div className="panel-body">
+            <TabbedArea
+              activeKey={selectedTab}
+              animation={false}
+              onSelect={this._onTabSelect}>
+                {/* Lazy-init the child components so they can lazy-fetch their data. */}
+                <TabPane eventKey={1} tab="Columns">
+                  {selectedTab === 1 ? <ColumnsPreview /> : null}
+                </TabPane>
 
-            <TabPane eventKey={2} tab="Data Preview">
-              {selectedTab === 2 ? <DataPreview /> : null}
-            </TabPane>
-          </TabbedArea>
-        </div>
-        </div>
+                <TabPane eventKey={2} tab="Data Preview">
+                  {selectedTab === 2 ? <DataPreview /> : null}
+                </TabPane>
+            </TabbedArea>
+          </div>
         </div>
       </section>
     );
