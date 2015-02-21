@@ -63,18 +63,11 @@ var DataPreview = React.createClass({
     if( this.state.table && this.state.table.data ) {
       return this._renderColumns();
     } else {
-      return this._renderEmptyMessage();
+      return null;
     }
   },
 
   /* Internal Helpers ------------------------------------------------------- */
-  _renderEmptyMessage() {
-    return (
-      <div className="alert alert-warning">
-        <p>There is no table selected. Please select (another) table to view the inner data.</p>
-      </div>
-    )
-  },
 
   _renderColumns() {
     return (

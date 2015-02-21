@@ -38,7 +38,7 @@ var ColumnsPreview = React.createClass({
     if( this.state.table && this.state.table.columns ) {
       return this._renderColumns(this.state.table.columns);
     } else {
-      return this._renderEmptyMessage();
+      return null;
     }
   },
 
@@ -67,14 +67,6 @@ var ColumnsPreview = React.createClass({
 
     // Render the template
     return (<div>{columns}</div>);
-  },
-
-  _renderEmptyMessage: function() {
-    return (
-      <div className="alert alert-warning">
-        <p>There are no columns, or there is no table selected. Please select (another) table.</p>
-      </div>
-    )
   },
 
   _capitalize: function(string) {
