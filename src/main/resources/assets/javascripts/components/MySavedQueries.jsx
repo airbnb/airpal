@@ -82,11 +82,11 @@ var MySavedQueries = React.createClass({
 
   renderEmptyMessage() {
     return (
-      <tr className="info">
-        <td className="text-center" colSpan="1">
+      <div className='row'>
+        <div className="col-md-12 text-center">
           No saved queries
-        </td>
-      </tr>
+        </div>
+      </div>
     );
   },
 
