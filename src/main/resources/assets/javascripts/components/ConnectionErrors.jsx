@@ -39,12 +39,14 @@ var ConnectionErrors = React.createClass({
     });
 
     return (
-      <div className={classes}>
-        <div className={alertClasses}>
-          {this.connectionMessage()}
-          <button type="button" className="close" onClick={this.handleDismiss}>
-            <span>&times;</span>
-          </button>
+      <div className='container'>
+        <div className={classes}>
+          <div className={alertClasses}>
+            {this.connectionMessage()}
+            <button type="button" className="close" onClick={this.handleDismiss}>
+              <span>&times;</span>
+            </button>
+          </div>
         </div>
       </div>
     );

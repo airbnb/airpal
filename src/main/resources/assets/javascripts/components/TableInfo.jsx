@@ -22,7 +22,7 @@ var TableInfo = React.createClass({
     return (
       <section className="row tables-selector-row">
         <div className="col-sm-12">
-          <div className="panel-body">
+          <div>
             <TabbedArea
               activeKey={selectedTab}
               animation={false}

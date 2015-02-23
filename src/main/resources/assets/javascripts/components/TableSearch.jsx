@@ -77,10 +77,9 @@ var TableSearch = React.createClass({
 
     return (
       <section className="row table-search-row">
-        <div className="panel-body">
+        <div>
           <form className="col-sm-7" role="form">
             <div className="form-group">
-              <label htmlFor="tables-input">Tables:</label>
               <SearchInputField
                 placeholder="Select a table"
                 selectizeOptions={this.tableSelectizeOptions} />
@@ -88,7 +87,6 @@ var TableSearch = React.createClass({
           </form>
           <form className="col-sm-5" role="form">
             <div className="form-group">
-              <label htmlFor="tables-input">Partition:</label>
               <SearchInputField
                 placeholder={partitionPlaceholder}
                 disabled={partitionsDisabled}

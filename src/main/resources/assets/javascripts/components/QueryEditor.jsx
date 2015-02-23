@@ -56,53 +56,38 @@ var QueryEditor = React.createClass({
 
   render() {
     return (
-      <div className="row">
-        <div className="col-sm-12">
-
-          <div className="panel panel-default">
-            <div className="panel-heading">
-              <h3 className="panel-title">Query editor</h3>
-            </div>
-
-            <div ref="queryContainer" className="editor-container clearfix">
-              <pre ref="queryEditor" className="editor">
-                SELECT COUNT(1) FROM users
-              </pre>
-              <div ref="handle" className="editor-resize-handles">
-                <span className="glyphicon glyphicon-chevron-up editor-resize-handle"
-                  onClick={this.handleResizeShrink}
-                  title="Shrink Editor"></span>
-                <span className="glyphicon glyphicon-chevron-down editor-resize-handle"
-                  onClick={this.handleResizeGrow}
-                  title="Grow Editor"></span>
+      <div className='flex flex-column'>
+        <div className='flex'>
+          <div className="flex flex-row query-menu-bar">
+            <div className="flex" style={{justifyContent: 'flex-end'}}>
+              <input ref="customName" type="text" name="custom-name" className="form-control flex"
+                placeholder="Select a custom table name" />
+              <div>
+                  <button className="btn"
+                    onClick={this.handleToggle}>
+                      Save {this.state.runText}
+                  </button>
+                  <button className="btn"
+                    onClick={this.handleRun}>
+                      Run {this.state.runText}
+                  </button>
               </div>
             </div>
+          </div>
+        </div>
 
-            <div className="panel-body">
-              <div className="col-sm-12">
-                <div className="row">
-
-                  <div className="col-sm-6">
-                    <input ref="customName" type="text" name="custom-name" className="form-control"
-                      placeholder="Select a custom table name" />
-                  </div>
-
-                  <div className="col-sm-6 text-right">
-                    <div className="btn-toolbar pull-right">
-                      <div className="btn-group">
-                        <button className="btn btn-primary"
-                          onClick={this.handleToggle}>Save {this.state.runText}</button>
-                      </div>
-
-                      <div className="btn-group">
-                        <button className="btn btn-success"
-                          onClick={this.handleRun}>Run {this.state.runText}</button>
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
-              </div>
+        <div className='flex flex-column'>
+          <div ref="queryContainer" className="editor-container flex clearfix">
+            <pre ref="queryEditor" className="editor flex">
+              SELECT COUNT(1) FROM users
+            </pre>
+            <div ref="handle" className="editor-resize-handles">
+              <span className="glyphicon glyphicon-chevron-up editor-resize-handle"
+                onClick={this.handleResizeShrink}
+                title="Shrink Editor"></span>
+              <span className="glyphicon glyphicon-chevron-down editor-resize-handle"
+                onClick={this.handleResizeGrow}
+                title="Grow Editor"></span>
             </div>
           </div>
         </div>
