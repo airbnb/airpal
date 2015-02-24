@@ -2,11 +2,7 @@
  * App Bootstrap
  */
 
-import assign from 'object-assign';
-
-// Assign to global for compatibility with FixedDataTable.
-Object.assign = Object.assign || assign;
-
+import 'es6-shim';
 import AirpalApp from './components/AirpalApp.jsx';
 import React from 'react';
 
