@@ -1,3 +1,46 @@
+body {
+  font-family: 'Inconsolata', monospace;
+}
+
+.raleway {
+  font-family: 'Raleway', sans-serif;
+}
+
+.flex {
+  flex: 1;
+  display: flex;
+}
+
+.flex-initial {
+  flex: initial;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.airpal-app {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  backgroundColor: #233240;
+}
+
+.left-pane {
+  width: 330px;
+  color: #565a5c;
+  font-weight: bold;
+  padding: 10px 20px 20px;
+  background-color: #edefed;
+}
+
 .panel-compressed {
   margin-bottom: 10px;
   word-wrap: break-word;
