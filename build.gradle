@@ -85,6 +85,10 @@ node {
     download   = System.properties['airpal.useLocalNode'] == null
 }
 
+task cleanAssets {
+  delete file("src/main/resources/assets/build")
+}
+
 task installAssets(type: NpmTask) {
     args = ['install']
 
@@ -113,3 +117,4 @@ shadowJar {
 
 buildAssets.dependsOn installAssets
 compileJava.dependsOn buildAssets
+clean.dependsOn cleanAssets
