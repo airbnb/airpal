@@ -20,16 +20,14 @@ let AirpalApp = React.createClass({
     return getStateFromStore();
   },
 
-  componentWillMount() {
-    UserApiUtils.getCurrentUser();
-  },
-
   componentDidMount() {
     // Add event listeners to the window to detect
     // when the user goes online/offline
     window.addEventListener('online', RunActions.wentOnline );
     window.addEventListener('offline', RunActions.wentOffline );
+
     UserStore.listen(this.onChange);
+    UserApiUtils.getCurrentUser();
   },
 
   componentWillUnmount() {
