@@ -1,6 +1,6 @@
-import React from "react";
-import RunsTable from "./RunsTable.jsx";
-import UserStore from "../stores/UserStore";
+import React from 'react';
+import RunsTable from './RunsTable';
+import UserStore from '../stores/UserStore';
 
 function getStateFromStore() {
   return {

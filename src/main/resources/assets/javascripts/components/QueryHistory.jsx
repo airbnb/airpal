@@ -1,5 +1,5 @@
-import React from "react";
-import QueryInformation from "./QueryInformation.jsx";
+import React from 'react';
+import QueryInformation from './QueryInformation';
 
 let QueryHistory = React.createClass({
   render() {

@@ -1,6 +1,6 @@
-import React from "react";
-import QueryActions from "../actions/QueryActions";
-let Modal = require('react-bootstrap').Modal;
+import React from 'react';
+import QueryActions from '../actions/QueryActions';
+import { Modal } from 'react-bootstrap';
 
 let QuerySaveModal = React.createClass({
   displayName: 'QuerySaveModal',
@@ -49,8 +49,12 @@ let QuerySaveModal = React.createClass({
   handleSaveRequest(event) {
     event.preventDefault();
 
-    let name = this.refs['name'].getDOMNode().value, description = this.refs['description'].getDOMNode().value;
-    if ( name == '' ) return;
+    let name = this.refs.name.getDOMNode().value;
+    let description = this.refs.description.getDOMNode().value;
+
+    if (name === '') {
+      return;
+    }
 
     // Start the "saving process"
     $(this.refs['saveQueryIndicator'].getDOMNode()).removeClass('hidden');

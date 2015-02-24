@@ -1,6 +1,6 @@
-import React from "react";
-import TableInfo from "./TableInfo.jsx";
-import TableSearch from "./TableSearch.jsx";
+import React from 'react';
+import TableInfo from './TableInfo';
+import TableSearch from './TableSearch';
 
 let TableExplorer = React.createClass({
   displayName: 'TableExplorer',

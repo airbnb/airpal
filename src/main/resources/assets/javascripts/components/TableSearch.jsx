@@ -1,9 +1,9 @@
-import React from "react";
-import SearchInputField from "./SearchInputField.jsx";
-import TableActions from "../actions/TableActions";
-import TableStore from "../stores/TableStore";
-import _ from "lodash";
-import moment from "moment";
+import React from 'react';
+import SearchInputField from './SearchInputField';
+import TableActions from '../actions/TableActions';
+import TableStore from '../stores/TableStore';
+import _ from 'lodash';
+import moment from 'moment';
 
 let commonSelectizeOptions = {
   closeAfterSelect: true
@@ -40,7 +40,7 @@ let TableSearch = React.createClass({
   displayName: 'TableSearch',
 
   componentDidMount() {
-    TableStore.listen('change', this._onChange);
+    TableStore.listen(this._onChange);
   },
 
   componentWillUnmount() {

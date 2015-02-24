@@ -1,8 +1,8 @@
-import React from "react";
-import ColumnsPreview from "./ColumnsPreview.jsx";
-import DataPreview from "./DataPreview.jsx";
-import MetaDataPreview from "./MetaDataPreview.jsx";
-let TabbedArea      = require('react-bootstrap').TabbedArea, TabPane         = require('react-bootstrap').TabPane;
+import React from 'react';
+import ColumnsPreview from './ColumnsPreview';
+import DataPreview from './DataPreview';
+import MetaDataPreview from './MetaDataPreview';
+import { TabbedArea, TabPane } from 'react-bootstrap';
 
 let TableInfo = React.createClass({
   displayName: 'TableInfo',

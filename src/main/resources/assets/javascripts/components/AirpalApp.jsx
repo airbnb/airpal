@@ -1,10 +1,10 @@
-import React from "react";
-import RunActions from "../actions/RunActions";
-import ConnectionErrors from "./ConnectionErrors.jsx";
-import Header from "./Header.jsx";
-import TableExplorer from "./TableExplorer.jsx";
-import QueryHistory from "./QueryHistory.jsx";
-import QueryEditor from "./QueryEditor.jsx";
+import React from 'react';
+import RunActions from '../actions/RunActions';
+import ConnectionErrors from './ConnectionErrors';
+import Header from './Header';
+import TableExplorer from './TableExplorer';
+import QueryHistory from './QueryHistory';
+import QueryEditor from './QueryEditor';
 
 let AirpalApp = React.createClass({
   displayName: 'AirpalApp',

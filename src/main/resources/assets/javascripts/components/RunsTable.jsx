@@ -1,14 +1,14 @@
-/** @jsx React.DOM */
-import React from "react/addons";
-import _ from "lodash";
-import moment from "moment";
-let cx      = React.addons.classSet;
-import QueryActions from "../actions/QueryActions";
-import RunActions from "../actions/RunActions";
-import RunStore from "../stores/RunStore";
-import { Table, Column } from "fixed-data-table";
-import { ProgressBar } from "react-bootstrap";
-import UpdateWidthMixin from "../mixins/UpdateWidthMixin";
+import React from 'react/addons';
+import _ from 'lodash';
+import moment from 'moment';
+import QueryActions from '../actions/QueryActions';
+import RunActions from '../actions/RunActions';
+import RunStore from '../stores/RunStore';
+import { Table, Column } from 'fixed-data-table';
+import { ProgressBar } from 'react-bootstrap';
+import UpdateWidthMixin from '../mixins/UpdateWidthMixin';
+
+let cx = React.addons.classSet;
 
 // State actions
 function getRuns(user) {

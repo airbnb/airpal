@@ -1,10 +1,11 @@
-import React from "react";
-import { Table, Column } from "fixed-data-table";
-import _ from "lodash";
-import FQN from "../utils/fqn";
-import TableStore from "../stores/TableStore";
-import TableActions from "../actions/TableActions";
-import UpdateWidthMixin from "../mixins/UpdateWidthMixin";
+import React from 'react';
+import { Table, Column } from 'fixed-data-table';
+import _ from 'lodash';
+import FQN from '../utils/fqn';
+import TableStore from '../stores/TableStore';
+import TableActions from '../actions/TableActions';
+import UpdateWidthMixin from '../mixins/UpdateWidthMixin';
+
 let isColumnResizing = false;
 
 // State actions
@@ -46,11 +47,11 @@ let DataPreview = React.createClass({
   },
 
   componentDidMount() {
-    TableStore.listen('change', this._onChange);
+    TableStore.listen(this._onChange);
   },
 
   componentWillUnmount() {
-    TableStore.unlisten('change', this._onChange);
+    TableStore.unlisten(this._onChange);
   },
 
   render() {

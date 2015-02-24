@@ -1,9 +1,9 @@
-import React from "react";
-import QueryApiUtils from "../utils/QueryApiUtils";
-import QueryStore from "../stores/QueryStore";
-import QueryActions from "../actions/QueryActions";
-import RunActions from "../actions/RunActions";
-import { Button, ButtonToolbar } from "react-bootstrap";
+import React from 'react';
+import QueryApiUtils from '../utils/QueryApiUtils';
+import QueryStore from '../stores/QueryStore';
+import QueryActions from '../actions/QueryActions';
+import RunActions from '../actions/RunActions';
+import { Button, ButtonToolbar } from 'react-bootstrap';
 
 function getStateFromStore() {
   return {

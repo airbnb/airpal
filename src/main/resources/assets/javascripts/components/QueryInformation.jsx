@@ -1,9 +1,9 @@
-import React from "react";
-import RunActions from "../actions/RunActions";
-import { TabbedArea, TabPane } from "react-bootstrap";
-import MyOwnRuns from "./MyOwnRuns.jsx";
-import MySavedQueries from "./MySavedQueries.jsx";
-import AllRunningQueries from "./AllRunningQueries.jsx";
+import React from 'react';
+import RunActions from '../actions/RunActions';
+import { TabbedArea, TabPane } from 'react-bootstrap';
+import MyOwnRuns from './MyOwnRuns';
+import MySavedQueries from './MySavedQueries';
+import AllRunningQueries from './AllRunningQueries';
 
 let QueryInformation = React.createClass({
   displayName: 'QueryInformation',

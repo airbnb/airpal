@@ -19,7 +19,7 @@ class RunStore {
   // Creates an SSE connection to the backend to make a real time stream
   // with the API
   connect() {
-    this.onWentOffline(); // Close any open connection
+    this.disconnect(); // Close any open connection
 
     // Create a new listener to the API endpoint
     this._eventSource = new EventSource('/api/updates/subscribe');
@@ -73,6 +73,13 @@ class RunStore {
     this.hasFetchedHistory = true;
 
     RunApiUtils.fetchHistory();
+  }
+
+  onExecute({ query, tmpTable }) {
+    RunApiUtils.execute(query, tmpTable);
+
+    // Do not emit event
+    return false;
   }
 
   // Yeah baby. We're ready to rambo! The SSEConnection has made a connection

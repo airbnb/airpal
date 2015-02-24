@@ -1,5 +1,4 @@
 import alt from '../alt';
-import RunApiUtils from '../utils/RunApiUtils';
 
 class RunActions {
   constructor() {
@@ -18,8 +17,7 @@ class RunActions {
   }
 
   execute({ query, tmpTable }) {
-    // XXX we should add this run to the UI anyway
-    RunApiUtils.execute(query, tmpTable);
+    this.dispatch({ query, tmpTable });
   }
 
   kill(uuid) {

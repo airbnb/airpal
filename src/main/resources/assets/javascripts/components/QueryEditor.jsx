@@ -1,13 +1,13 @@
-import React from "react";
-import RunActions from "../actions/RunActions";
-let OverlayMixin    = require('react-bootstrap').OverlayMixin;
-import _ from "lodash";
-import ace from "brace";
-import QueryStore from "../stores/QueryStore";
-import QuerySaveModal from "./QuerySaveModal.jsx";
+import React from 'react';
+import RunActions from '../actions/RunActions';
+import { OverlayMixin } from 'react-bootstrap';
+import _ from 'lodash';
+import ace from 'brace';
+import QueryStore from '../stores/QueryStore';
+import QuerySaveModal from './QuerySaveModal';
 
-require('brace/theme/monokai');
-require('brace/mode/sql');
+import 'brace/theme/monokai';
+import 'brace/mode/sql';
 
 let QueryEditor = React.createClass({
   displayName: 'QueryEditor',

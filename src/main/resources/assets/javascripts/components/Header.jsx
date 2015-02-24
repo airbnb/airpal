@@ -1,6 +1,6 @@
-import React from "react";
-import UserStore from "../stores/UserStore";
-import UserApiUtils from "../utils/UserApiUtils";
+import React from 'react';
+import UserStore from '../stores/UserStore';
+import UserApiUtils from '../utils/UserApiUtils';
 
 // State actions
 function getStateFromStore() {

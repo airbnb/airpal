@@ -1,8 +1,6 @@
 import React from 'react';
-
 import RunActions from '../actions/RunActions';
-
-import RunsTable from './RunsTable.jsx';
+import RunsTable from './RunsTable';
 
 let AllRunningQueries = React.createClass({
   componentWillMount() {

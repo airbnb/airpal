@@ -12,7 +12,7 @@ class TableStore {
     this.activeTable = null;
   }
 
-  getByName() {
+  getByName(name) {
     if (_.isEmpty(this.tables)) {
       return undefined;
     }
@@ -101,9 +101,9 @@ class TableStore {
     this.unmarkActive(name);
   }
 
-  onReceivedTableData({ table, columns, data, partitions }) {
+  onReceivedTableData({ table: refTable, columns, data, partitions }) {
     // Get the right table first
-    let table = this.getByName(table.name);
+    let table = this.getByName(refTable.name);
 
     if (table === undefined) {
       return;

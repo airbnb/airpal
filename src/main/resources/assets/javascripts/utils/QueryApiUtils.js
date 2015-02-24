@@ -33,6 +33,7 @@ let QueryApiUtils = {
             query: data.query
           }
         };
+
         QueryActions.receivedQuery(query);
       }
     });

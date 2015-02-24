@@ -1,6 +1,6 @@
-import React from "react";
-import _ from "lodash";
-import TableStore from "../stores/TableStore";
+import React from 'react';
+import _ from 'lodash';
+import TableStore from '../stores/TableStore';
 
 // State actions
 function getStateFromStore() {
@@ -17,11 +17,11 @@ let MetaDataPreview = React.createClass({
   },
 
   componentDidMount() {
-    TableStore.listen('change', this._onChange);
+    TableStore.listen(this._onChange);
   },
 
   componentWillUnmount() {
-    TableStore.unlisten('change', this._onChange);
+    TableStore.unlisten(this._onChange);
   },
 
   render() {
