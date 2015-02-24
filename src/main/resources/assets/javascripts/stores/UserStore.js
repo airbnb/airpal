@@ -1,6 +1,6 @@
-var alt = require('../alt');
-var UserActions = require('../actions/UserActions');
-var RunApiUtils = require('../utils/RunApiUtils');
+import alt from '../alt';
+import UserActions from '../actions/UserActions';
+import RunApiUtils from '../utils/RunApiUtils';
 
 class UserStore {
   constructor() {
