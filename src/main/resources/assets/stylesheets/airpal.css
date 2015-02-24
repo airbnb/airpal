@@ -6,41 +6,6 @@ body {
   font-family: 'Raleway', sans-serif;
 }
 
-.flex {
-  flex: 1;
-  display: flex;
-}
-
-.flex-initial {
-  flex: initial;
-}
-
-.flex-row {
-  flex-direction: row;
-}
-
-.flex-column {
-  flex-direction: column;
-}
-
-.airpal-app {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  backgroundColor: #233240;
-}
-
-.left-pane {
-  width: 330px;
-  color: #565a5c;
-  font-weight: bold;
-  padding: 10px 20px 20px;
-  background-color: #edefed;
-}
-
 .panel-compressed {
   margin-bottom: 10px;
   word-wrap: break-word;
@@ -81,4 +46,63 @@ body {
 
 .columns-container {
   overflow-x: hidden;
+}
+
+.flex {
+  flex: 1;
+  display: flex;
+}
+
+.flex-initial {
+  flex: initial;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.airpal-app {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  backgroundColor: #233240;
+}
+
+.left-pane {
+  width: 330px;
+  color: #565a5c;
+  font-weight: bold;
+  padding: 10px 20px 20px;
+  background-color: #edefed;
+}
+
+.query-menu-bar {
+  background-color: #2f3129;
+}
+
+.query-menu-bar .btn {
+  background: transparent;
+  color: white;
+  border-left: 1px solid black;
+  padding: 6px 12px;
+  border-radius: 0;
+}
+
+.query-menu-bar .form-control {
+  width: 350px;
+  border: none;
+  border-radius: 0;
+  margin-left: 45px;
+  background-color: #000;
+}
+
+.ace_editor {
+  border: none;
 }

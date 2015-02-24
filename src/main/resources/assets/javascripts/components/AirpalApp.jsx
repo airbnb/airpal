@@ -2,9 +2,8 @@ import React from 'react';
 import RunActions from '../actions/RunActions';
 import ConnectionErrors from './ConnectionErrors';
 import LeftPane from './LeftPane';
+import RightPane from './RightPane';
 import TableExplorer from './TableExplorer';
-import QueryHistory from './QueryHistory';
-import QueryEditor from './QueryEditor';
 import UserStore from '../stores/UserStore';
 import UserApiUtils from '../utils/UserApiUtils';
 
@@ -46,14 +45,7 @@ let AirpalApp = React.createClass({
       <div className="airpal-app">
         <div className='flex flex-row'>
           <LeftPane user={this.state.user} />
-          <div classNam='flex flex-column'>
-            <div className='flex flex-initial'>
-              <QueryEditor />
-            </div>
-            <div className='flex'>
-              <QueryHistory />
-            </div>
-          </div>
+          <RightPane />
         </div>
       </div>
     );
