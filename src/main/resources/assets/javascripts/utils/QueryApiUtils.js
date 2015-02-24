@@ -1,14 +1,7 @@
-/**
- * QueryApiUtils
- */
+import QueryActions from '../actions/QueryActions';
+import _ from 'lodash';
 
-/* Actions */
-var QueryActions = require('../actions/QueryActions');
-
-/* Helpers */
-var _ = require('lodash');
-
-module.exports = {
+let QueryApiUtils = {
   fetchSavedQueries() {
     $.ajax({
       type: 'GET',
@@ -28,21 +21,19 @@ module.exports = {
     $.ajax({
       type: 'POST',
       url: './api/query/saved',
-      data: data,
+      data,
 
       success(uuid) {
-        // TODO: currently the API only returns the uuid, but I also want the
-        // name and the description. So we're merging the uuid into the data
-        // object  We also have to reformat to match the nested structure of
-        // the `queryWithPlaceholders` object.
-        var query = {
-          uuid: uuid,
+        let query = {
+          uuid,
           name: data.name,
           description: data.description,
+
           queryWithPlaceholders: {
-            query: data.query,
-          },
+            query: data.query
+          }
         };
+
         QueryActions.receivedQuery(query);
       }
     });
@@ -51,10 +42,12 @@ module.exports = {
   destroyQuery(uuid) {
     $.ajax({
       type: 'DELETE',
-      url: './api/query/saved/' + uuid,
+      url: `./api/query/saved/${uuid}`
     });
 
     // Optimistically update.
     _.defer(() => QueryActions.receivedDestroyedQuery(uuid));
   }
 };
+
+export default QueryApiUtils;

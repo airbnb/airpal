@@ -1,41 +1,37 @@
-var React   = require('react/addons');
-var _       = require('lodash');
-var moment  = require('moment');
-var cx      = React.addons.classSet;
+import React from 'react/addons';
+import _ from 'lodash';
+import moment from 'moment';
+import QueryActions from '../actions/QueryActions';
+import RunActions from '../actions/RunActions';
+import RunStore from '../stores/RunStore';
+import { Table, Column } from 'fixed-data-table';
+import { ProgressBar } from 'react-bootstrap';
+import UpdateWidthMixin from '../mixins/UpdateWidthMixin';
 
-/* Actions */
-var QueryActions = require('../actions/QueryActions');
-var RunActions   = require('../actions/RunActions');
-
-/* Stores */
-var RunStore  = require('../stores/RunStore');
-
-/* FixedDataTable */
-var { Table, Column } = require('fixed-data-table');
-
-/* Bootstrap */
-var { ProgressBar } = require('react-bootstrap');
-
-/* Mixins */
-var UpdateWidthMixin = require('../mixins/UpdateWidthMixin');
+let cx = React.addons.classSet;
 
 // State actions
 function getRuns(user) {
   if (user) {
-    return RunStore.where({user: user}, {sort: true})
+    return RunStore.getCollection().where({
+      user
+    }, {
+      sort: true
+    })
   } else {
-    return RunStore.all({sort: true});
+    return RunStore.getCollection().all({
+      sort: true
+    });
   }
 }
 
-var RunsTable = React.createClass({
+let RunsTable = React.createClass({
   displayName: 'RunsTable',
-
   mixins: [UpdateWidthMixin],
 
   getStateFromStore() {
     return {
-      runs: getRuns(this.props.user),
+      runs: getRuns(this.props.user)
     };
   },
 
@@ -44,12 +40,11 @@ var RunsTable = React.createClass({
   },
 
   componentDidMount() {
-    RunStore.addStoreListener('change', this._onChange);
+    RunStore.listen(this._onChange);
   },
 
   componentWillUnmount() {
-    // Remove the store listeners
-    RunStore.removeStoreListener('change', this._onChange);
+    RunStore.unlisten(this._onChange);
   },
 
   render() {
@@ -57,12 +52,10 @@ var RunsTable = React.createClass({
       return this.renderEmptyMessage();
     }
 
+//    Need to make sure to wrap `Table` in a parent element so we can
+//    compute the natural width of the component.
     return (
       <div>
-        {/*
-          Need to make sure to wrap `Table` in a parent element so we can
-          compute the natural width of the component.
-        */}
         <Table
           rowHeight={40}
           rowGetter={this.rowGetter}
@@ -90,11 +83,11 @@ var RunsTable = React.createClass({
   /* Store events */
   _onChange() {
     this.setState(this.getStateFromStore());
-  },
+  }
 });
 
 function getColumns(forCurrentUser) {
-  var i = 0;
+  let i = 0;
   return _.compact([
     (forCurrentUser ? null : <Column
       label="User"
@@ -150,7 +143,7 @@ function formatRun(run, currentUser) {
     duration: run.queryStats && run.queryStats.elapsedTime,
     output: run.output && run.output,
     _run: run,
-    _currentUser: currentUser,
+    _currentUser: currentUser
   };
 }
 
@@ -161,8 +154,10 @@ function formatRun(run, currentUser) {
  */
 function getRenderer(key) {
   return function wrappedRenderer(cellData, cellDataKey, rowData, rowIndex, columnData, width) {
-    var content = CellRenderers[key](cellData, cellDataKey, rowData, rowIndex, columnData, width);
-    return <div className="text-overflow-ellipsis" style={{width: width}}>{content}</div>;
+    let content = CellRenderers[key](cellData, cellDataKey, rowData, rowIndex, columnData, width);
+    return <div className="text-overflow-ellipsis" style={{
+      width
+    }}>{content}</div>;
   };
 }
 
@@ -175,7 +170,7 @@ function killRun(uuid) {
   RunActions.kill(uuid);
 }
 
-var CellRenderers = {
+let CellRenderers = {
   user(cellData) {
     return <span title={cellData}>{cellData}</span>;
   },
@@ -189,7 +184,7 @@ var CellRenderers = {
   },
 
   status(cellData, cellDataKey, rowData, rowIndex, columnData, width) {
-    var run = rowData._run;
+    let run = rowData._run;
     if (run.state === 'FAILED') {
       return (<span className="label label-danger">FAILED</span>);
     } else if (run.state === 'FINISHED') {
@@ -202,10 +197,10 @@ var CellRenderers = {
   },
 
   output(cellData, cellDataKey, rowData) {
-    var run = rowData._run;
-    var currentUser = rowData._currentUser;
-    var killable = currentUser && currentUser === run.user;
-    var output = cellData;
+    let run = rowData._run;
+    let currentUser = rowData._currentUser;
+    let killable = currentUser && currentUser === run.user;
+    let output = cellData;
     if (output && output.location) {
       return (
         <a href={output.location} target="_blank">
@@ -216,7 +211,7 @@ var CellRenderers = {
       return (
         <div className={cx({
           'runs-table-progress': true,
-          'runs-table-progress-killable': killable,
+          'runs-table-progress-killable': killable
         })}>
           <ProgressBar now={getProgressFromStats(run.queryStats)} />
           {killable ?
@@ -232,12 +227,12 @@ var CellRenderers = {
   },
 
   started(cellData) {
-    var m = moment.utc(cellData, 'x');
-    var utc = m.format();
-    var human = m.format('lll');
+    let m = moment.utc(cellData, 'x');
+    let utc = m.format();
+    let human = m.format('lll');
     return <span title={utc}>{human} UTC</span>;
-  },
-}
+  }
+};
 
 function getProgressFromStats(stats) {
   if (!stats || !stats.totalTasks || stats.totalTasks == 0) {
@@ -247,4 +242,4 @@ function getProgressFromStats(stats) {
   }
 }
 
-module.exports = RunsTable;
+export default RunsTable;

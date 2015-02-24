@@ -1,84 +1,32 @@
-/*
- * RunActions
- */
+import alt from '../alt';
 
-var AppDispatcher = require('../dispatchers/AppDispatcher');
-var RunConstants  = require('../constants/RunConstants');
+class RunActions {
+  constructor() {
+    this.generateActions(
+      'addMultipleRuns',
+      'addRun',
+      'connect',
+      'disconnect',
+      'fetchHistory',
+      'onError',
+      'onOpen',
+      'resetOnlineStatus',
+      'wentOffline',
+      'wentOnline'
+    );
+  }
 
-module.exports = {
+  execute({ query, tmpTable }) {
+    this.dispatch({ query, tmpTable });
+  }
 
-  // - ViewActions --------------------------------------------------------- //
-  wentOnline: function() {
-    AppDispatcher.handleViewAction({
-      type: RunConstants.USER_WENT_ONLINE
-    });
-  },
+  kill(uuid) {
+    RunApiUtils.kill(uuid);
+  }
 
-  wentOffline: function() {
-    AppDispatcher.handleViewAction({
-      type: RunConstants.USER_WENT_OFFLINE
-    });
-  },
+  onMessage(data) {
+    this.dispatch(data.job);
+  }
+}
 
-  connect: function() {
-    AppDispatcher.handleViewAction({
-      type: RunConstants.CONNECT
-    });
-  },
-
-  disconnect: function() {
-    AppDispatcher.handleViewAction({
-      type: RunConstants.DISCONNECT
-    });
-  },
-
-  execute: function(obj) {
-    AppDispatcher.handleViewAction({
-      type: RunConstants.EXECUTE_RUN,
-      query: obj.query,
-      tmpTable: obj.tmpTable
-    });
-  },
-
-  kill: function(uuid) {
-    AppDispatcher.handleViewAction({
-      type: RunConstants.KILL_RUN,
-      uuid: uuid,
-    });
-  },
-
-  // - ServerActions ------------------------------------------------------- //
-  onOpen: function() {
-    AppDispatcher.handleServerAction({
-      type: RunConstants.ON_SSE_OPEN
-    });
-  },
-
-  onError: function(event) {
-    AppDispatcher.handleServerAction({
-      type: RunConstants.ON_SSE_ERROR,
-      event: event
-    });
-  },
-
-  onMessage: function(data) {
-    AppDispatcher.handleServerAction({
-      type: RunConstants.ON_SSE_MESSAGE,
-      data: data.job
-    });
-  },
-
-  addRun: function(data) {
-    AppDispatcher.handleServerAction({
-      type: RunConstants.ADD_RUN,
-      data: data
-    });
-  },
-
-  addMultipleRuns: function(runs) {
-    AppDispatcher.handleServerAction({
-      type: RunConstants.ADD_MULTIPLE_RUNS,
-      data: runs
-    });
-  },
-};
+export default alt.createActions(RunActions);

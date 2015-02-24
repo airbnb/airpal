@@ -1,22 +1,11 @@
-/**
- * BaseStore
- */
+import _ from 'lodash';
 
-// Utilities
-var _ = require('lodash');
-var EventEmitter  = require('events').EventEmitter;
-
-class BaseStore extends EventEmitter {
-
-  constructor() {
-    /* - Defaults ------------------------------------------------------------ */
-
-    // The collection holds the data for the store
-    this.collection = [];
-
-    // Defines the default comparator for the collection
-    // @return {String} the uuid of the model
-    this.comparator || (this.comparator = 'uuid');
+class FluxCollection {
+  constructor(opts = {}) {
+    Object.assign(this, {
+      collection: [],
+      comparator: 'uuid'
+    }, opts);
   }
 
   /* - Selectors ----------------------------------------------------------- */
@@ -25,9 +14,8 @@ class BaseStore extends EventEmitter {
   // if no comparator is given, the default one is used
   // @param options {object} the options for this function
   // @return {array} the collection
-  all(options) {
+  all(options = {}) {
     if (this.size() === 0) return [];
-    options || (options = {})
 
     // Return the sorted collection
     if (options.sort) {
@@ -45,12 +33,11 @@ class BaseStore extends EventEmitter {
 
   // Filters the collection based on the arguments
   // @param context {Object/Function/Array} the search context
-  where(context, options) {
+  where(context, options = {}) {
     if (_.isEmpty(context) || this.size() === 0) return [];
-    options || (options = {})
 
     // Filter the collection
-    var results = _.where(this.collection, context);
+    let results = _.where(this.collection, context);
 
     // Sort the result, if asked
     if (options.sort) {
@@ -71,26 +58,20 @@ class BaseStore extends EventEmitter {
   // sure we don't got the object
   // @param models {Object} the model object
   // @return {Object} the store
-  add(models, options) {
-    options || (options = {})
-
+  add(models, options = {}) {
     // Convert a single object to an array
-    var singular  = !_.isArray(models);
-    models        = singular ? (models ? [models] : []) : _.clone(models)
+    let singular = !_.isArray(models);
+    models = singular ? (models ? [models] : []) : _.clone(models)
 
     // Loop over the array and try to add them to the collection.
-    _.each(models, function(model) {
+    _.each(models, (model) => {
       // Make sure this is a unique item. If there is already a match, fail this.
-      var unique = _.find(this.collection, { uuid: model.uuid });
+      let unique = _.find(this.collection, { uuid: model.uuid });
       if (!_.isUndefined(unique)) return;
 
       // Add the model to the collection
       this.collection.push(model);
-
-      // Emit a store create event, unless the silent param is given
-      if (options.silent) return this;
-      this.emitChange('add');
-    }.bind(this));
+    });
 
     // Return this for chaining purpose
     return this;
@@ -100,11 +81,9 @@ class BaseStore extends EventEmitter {
   // @param uuid {String} the uuid of the model
   // @param changedObject {Object} the updated run
   // @return {Object} the store
-  update(uuid, changedObject, options) {
-    options || (options = {})
-
+  update(uuid, changedObject, options = {}) {
     // Find the correct entry and update it with the new info
-    var model = _.find(this.collection, { uuid: uuid });
+    let model = _.find(this.collection, { uuid: uuid });
 
     // Apply all the data to the object
     model = _.assign(model, changedObject);
@@ -113,9 +92,6 @@ class BaseStore extends EventEmitter {
     this.collection = _.reject(this.collection, { uuid: uuid });
     this.collection.push(model);
 
-    // Emit the update event, unless the silent param is given
-    if (options.silent) return this;
-    this.emitChange('update');
     return this;
   }
 
@@ -123,44 +99,17 @@ class BaseStore extends EventEmitter {
   // @param uuid {String} the uuid of the model
   // @param options {?Object}
   // @return {Object} the store
-  remove(uuid, options) {
-    options || (options = {})
-
+  remove(uuid, options = {}) {
     // Find the correct entry and update it with the new info
-    var index = _.findIndex(this.collection, { uuid: uuid });
+    let index = _.findIndex(this.collection, { uuid: uuid });
 
     if (index !== -1) {
       // Remove the old object
       this.collection.splice(index, 1);
-
-      // Emit the update event, unless the silent param is given
-      if (options.silent) return this;
-      this.emitChange('remove');
     }
 
     return this;
   }
-
-  /* - Events handlers ----------------------------------------------------- */
-
-  // Emit the changes with the eventemitter
-  emitChange(eventName, options) {
-    this.emit(eventName, options);
-  }
-
-  // Creates an event listener for a specific event
-  // @param eventName {string} event name to listen to
-  // @param callback {function} event callback
-  addStoreListener(eventName, callback) {
-    this.on(eventName, callback);
-  }
-
-  // Removes a specific event listener
-  // @param eventName {string} event name to remove
-  // @param callback {function} event callback
-  removeStoreListener(eventName, callback) {
-    this.removeListener(eventName, callback);
-  }
 }
 
-module.exports = BaseStore;
+export default FluxCollection;

@@ -1,25 +1,12 @@
-var React = require('react');
+import React from 'react';
+import QueryActions from '../actions/QueryActions';
+import { Modal } from 'react-bootstrap';
 
-/* Actions */
-var QueryActions = require('../actions/QueryActions');
-
-/* Helpers */
-var Modal = require('react-bootstrap').Modal;
-
-/* Stores */
-var QueryStore = require('../stores/QueryStore');
-
-var QuerySaveModal = React.createClass({
+let QuerySaveModal = React.createClass({
   displayName: 'QuerySaveModal',
 
   componentDidMount() {
     this.refs.name.getDOMNode().focus();
-
-    QueryStore.addStoreListener('create', this._disableSubmitButton);
-  },
-
-  componentWillUnmount() {
-    QueryStore.removeStoreListener('create', this._disableSubmitButton);
   },
 
   render() {
@@ -62,11 +49,12 @@ var QuerySaveModal = React.createClass({
   handleSaveRequest(event) {
     event.preventDefault();
 
-    // Extract the data from the view and pass the data to the
-    // view action to create a new query
-    var name = this.refs['name'].getDOMNode().value,
-        description = this.refs['description'].getDOMNode().value;
-    if ( name == '' ) return;
+    let name = this.refs.name.getDOMNode().value;
+    let description = this.refs.description.getDOMNode().value;
+
+    if (name === '') {
+      return;
+    }
 
     // Start the "saving process"
     $(this.refs['saveQueryIndicator'].getDOMNode()).removeClass('hidden');
@@ -74,17 +62,10 @@ var QuerySaveModal = React.createClass({
     // Send the data await
     QueryActions.createQuery({
       query: this.props.query,
-      name: name,
-      description: description
+      name,
+      description
     });
-  },
-
-  // - Internal helpers --------------------------------------------------- //
-  // Makes sure the submit button is disabled
-  _disableSubmitButton() {
-    var button = this.refs.submitButton.getDOMNode();
-    button.setAttribute('disabled', true);
   }
 });
 
-module.exports = QuerySaveModal;
+export default QuerySaveModal;

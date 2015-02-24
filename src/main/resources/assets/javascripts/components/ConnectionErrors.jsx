@@ -1,27 +1,22 @@
-var React = require('react/addons');
+import React from 'react/addons';
+import RunActions from '../actions/RunActions';
+import RunStore from '../stores/RunStore';
 
-/* Stores */
-var RunStore = require('../stores/RunStore');
-
-var ConnectionErrors = React.createClass({
-  displayName: 'ConnectionErrors',
-
-  getInitialState: function() {
-    return { offline: false, online: false };
+let ConnectionErrors = React.createClass({
+  getInitialState() {
+    return RunStore.getState();
   },
 
-  componentDidMount: function() {
-    RunStore.addStoreListener('online', this._wentOnline);
-    RunStore.addStoreListener('offline', this._wentOffline);
+  componentDidMount() {
+    RunStore.listen(this._changeStatus);
   },
 
-  componentWillUnmount: function() {
-    RunStore.removeStoreListener('online');
-    RunStore.removeStoreListener('offline');
+  componentWillUnmount() {
+    RunStore.unlisten(this._changeStatus);
   },
 
-  render: function () {
-    var cx = React.addons.classSet, classes, alertClasses;
+  render() {
+    let cx = React.addons.classSet, classes, alertClasses;
 
     // Define the main classes
     classes = cx({
@@ -49,8 +44,8 @@ var ConnectionErrors = React.createClass({
     );
   },
 
-  connectionMessage: function() {
-    if( this.state.offline ) {
+  connectionMessage() {
+    if (this.state.offline) {
       return "You're currently offline.";
     } else {
       return "You're re-connected to the internet";
@@ -60,18 +55,13 @@ var ConnectionErrors = React.createClass({
   /* - Event handlers ------------------------------------------------------ */
 
   // Reset the online and offline state
-  handleDismiss: function() {
-    this.setState({ online: false, offline: false });
+  handleDismiss() {
+    RunActions.resetOnlineStatus();
   },
 
-  /* - Internal helpers ---------------------------------------------------- */
-  _wentOffline: function() {
-    this.setState({ online: false, offline: true });
-  },
-
-  _wentOnline: function() {
-    this.setState({ online: true, offline: false });
+  _changeStatus() {
+    this.setState(RunStore.getState());
   }
 });
 
-module.exports = ConnectionErrors;
+export default ConnectionErrors;

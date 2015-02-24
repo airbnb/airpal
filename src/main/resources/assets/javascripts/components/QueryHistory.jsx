@@ -1,8 +1,7 @@
-var React = require('react');
+import React from 'react';
+import QueryInformation from './QueryInformation';
 
-var QueryInformation = require('./QueryInformation');
-
-var QueryHistory = React.createClass({
+let QueryHistory = React.createClass({
   render() {
     return (
       <div className='panel panel-default panel-container'>
@@ -17,4 +16,4 @@ var QueryHistory = React.createClass({
   }
 });
 
-module.exports = QueryHistory;
+export default QueryHistory;

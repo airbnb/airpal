@@ -1,17 +1,9 @@
-/*
- * UserActions
- */
+import alt from '../alt';
 
-var AppDispatcher = require('../dispatchers/AppDispatcher');
-var UserConstants = require('../constants/UserConstants');
-
-module.exports = {
-
-  receivedCurrentUser: function(user) {
-    AppDispatcher.handleServerAction({
-      type: UserConstants.RECEIVED_USER_INFO,
-      user: user
-    });
+class UserActions {
+  receivedCurrentUser(user) {
+    this.dispatch(user);
   }
+}
 
-};
+module.exports = alt.createActions(UserActions);

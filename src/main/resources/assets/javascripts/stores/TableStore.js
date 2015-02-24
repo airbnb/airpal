@@ -1,203 +1,142 @@
-/**
- * TableStore
- */
+import FQN from '../utils/fqn';
+import TableActions from '../actions/TableActions';
+import TableApiUtils from '../utils/TableApiUtils';
+import _ from 'lodash';
+import alt from '../alt';
 
-var BaseStore   = require('./BaseStore');
-var AppDispatcher   = require('../dispatchers/AppDispatcher');
-var TableConstants  = require('../constants/TableConstants');
-var TableApiUtils   = require('../utils/TableApiUtils');
+class TableStore {
+  constructor() {
+    this.bindActions(TableActions);
 
-/* Store helpers */
-var _ = require('lodash');
-var FQN = require('../utils/fqn');
-
-/* Tables */
-var _tables = [];
-
-// Adds the table to the collection
-// @param {object} the table object
-function _addTable(table) {
-  if (TableStore.getByName(table.name) !== undefined) {
-    return;
+    this.tables = [];
+    this.activeTable = null;
   }
 
-  // Unmark the whole collection
-  _unMarkActiveTables();
-
-  // Enrich the table with some extra data (active status and url)
-  table = _.extend(table, {
-    active: true,
-    url: './api/table/' + FQN.schema(table.name) + '/' + FQN.table(table.name),
-    partitions: [],
-  });
-
-  // Add the table to the collection
-  _tables.push(table);
-
-  // Fetch the data from the new table
-  TableApiUtils.getTableData(table);
-}
-
-// Updates a table with the new data
-function _updateTableData(table, columns, data, partitions) {
-
-  // Get the right table first
-  var table = TableStore.getByName(table.name);
-  if( table === undefined ) return;
-
-  // Add the changed data to the table
-  table = _.extend(table, {
-    columns: columns,
-    data: data,
-    partitions: partitions,
-    columnWidths: columns.map(() => 120),
-  });
-}
-
-// Removes the table from the collection
-// @param {string} the table name
-function _removeTable(name) {
-  var table;
-
-  if( TableStore.getByName(name) === undefined ) return;
-
-  // Remove the table from the collection
-  _tables = _.reject(_tables, { name: name });
-
-  // Check or we can make an other table active
-  if( _tables.length > 0 ) {
-    table = _.first(_tables);
-    _markActive(table.name);
-  }
-}
-
-// Marks all tables as inactive
-function _unMarkActiveTables() {
-  TableStore.all().forEach(function(table) {
-    if (table.active) {
-      // Change the active state of the table
-      table.active = false;
-    }
-  });
-}
-
-// Marks a table as active
-function _markActive(name) {
-
-  // Unmark the whole collection first
-  _unMarkActiveTables()
-
-  // Mark the table as active
-  var table = TableStore.getByName(name);
-  table.active = true;
-}
-
-function _unmarkActive(name) {
-  var table = TableStore.getByName(name);
-  if (table === undefined) {
-    return;
-  }
-  table.active = false;
-}
-
-function _setActiveTableColumnWidth(col, width) {
-  var table = TableStore.getActiveTable();
-  if (table === undefined) {
-    return;
-  }
-
-  table.columnWidths[col] = width;
-}
-
-class TableStoreClass extends BaseStore {
-
-  // Get the table by name
-  // @param name {string} the table name
-  // @return {object/undefined} the table object
   getByName(name) {
-    if (_.isEmpty(_tables)) return undefined;
-    return _.find(_tables, { name: name });
-  }
-
-  // Alias for the getByName method
-  // @param name {string} the table name
-  // @return {object/undefined} the table object
-  get(name) {
-    if (_.isEmpty(_tables)) return undefined;
-    return this.getByName(name);
-  }
-
-  // Get the active table
-  // @return {object/undefined} the active table
-  getActiveTable() {
-    if (_.isEmpty(_tables)) return undefined;
-    return _.find(_tables, { active: true });
-  }
-
-  getActiveTableColumnWidths() {
-    var activeTable = this.getActiveTable();
-
-    if (!activeTable) {
-      return null;
+    if (_.isEmpty(this.tables)) {
+      return undefined;
     }
 
-    return activeTable.columnWidths;
+    return _.find(this.tables, { name });
   }
 
-  // Get all tables
-  // @return {array} all the current tables
-  all() {
-    return _tables;
+  unmarkActiveTables() {
+    this.tables.forEach((table) => {
+      if (table.active) {
+        // Change the active state of the table
+        table.active = false;
+      }
+    });
+
+    this.activeTable = null;
   }
 
-  containsTable(name) {
-    return !!TableStore.getByName(name);
+  unmarkActive(name) {
+    let table = this.getByName(name);
+
+    if (table === undefined) {
+      return;
+    }
+
+    table.active = false;
+
+    this.activeTable = null;
+  }
+
+  markActive(name) {
+    // Unmark the whole collection first
+    this.unmarkActiveTables()
+
+    // Mark the table as active
+    let table = this.getByName(name);
+    table.active = true;
+
+    this.activeTable = table;
+  }
+
+  onAddTable(table) {
+    if (this.getByName(table.name) !== undefined) {
+      return;
+    }
+
+    // Unmark the whole collection
+    this.unmarkActiveTables();
+
+    // Enrich the table with some extra data (active status and url)
+    table = _.extend(table, {
+      active: true,
+      url: `./api/table/${FQN.schema(table.name)}/${FQN.table(table.name)}`,
+      partitions: [],
+    });
+
+    // Add the table to the collection
+    this.tables.push(table);
+
+    // Fetch the data from the new table
+    TableApiUtils.getTableData(table);
+  }
+
+  onRemoveTable(name) {
+    let table;
+
+    if (this.getByName(name) === undefined) {
+      return;
+    }
+
+    // Remove the table from the collection
+    this.tables = _.reject(this.tables, { name });
+
+    // Check or we can make an other table active
+    if (this.tables.length > 0) {
+      table = _.first(this.tables);
+      this.markActive(table.name);
+    }
+  }
+
+  onSelectTable(name) {
+    this.markActive(name);
+  }
+
+  onUnselectTable(name) {
+    this.unmarkActive(name);
+  }
+
+  onReceivedTableData({ table: refTable, columns, data, partitions }) {
+    // Get the right table first
+    let table = this.getByName(refTable.name);
+
+    if (table === undefined) {
+      return;
+    }
+
+    // Add the changed data to the table
+    table = _.extend(table, {
+      columns: columns,
+      data: data,
+      partitions: partitions,
+      columnWidths: columns.map(() => 120),
+    });
+  }
+
+  onSetTableColumnWidth({ columnIdx, width }) {
+    let table = this.activeTable;
+
+    if (table === undefined) {
+      return;
+    }
+
+    table.columnWidths[columnIdx] = width;
+  }
+
+  static getActiveTable() {
+    return this.getState().activeTable;
+  }
+
+  static containsTable(name) {
+    let { tables } = this.getState();
+
+    return !!_.find(tables, { name: name });
   }
 }
 
-var TableStore = new TableStoreClass();
-
-TableStore.dispatchToken = AppDispatcher.register(function(payload) {
-  var action = payload.action;
-
-  switch(action.type) {
-
-    case TableConstants.ADD_TABLE:
-      _addTable(action.table);
-      TableStore.emitChange('add');
-      TableStore.emitChange('change');
-      break;
-
-    case TableConstants.REMOVE_TABLE:
-      _removeTable(action.name);
-      TableStore.emitChange('remove');
-      TableStore.emitChange('change');
-      break;
-
-    case TableConstants.SELECT_TABLE:
-      _markActive(action.name);
-      TableStore.emitChange('select');
-      break;
-
-    case TableConstants.UNSELECT_TABLE:
-      _unmarkActive(action.name);
-      TableStore.emitChange('select');
-      break;
-
-    case TableConstants.RECEIVED_TABLE_DATA:
-      _updateTableData(action.table, action.columns, action.data, action.partitions);
-      TableStore.emitChange('change');
-      break;
-
-    case TableConstants.SET_TABLE_COLUMN_WIDTH:
-      _setActiveTableColumnWidth(action.columnIdx, action.width);
-      TableStore.emitChange('change');
-      break;
-
-    default:
-      // do nothing
-  }
-
-});
-
-module.exports = TableStore;
+export default alt.createStore(TableStore, 'TableStore');

@@ -1,10 +1,6 @@
-var React = require('react');
-
-/* Helpers */
-var _     = require('lodash');
-
-/* Stores */
-var TableStore = require('../stores/TableStore');
+import React from 'react';
+import _ from 'lodash';
+import TableStore from '../stores/TableStore';
 
 // State actions
 function getStateFromStore() {
@@ -13,24 +9,22 @@ function getStateFromStore() {
   };
 }
 
-var MetaDataPreview = React.createClass({
+let MetaDataPreview = React.createClass({
   displayName: 'MetaDataPreview',
 
-  getInitialState: function() {
+  getInitialState() {
     return getStateFromStore();
   },
 
-  componentDidMount: function() {
-    TableStore.addStoreListener('select', this._onChange);
-    TableStore.addStoreListener('change', this._onChange);
+  componentDidMount() {
+    TableStore.listen(this._onChange);
   },
 
-  componentWillUnmount: function() {
-    TableStore.removeStoreListener('select', this._onChange);
-    TableStore.removeStoreListener('change', this._onChange);
+  componentWillUnmount() {
+    TableStore.unlisten(this._onChange);
   },
 
-  render: function () {
+  render() {
     if( !_.isEmpty(this.state.table) ) {
       return this._renderMetaData();
     } else {
@@ -39,7 +33,7 @@ var MetaDataPreview = React.createClass({
   },
 
   /* Internal Helpers ------------------------------------------------------- */
-  _renderEmptyMessage: function() {
+  _renderEmptyMessage() {
     return (
       <div className="alert alert-warning">
         <p>There is no table selected. Please select a table to view the meta data.</p>
@@ -47,7 +41,7 @@ var MetaDataPreview = React.createClass({
     )
   },
 
-  _renderMetaData: function () {
+  _renderMetaData() {
     return (
       <div className="col-sm-12 column-selector">
         <p><strong>Table name: </strong> {this.state.table.name}</p>
@@ -56,9 +50,9 @@ var MetaDataPreview = React.createClass({
   },
 
   /* Store events */
-  _onChange: function() {
+  _onChange() {
     this.setState(getStateFromStore());
   }
 });
 
-module.exports = MetaDataPreview;
+export default MetaDataPreview;

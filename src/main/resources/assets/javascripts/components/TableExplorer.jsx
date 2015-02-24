@@ -1,9 +1,8 @@
-var React = require('react');
+import React from 'react';
+import TableInfo from './TableInfo';
+import TableSearch from './TableSearch';
 
-var TableInfo = require('./TableInfo');
-var TableSearch = require('./TableSearch');
-
-var TableExplorer = React.createClass({
+let TableExplorer = React.createClass({
   displayName: 'TableExplorer',
 
   render() {
@@ -21,4 +20,4 @@ var TableExplorer = React.createClass({
   }
 });
 
-module.exports = TableExplorer;
+export default TableExplorer;

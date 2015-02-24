@@ -2,15 +2,15 @@
  * UserApiUtils
  */
 
-var UserActions = require('../actions/UserActions');
+import UserActions from "../actions/UserActions";
 
-module.exports = {
-  getCurrentUser: function() {
+export default {
+  getCurrentUser() {
     $.ajax({
       type: 'GET',
       url: './api/user',
 
-      success: function(user) {
+      success(user) {
         UserActions.receivedCurrentUser(user);
       }
     });

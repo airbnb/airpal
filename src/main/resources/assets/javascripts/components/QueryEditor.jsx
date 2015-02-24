@@ -1,25 +1,15 @@
-var React = require('react');
+import React from 'react';
+import RunActions from '../actions/RunActions';
+import { OverlayMixin } from 'react-bootstrap';
+import _ from 'lodash';
+import ace from 'brace';
+import QueryStore from '../stores/QueryStore';
+import QuerySaveModal from './QuerySaveModal';
 
-/* Actions */
-var RunActions      = require('../actions/RunActions');
+import 'brace/theme/monokai';
+import 'brace/mode/sql';
 
-/* Helpers */
-var OverlayMixin    = require('react-bootstrap').OverlayMixin;
-var _               = require('lodash');
-
-/* Editor */
-var ace             = require('brace');
-
-/* Stores */
-var QueryStore      = require('../stores/QueryStore');
-
-/* Views */
-var QuerySaveModal  = require('./QuerySaveModal');
-
-require('brace/theme/monokai');
-require('brace/mode/sql');
-
-var QueryEditor = React.createClass({
+let QueryEditor = React.createClass({
   displayName: 'QueryEditor',
   mixins: [OverlayMixin],
 
@@ -34,22 +24,24 @@ var QueryEditor = React.createClass({
 
     // Listen to the selection event
     this.editor.selection.on('changeSelection', _.debounce(
-      this.handleChangeSelection, 150, { maxWait: 150 }
+      this.handleChangeSelection, 150, {
+      maxWait: 150
+    }
     ));
 
-    QueryStore.addStoreListener('add', this._hideModal);
-    QueryStore.addStoreListener('select', this._selectQuery);
+    QueryStore.listen(this._selectQuery);
+    QueryStore.listen(this._hideModal);
   },
 
   componentWillUnmount() {
-    QueryStore.removeStoreListener('add', this._hideModal);
-    QueryStore.removeStoreListener('select', this._selectQuery);
+    QueryStore.unlisten(this._selectQuery);
+    QueryStore.listen(this._hideModal);
   },
 
   getInitialState() {
     return {
       isModalOpen: false,
-      runText: 'query',
+      runText: 'query'
     };
   },
 
@@ -131,14 +123,15 @@ var QueryEditor = React.createClass({
   },
 
   handleChangeSelection() {
-    var range = this.editor.selection.getRange();
+    let range = this.editor.selection.getRange();
 
-    // Define the text based on the current text range
-    var text = ( !this._isRangeStartSameAsEnd(range) ) ? 'selection' : 'query';
+    let text = ( !this._isRangeStartSameAsEnd(range) ) ? 'selection' : 'query';
     if ( text === this.state.runText ) return;
 
     // Update the state with the new runText
-    this.setState({ runText: text });
+    this.setState({
+      runText: text
+    });
   },
 
   handleResizeShrink($event) {
@@ -155,12 +148,12 @@ var QueryEditor = React.createClass({
   // @param {integer} the amount of pixels to increase/decrease the editor
   _resizeEditor(pixels) {
 
-    // Get the editor by className
-    var $el = $(this.refs.queryEditor.getDOMNode());
+    let $el = $(this.refs.queryEditor.getDOMNode());
 
     // Animate the editor height
     $el.animate({
-      height: $el.height() + pixels },
+      height: $el.height() + pixels
+    },
       {
         duration: 300,
 
@@ -175,8 +168,8 @@ var QueryEditor = React.createClass({
   // Retrieves the current query
   // @return {string} the query string
   _getQuery() {
-    var query;
-    var range = this.editor.selection.getRange();
+    let query;
+    let range = this.editor.selection.getRange();
 
     // Define the current query
     if (!this._isRangeStartSameAsEnd(range)) {
@@ -192,15 +185,14 @@ var QueryEditor = React.createClass({
   // Retrieves the custom table name
   // @return {string} the custom table name
   _getCustomTableName() {
-    var customTableName = this.refs.customName.getDOMNode().value;
+    let customTableName = this.refs.customName.getDOMNode().value;
     return !_.isEmpty(customTableName) ? customTableName : null;
   },
 
   // Checks or there is currently something selected
   // @return {boolean} is the start equal to the end of the selection
   _isRangeStartSameAsEnd(range) {
-    var start = range.start,
-        end   = range.end;
+    let start = range.start, end   = range.end;
 
     // Return of the start equals the end of the selection
     return !!start && !!end &&
@@ -210,14 +202,16 @@ var QueryEditor = React.createClass({
 
   // Hides the modal when a change is triggered
   _hideModal() {
-    this.setState({ isModalOpen: false });
+    this.setState({
+      isModalOpen: false
+    });
   },
 
   // Populate the editor with a given query.
   _selectQuery() {
-    var selectedQuery = QueryStore.getSelectedQuery();
+    let selectedQuery = QueryStore.getSelectedQuery();
     this.editor.setValue(selectedQuery);
   }
 });
 
-module.exports = QueryEditor;
+export default QueryEditor;

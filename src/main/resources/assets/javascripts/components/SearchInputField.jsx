@@ -1,9 +1,7 @@
-var React = require('react');
+import React from 'react';
+import _ from 'lodash';
 
-/* Helpers */
-var _ = require('lodash');
-
-var SearchInputField = React.createClass({
+let SearchInputField = React.createClass({
   displayName: 'SearchInputField',
 
   propTypes: {
@@ -13,7 +11,7 @@ var SearchInputField = React.createClass({
 
   getInitialState() {
     return {
-      loading: true,
+      loading: true
     };
   },
 
@@ -32,7 +30,9 @@ var SearchInputField = React.createClass({
     this.$selectize = this.$input[0].selectize;
 
     this.$selectize.on('load', () => {
-      this.setState({loading: false});
+      this.setState({
+        loading: false
+      });
     });
 
     // Check or the editor is disabled
@@ -67,14 +67,15 @@ var SearchInputField = React.createClass({
       loadThrottle: 1000,
       closeAfterSelect: true,
       hideSelected: true,
+
       onChange() {
         this.close();
-      },
+      }
     };
   },
 
   componentWillReceiveProps(nextProps) {
-    var nextSelectizeOpts = nextProps.selectizeOptions();
+    let nextSelectizeOpts = nextProps.selectizeOptions();
 
     if (this.props.placeholder !== nextProps.placeholder) {
       this.$selectize.
@@ -100,16 +101,20 @@ var SearchInputField = React.createClass({
   },
 
   // Enables the selectize plugin
-  enable() { return this._enable(); }, // Alias for internal function
+  // Alias for internal function
+  enable() { return this._enable(); },
+
   _enable() {
     this.$selectize.enable();
   },
 
   // Disables the selectize plugin
-  disable() { return this._disable(); }, // Alias for internal function
+  // Alias for internal function
+  disable() { return this._disable(); },
+
   _disable() {
     this.$selectize.disable();
   }
 });
 
-module.exports = SearchInputField;
+export default SearchInputField;

@@ -1,25 +1,19 @@
-var React = require('react');
-
-/* ApiUtils */
-var QueryApiUtils = require('../utils/QueryApiUtils');
-
-/* Stores */
-var QueryStore = require('../stores/QueryStore');
-
-/* Actions */
-var QueryActions = require('../actions/QueryActions');
-var RunActions = require('../actions/RunActions');
-
-/* Components */
-var { Button, ButtonToolbar } = require('react-bootstrap');
+import React from 'react';
+import QueryApiUtils from '../utils/QueryApiUtils';
+import QueryStore from '../stores/QueryStore';
+import QueryActions from '../actions/QueryActions';
+import RunActions from '../actions/RunActions';
+import { Button, ButtonToolbar } from 'react-bootstrap';
 
 function getStateFromStore() {
   return {
-    queries: QueryStore.all({sort: true}),
+    queries: QueryStore.getCollection().all({
+      sort: true
+    })
   };
 }
 
-var MySavedQueries = React.createClass({
+let MySavedQueries = React.createClass({
   displayName: 'MySavedQueries',
 
   getInitialState() {
@@ -27,12 +21,12 @@ var MySavedQueries = React.createClass({
   },
 
   componentDidMount() {
-    QueryStore.addStoreListener('change', this._onChange);
+    QueryStore.listen(this._onChange);
     this._fetchQueries();
   },
 
   componentWillUnmount() {
-    QueryStore.removeStoreListener('change', this._onChange);
+    QueryStore.unlisten(this._onChange);
   },
 
   render() {
@@ -48,7 +42,7 @@ var MySavedQueries = React.createClass({
       return this.renderEmptyMessage();
     } else {
       return this.state.queries.map((query) => {
-        var queryText = query.queryWithPlaceholders.query;
+        let queryText = query.queryWithPlaceholders.query;
         return (
           <div className='row'>
             <div className="col-md-12">
@@ -103,20 +97,22 @@ var MySavedQueries = React.createClass({
 
   _runQuery(queryText) {
     QueryActions.selectQuery(queryText);
-    RunActions.execute({query: queryText});
+    RunActions.execute({
+      query: queryText
+    });
   },
 
   _deleteQuery(uuid) {
     QueryActions.destroyQuery(uuid);
-  },
+  }
 });
 
 function truncate(text, length) {
-  var output = text || '';
+  let output = text || '';
   if (output.length > length) {
     output = output.slice(0, length) + '...';
   }
   return output;
 }
 
-module.exports = MySavedQueries;
+export default MySavedQueries;

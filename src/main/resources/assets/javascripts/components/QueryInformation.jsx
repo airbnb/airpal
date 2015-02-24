@@ -1,20 +1,16 @@
-var React = require('react');
+import React from 'react';
+import RunActions from '../actions/RunActions';
+import { TabbedArea, TabPane } from 'react-bootstrap';
+import MyOwnRuns from './MyOwnRuns';
+import MySavedQueries from './MySavedQueries';
+import AllRunningQueries from './AllRunningQueries';
 
-/* Actions */
-var RunActions    = require('../actions/RunActions');
-
-/* Components */
-var { TabbedArea, TabPane } = require('react-bootstrap');
-var MyOwnRuns          = require('./MyOwnRuns');
-var MySavedQueries     = require('./MySavedQueries');
-var AllRunningQueries  = require('./AllRunningQueries');
-
-var QueryInformation = React.createClass({
+let QueryInformation = React.createClass({
   displayName: 'QueryInformation',
 
   getInitialState() {
     return {
-      selectedTab: 1,
+      selectedTab: 1
     };
   },
 
@@ -27,7 +23,7 @@ var QueryInformation = React.createClass({
   },
 
   render() {
-    var {selectedTab} = this.state;
+    let {selectedTab} = this.state;
     return (
       <div className="row spaced query-information">
         <div className="col-sm-12">
@@ -51,8 +47,10 @@ var QueryInformation = React.createClass({
   },
 
   _onTabSelect(selectedTab) {
-    this.setState({selectedTab});
-  },
+    this.setState({
+      selectedTab
+    });
+  }
 });
 
-module.exports = QueryInformation;
+export default QueryInformation;

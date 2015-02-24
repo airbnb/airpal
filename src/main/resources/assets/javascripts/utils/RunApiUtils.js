@@ -3,21 +3,19 @@
  */
 
 /* Actions */
-var RunActions = require('../actions/RunActions');
+import RunActions from "../actions/RunActions";
+import _ from "lodash";
 
-/* Helpers */
-var _ = require('lodash');
-
-module.exports = {
+export default {
   execute(query, tmpTable) {
     $.ajax({
       type: 'PUT',
       url: './api/execute',
-
       contentType: 'application/json',
+
       data: JSON.stringify({
-        query: query,
-        tmpTable: tmpTable
+        query,
+        tmpTable
       }),
 
       success(runObject, status, xhr) {
@@ -66,5 +64,5 @@ module.exports = {
         // Just let the SSE handle updates.
       }
     });
-  },
+  }
 };
