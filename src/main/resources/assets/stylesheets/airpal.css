@@ -7,6 +7,7 @@ body {
 }
 
 .abel {
+  text-transform: uppercase;
   font-family: 'Abel', monospace;
 }
 
@@ -87,12 +88,47 @@ body {
   backgroundColor: #233240;
 }
 
+.info {
+  padding: 10px 20px;
+}
+
 .left-pane {
   width: 280px;
   color: #565a5c;
   font-weight: bold;
-  padding: 10px 20px 20px;
   background-color: #edefed;
+}
+
+.brand {
+  margin: 5px 0 10px;
+}
+
+.table-search,
+.partition-search {
+  padding: 10px 15px 0;
+}
+
+.table-search .selectize-input,
+.partition-search .selectize-input {
+  border: 0;
+  border-radius: 20px;
+  font-weight: 300;
+}
+
+.empty-columns {
+  background-color: white;
+  background-size: 45px 45px;
+  background-image: linear-gradient(
+      #f6f7f8 50%,
+      transparent 50%,
+      transparent
+  );
+}
+
+.empty-gutter {
+  width: 10px;
+  background-color: white;
+  border-left: 1px solid #edefed;
 }
 
 .query-menu-bar {
@@ -122,6 +158,7 @@ body {
 
 .tab-container {
   position: relative;
+  border-left: 1px solid #edefed;
 }
 
 .tab-container > div {

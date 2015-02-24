@@ -1,30 +1,34 @@
 import React from 'react';
+import TableExplorer from './TableExplorer';
 
 let LeftPane = React.createClass({
   render() {
     return (
       <div className='flex flex-column flex-initial left-pane'>
-        <h1 className='raleway'>
-          AIRPAL
-        </h1>
-        <div className='flex flex-row'>
-          <div className='flex flex-column'>
-            <div>
-              <small>username</small>
+        <div className='info'>
+          <h3 className='abel brand'>
+            AIRPAL
+          </h3>
+          <div className='flex flex-row flex-initial'>
+            <div className='flex flex-column'>
+              <div>
+                <small>username</small>
+              </div>
+              <div className='abel'>
+                {this.props.user.name}
+              </div>
             </div>
-            <div className='raleway'>
-              {this.props.user.name}
-            </div>
-          </div>
-          <div className='flex flex-column'>
-            <div>
-              <small>access level</small>
-            </div>
-            <div className='raleway'>
-              {this.props.user.executionPermissions.accessLevel}
+            <div className='flex flex-column'>
+              <div>
+                <small>access level</small>
+              </div>
+              <div className='abel'>
+                {this.props.user.executionPermissions.accessLevel}
+              </div>
             </div>
           </div>
         </div>
+        <TableExplorer />
       </div>
     );
   }

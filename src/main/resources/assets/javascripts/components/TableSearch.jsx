@@ -65,27 +65,23 @@ let TableSearch = React.createClass({
     }
 
     return (
-      <section className="row table-search-row">
-        <div className="panel-body">
-          <form className="col-sm-7" role="form">
-            <div className="form-group">
-              <label htmlFor="tables-input">Tables:</label>
-              <SearchInputField
-                placeholder="Select a table"
-                selectizeOptions={this.tableSelectizeOptions} />
-            </div>
-          </form>
-          <form className="col-sm-5" role="form">
-            <div className="form-group">
-              <label htmlFor="tables-input">Partition:</label>
-              <SearchInputField
-                placeholder={partitionPlaceholder}
-                disabled={partitionsDisabled}
-                selectizeOptions={this.partitionSelectizeOptions} />
-            </div>
-          </form>
-        </div>
-      </section>
+      <div className='flex flex-column flex-initial'>
+        <form role="form">
+          <div className="form-group table-search">
+            <SearchInputField
+              placeholder="Select a table"
+              selectizeOptions={this.tableSelectizeOptions} />
+          </div>
+        </form>
+        {!partitionsDisabled && <form role="form">
+          <div className="form-group partition-search">
+            <SearchInputField
+              placeholder={partitionPlaceholder}
+              disabled={partitionsDisabled}
+              selectizeOptions={this.partitionSelectizeOptions} />
+          </div>
+        </form>}
+      </div>
     );
   },
 
@@ -164,7 +160,7 @@ let TableSearch = React.createClass({
   _renderTableOptions(item, escape) {
     return (
       '<div class="row">' +
-        '<div class="col-sm-6 col-name"><span>' + escape(item.fqn) + '</span></div>' +
+        '<div class="col-sm-9 col-name"><span>' + escape(item.fqn) + '</span></div>' +
         '<div class="col-sm-3"><span>' + escape(item.usages) + '</span></div>' +
       '</div>'
     );

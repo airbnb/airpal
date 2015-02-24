@@ -16,25 +16,9 @@ let TableInfo = React.createClass({
   render() {
     let {selectedTab} = this.state;
     return (
-      <section className="row tables-selector-row">
-        <div className="col-sm-12">
-          <div className="panel-body">
-            <TabbedArea
-              activeKey={selectedTab}
-              animation={false}
-              onSelect={this._onTabSelect}>
-                {/* Lazy-init the child components so they can lazy-fetch their data. */}
-                <TabPane eventKey={1} tab="Columns">
-                  {selectedTab === 1 ? <ColumnsPreview /> : null}
-                </TabPane>
-
-                <TabPane eventKey={2} tab="Data Preview">
-                  {selectedTab === 2 ? <DataPreview /> : null}
-                </TabPane>
-            </TabbedArea>
-          </div>
-        </div>
-      </section>
+      <div className="flex tables-selector-row">
+        <ColumnsPreview />
+      </div>
     );
   },
 
