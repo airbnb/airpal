@@ -1,4 +1,3 @@
-/** @jsx React.DOM */
 var React = require('react');
 
 /* Components */
@@ -76,7 +75,7 @@ var ColumnsPreview = React.createClass({
     }).value();
 
     // Render the template
-    return (<div>{columns}</div>);
+    return (<div className="columns-container">{columns}</div>);
   },
 
   _renderEmptyMessage: function() {

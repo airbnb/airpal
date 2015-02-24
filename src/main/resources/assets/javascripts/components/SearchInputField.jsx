@@ -1,4 +1,3 @@
-/** @jsx React.DOM */
 var React = require('react');
 
 /* Helpers */
@@ -94,11 +93,9 @@ var SearchInputField = React.createClass({
         this.$selectize.refreshOptions(false);
       } else {
         this.$selectize.disable();
+        this.$selectize.clear();
+        this.$selectize.clearOptions();
       }
-    }
-
-    if (this.props.disabled) {
-      this.$selectize.clear();
     }
   },
 

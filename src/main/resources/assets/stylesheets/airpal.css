@@ -1,5 +1,6 @@
 .panel-compressed {
   margin-bottom: 10px;
+  word-wrap: break-word;
 }
 
 .panel-compressed .panel-body {
@@ -33,4 +34,8 @@
 
 .tables-selector-row .panel-body {
   padding-top: 0;
+}
+
+.columns-container {
+  overflow-x: hidden;
 }

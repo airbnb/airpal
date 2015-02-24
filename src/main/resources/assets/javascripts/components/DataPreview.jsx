@@ -1,4 +1,3 @@
-/** @jsx React.DOM */
 var React = require('react');
 
 /* FixedDataTable */
@@ -26,6 +25,14 @@ function getStateFromStore() {
   };
 }
 
+function cellRenderer(cellData, cellDataKey, rowData, rowIndex, columnData, width) {
+  return (
+    <span
+      className="text-overflow-ellipsis"
+      style={{width: width}}>{cellData}</span>
+  );
+}
+
 function getColumns(columns, widths) {
   return columns.map(function(column, i) {
     return (
@@ -35,6 +42,7 @@ function getColumns(columns, widths) {
         dataKey={i}
         key={i}
         isResizable={true}
+        cellRenderer={cellRenderer}
         />
     );
   });
