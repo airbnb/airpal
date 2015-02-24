@@ -52,11 +52,11 @@ let RunsTable = React.createClass({
       return this.renderEmptyMessage();
     }
 
-//    Need to make sure to wrap `Table` in a parent element so we can
-//    compute the natural width of the component.
+    // Need to make sure to wrap `Table` in a parent element so we can
+    // compute the natural width of the component.
     return (
-      <div>
-        <Table
+      <div className='flex'>
+        <Table className='flex'
           rowHeight={40}
           rowGetter={this.rowGetter}
           rowsCount={this.state.runs.length}
@@ -155,9 +155,11 @@ function formatRun(run, currentUser) {
 function getRenderer(key) {
   return function wrappedRenderer(cellData, cellDataKey, rowData, rowIndex, columnData, width) {
     let content = CellRenderers[key](cellData, cellDataKey, rowData, rowIndex, columnData, width);
-    return <div className="text-overflow-ellipsis" style={{
-      width
-    }}>{content}</div>;
+    return (
+      <div className="text-overflow-ellipsis" style={{width}}>
+        {content}
+      </div>
+    );
   };
 }
 

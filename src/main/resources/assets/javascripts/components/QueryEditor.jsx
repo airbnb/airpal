@@ -65,7 +65,7 @@ let QueryEditor = React.createClass({
 
         <div className='flex'>
           <div className="flex flex-row query-menu-bar">
-            <div className="flex" style={{justifyContent: 'flex-end'}}>
+            <div className="flex justify-flex-end">
               <input className="form-control flex flex-initial"
                 ref="customName"
                 type="text"
@@ -73,10 +73,10 @@ let QueryEditor = React.createClass({
                 placeholder="Select a custom table name" />
               <div>
                 <button className="btn" onClick={this.handleToggle}>
-                    Save {this.state.runText}
+                  Save {this.state.runText}
                 </button>
                 <button className="btn" onClick={this.handleRun}>
-                    Run {this.state.runText}
+                  Run {this.state.runText}
                 </button>
               </div>
             </div>

@@ -6,6 +6,10 @@ body {
   font-family: 'Raleway', sans-serif;
 }
 
+.abel {
+  font-family: 'Abel', monospace;
+}
+
 .panel-compressed {
   margin-bottom: 10px;
   word-wrap: break-word;
@@ -65,6 +69,14 @@ body {
   flex-direction: column;
 }
 
+.justify-flex-end {
+  justify-content: flex-end;
+}
+
+.scroll-y {
+  overflow-y: scroll;
+}
+
 .airpal-app {
   position: absolute;
   top: 0;
@@ -76,7 +88,7 @@ body {
 }
 
 .left-pane {
-  width: 330px;
+  width: 280px;
   color: #565a5c;
   font-weight: bold;
   padding: 10px 20px 20px;
@@ -103,6 +115,56 @@ body {
   background-color: #000;
 }
 
+.query-information-table-tab {
+  max-height: initial;
+  margin-top: 20px;
+}
+
+.tab-container {
+  position: relative;
+}
+
+.tab-container > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.tab-container .tab-content {
+  display: flex;
+  overflow: scroll;
+  margin-top: 20px;
+}
+
+.tab-container .nav {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: white;
+}
+
 .ace_editor {
   border: none;
+}
+
+.query-information .nav-pills {
+  margin-left: 5px;
+}
+
+.nav-pills > li > a,
+.nav-pills > li > a:hover,
+.nav-pills > li > a:focus {
+  border-radius: 0;
+  background: none;
+  color: #d3d3d3;
+}
+
+.nav-pills > li.active > a,
+.nav-pills > li.active > a:hover,
+.nav-pills > li.active > a:focus {
+  background: none;
+  color: #565a5c;
+  border-bottom: 3px solid #565a5c;
+  border-radius: 0;
 }

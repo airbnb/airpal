@@ -1,6 +1,6 @@
 import React from 'react';
-import QueryHistory from './QueryHistory';
 import QueryEditor from './QueryEditor';
+import QueryInformation from './QueryInformation';
 
 let RightPane = React.createClass({
   render() {
@@ -10,7 +10,7 @@ let RightPane = React.createClass({
           <QueryEditor />
         </div>
         <div className='flex'>
-          <QueryHistory />
+          <QueryInformation />
         </div>
       </div>
     );
