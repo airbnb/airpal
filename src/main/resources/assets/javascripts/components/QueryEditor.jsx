@@ -1,4 +1,3 @@
-/** @jsx React.DOM */
 var React = require('react');
 
 /* Actions */
@@ -57,6 +56,22 @@ var QueryEditor = React.createClass({
   render() {
     return (
       <div className='flex flex-column'>
+        <div className='flex flex-column'>
+          <div ref="queryContainer" className="editor-container flex clearfix">
+            <pre ref="queryEditor" className="editor flex">
+              SELECT COUNT(1) FROM users
+            </pre>
+            <div ref="handle" className="editor-resize-handles">
+              <span className="glyphicon glyphicon-chevron-up editor-resize-handle"
+                onClick={this.handleResizeShrink}
+                title="Shrink Editor"></span>
+              <span className="glyphicon glyphicon-chevron-down editor-resize-handle"
+                onClick={this.handleResizeGrow}
+                title="Grow Editor"></span>
+            </div>
+          </div>
+        </div>
+
         <div className='flex'>
           <div className="flex flex-row query-menu-bar">
             <div className="flex" style={{justifyContent: 'flex-end'}}>
@@ -72,22 +87,6 @@ var QueryEditor = React.createClass({
                       Run {this.state.runText}
                   </button>
               </div>
-            </div>
-          </div>
-        </div>
-
-        <div className='flex flex-column'>
-          <div ref="queryContainer" className="editor-container flex clearfix">
-            <pre ref="queryEditor" className="editor flex">
-              SELECT COUNT(1) FROM users
-            </pre>
-            <div ref="handle" className="editor-resize-handles">
-              <span className="glyphicon glyphicon-chevron-up editor-resize-handle"
-                onClick={this.handleResizeShrink}
-                title="Shrink Editor"></span>
-              <span className="glyphicon glyphicon-chevron-down editor-resize-handle"
-                onClick={this.handleResizeGrow}
-                title="Grow Editor"></span>
             </div>
           </div>
         </div>

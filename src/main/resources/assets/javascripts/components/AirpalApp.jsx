@@ -1,4 +1,3 @@
-/** @jsx React.DOM */
 var React = require('react');
 
 /* Actions */
@@ -173,7 +172,7 @@ var AirpalApp = React.createClass({
         <div style={style2}>
           <div style={s1}>
             <div style={{fontSize: 26, marginBottom: 15}} className='raleway'>
-              AIRPAL \\\
+              AIRPAL
             </div>
 
             <div style={{display: 'flex', flexDirection: 'row'}}>
