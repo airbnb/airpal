@@ -1,11 +1,18 @@
+/**
+ * UserApiUtils
+ */
+
+import UserActions from "../actions/UserActions";
+
 export default {
-  fetchCurrentUser() {
-    return new Promise((resolve) => {
-      $.ajax({
-        type: 'GET',
-        url: './api/user',
-        success: resolve
-      });
+  getCurrentUser() {
+    $.ajax({
+      type: 'GET',
+      url: './api/user',
+
+      success(user) {
+        UserActions.receivedCurrentUser(user);
+      }
     });
   }
 };

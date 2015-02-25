@@ -1,3 +1,9 @@
+/**
+ * TableApiUtils
+ */
+
+import TableActions from "../actions/TableActions";
+
 // Fetch the column data
 function fetchColumData(table) {
   return $.ajax({
@@ -21,12 +27,10 @@ function fetchPartitionData(table) {
 }
 
 export default {
-  fetchTableData(table) {
-    return new Promise((resolve) => {
-      $.when(fetchColumData(table), fetchPreviewData(table), fetchPartitionData(table))
-        .then(function(columnArr, dataArr, partitionArr) {
-          resolve(table, columnArr[0], dataArr[0], partitionArr[0]);
-        });
-    });
+  getTableData(table) {
+    $.when(fetchColumData(table), fetchPreviewData(table), fetchPartitionData(table))
+      .then(function(columnArr, dataArr, partitionArr) {
+        TableActions.receivedTableData(table, columnArr[0], dataArr[0], partitionArr[0]);
+      });
   }
 };
