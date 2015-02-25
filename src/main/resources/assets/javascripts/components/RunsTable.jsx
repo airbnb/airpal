@@ -9,6 +9,15 @@ import { ProgressBar } from 'react-bootstrap';
 import UpdateWidthMixin from '../mixins/UpdateWidthMixin';
 
 let cx = React.addons.classSet;
+let isColumnResizing = false;
+let columnWidths = {
+  user: 80,
+  query: 400,
+  status: 80,
+  started: 220,
+  duration: 80,
+  output: 180,
+};
 
 // State actions
 function getRuns(user) {
@@ -52,22 +61,29 @@ let RunsTable = React.createClass({
       return this.renderEmptyMessage();
     }
 
-//    Need to make sure to wrap `Table` in a parent element so we can
-//    compute the natural width of the component.
     return (
-      <div>
+      <div className='flex airpal-table'>
         <Table
           rowHeight={40}
+          headerHeight={25}
           rowGetter={this.rowGetter}
           rowsCount={this.state.runs.length}
-          width={this.state.width}
-          maxHeight={400}
-          ownerHeight={400}
-          headerHeight={40}>
+          width={this.props.tableWidth}
+          maxHeight={this.props.tableHeight}
+          overflowX='auto'
+          overflowY='auto'
+          isColumnResizing={isColumnResizing}
+          onColumnResizeEndCallback={this.onColumnResizeEndCallback}>
           {getColumns(this.props.user != null)}
         </Table>
       </div>
     );
+  },
+
+  onColumnResizeEndCallback(newColumnWidth, dataKey) {
+    columnWidths[dataKey] = newColumnWidth;
+    isColumnResizing = false;
+    this.forceUpdate(); // TODO: move to store + state
   },
 
   rowGetter(rowIndex) {
@@ -76,7 +92,9 @@ let RunsTable = React.createClass({
 
   renderEmptyMessage() {
     return (
-      <p className="info text-center">No queries to show</p>
+      <p className="info text-center">
+        No queries to show
+      </p>
     );
   },
 
@@ -91,45 +109,47 @@ function getColumns(forCurrentUser) {
   return _.compact([
     (forCurrentUser ? null : <Column
       label="User"
-      width={80}
+      width={columnWidths.user}
       dataKey="user"
       cellRenderer={getRenderer('user')}
       key={i++}
-    />),
+      isResizable={true} />),
     <Column
       label="Query"
-      width={forCurrentUser ? 400 : 320}
+      width={columnWidths.query}
       dataKey="query"
       cellRenderer={getRenderer('query')}
       key={i++}
-    />,
+      isResizable={true}
+      flexGrow={2} />,
     <Column
       label="Status"
-      width={80}
+      width={columnWidths.status}
       dataKey="status"
       cellRenderer={getRenderer('status')}
       key={i++}
-    />,
+      isResizable={true} />,
     <Column
       label="Started"
-      width={220}
+      width={columnWidths.started}
       dataKey="started"
       cellRenderer={getRenderer('started')}
       key={i++}
-    />,
+      isResizable={true} />,
     <Column
       label="Duration"
-      width={80}
+      width={columnWidths.duration}
       dataKey="duration"
       key={i++}
-    />,
+      isResizable={true} />,
     <Column
       label="Output"
-      width={180}
+      width={columnWidths.output}
       dataKey="output"
       cellRenderer={getRenderer('output')}
       key={i++}
-    />,
+      isResizable={true}
+      flexGrow={1} />,
   ]);
 }
 
@@ -155,9 +175,11 @@ function formatRun(run, currentUser) {
 function getRenderer(key) {
   return function wrappedRenderer(cellData, cellDataKey, rowData, rowIndex, columnData, width) {
     let content = CellRenderers[key](cellData, cellDataKey, rowData, rowIndex, columnData, width);
-    return <div className="text-overflow-ellipsis" style={{
-      width
-    }}>{content}</div>;
+    return (
+      <div className="text-overflow-ellipsis" style={{width}}>
+        {content}
+      </div>
+    );
   };
 }
 
@@ -172,13 +194,19 @@ function killRun(uuid) {
 
 let CellRenderers = {
   user(cellData) {
-    return <span title={cellData}>{cellData}</span>;
+    return (
+      <span title={cellData}>
+        {cellData}
+      </span>
+    );
   },
 
   query(query) {
     return (
       <a href="#" onClick={selectQuery.bind(null, query)}>
-        <code title={query}>{query}</code>
+        <code title={query}>
+          {query}
+        </code>
       </a>
     );
   },
@@ -201,6 +229,7 @@ let CellRenderers = {
     let currentUser = rowData._currentUser;
     let killable = currentUser && currentUser === run.user;
     let output = cellData;
+
     if (output && output.location) {
       return (
         <a href={output.location} target="_blank">
@@ -208,21 +237,32 @@ let CellRenderers = {
         </a>
       );
     } else if (run.state === 'RUNNING') {
+      let running = cx({
+        'runs-table-progress': true,
+        'runs-table-progress-killable': killable
+      });
+
+      let remove = cx({
+        'glyphicon': true,
+        'glyphicon-remove': true,
+        'text-danger': true
+      });
+
       return (
-        <div className={cx({
-          'runs-table-progress': true,
-          'runs-table-progress-killable': killable
-        })}>
+        <div className={running}>
           <ProgressBar now={getProgressFromStats(run.queryStats)} />
-          {killable ?
-            <span className="glyphicon glyphicon-remove text-danger"
-              title="Kill query"
-              onClick={killRun.bind(null, run.uuid)}></span>
-          : null}
+          {killable &&
+          <span className={remove}
+            title="Kill query"
+            onClick={killRun.bind(null, run.uuid)} />}
         </div>
         );
     } else if (run.state === 'FAILED') {
-      return <span title={run.error.message}>{run.error.message}</span>;
+      return (
+        <span title={run.error.message}>
+          {run.error.message}
+        </span>
+      );
     }
   },
 

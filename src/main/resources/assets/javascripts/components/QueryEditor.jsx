@@ -1,10 +1,10 @@
-import React from 'react';
-import RunActions from '../actions/RunActions';
-import { OverlayMixin } from 'react-bootstrap';
 import _ from 'lodash';
 import ace from 'brace';
+import React from 'react';
+import RunActions from '../actions/RunActions';
 import QueryStore from '../stores/QueryStore';
 import QuerySaveModal from './QuerySaveModal';
+import { OverlayMixin } from 'react-bootstrap';
 
 import 'brace/theme/monokai';
 import 'brace/mode/sql';
@@ -14,7 +14,6 @@ let QueryEditor = React.createClass({
   mixins: [OverlayMixin],
 
   componentDidMount() {
-
     // Create the editor
     this.editor = ace.edit(this.refs.queryEditor.getDOMNode());
 
@@ -47,52 +46,38 @@ let QueryEditor = React.createClass({
 
   render() {
     return (
-      <div className="row">
-        <div className="col-sm-12">
-
-          <div className="panel panel-default">
-            <div className="panel-heading">
-              <h3 className="panel-title">Query editor</h3>
+      <div className='flex flex-column'>
+        <div className='flex flex-column'>
+          <div ref="queryContainer" className="editor-container flex">
+            <pre ref="queryEditor" className="editor flex">
+              SELECT COUNT(1) FROM users
+            </pre>
+            <div ref="handle" className="editor-resize-handles">
+              <span className="glyphicon glyphicon-chevron-up editor-resize-handle"
+                onClick={this.handleResizeShrink}
+                title="Shrink Editor"></span>
+              <span className="glyphicon glyphicon-chevron-down editor-resize-handle"
+                onClick={this.handleResizeGrow}
+                title="Grow Editor"></span>
             </div>
+          </div>
+        </div>
 
-            <div ref="queryContainer" className="editor-container clearfix">
-              <pre ref="queryEditor" className="editor">
-                SELECT COUNT(1) FROM users
-              </pre>
-              <div ref="handle" className="editor-resize-handles">
-                <span className="glyphicon glyphicon-chevron-up editor-resize-handle"
-                  onClick={this.handleResizeShrink}
-                  title="Shrink Editor"></span>
-                <span className="glyphicon glyphicon-chevron-down editor-resize-handle"
-                  onClick={this.handleResizeGrow}
-                  title="Grow Editor"></span>
-              </div>
-            </div>
-
-            <div className="panel-body">
-              <div className="col-sm-12">
-                <div className="row">
-
-                  <div className="col-sm-6">
-                    <input ref="customName" type="text" name="custom-name" className="form-control"
-                      placeholder="Select a custom table name" />
-                  </div>
-
-                  <div className="col-sm-6 text-right">
-                    <div className="btn-toolbar pull-right">
-                      <div className="btn-group">
-                        <button className="btn btn-primary"
-                          onClick={this.handleToggle}>Save {this.state.runText}</button>
-                      </div>
-
-                      <div className="btn-group">
-                        <button className="btn btn-success"
-                          onClick={this.handleRun}>Run {this.state.runText}</button>
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
+        <div className='flex'>
+          <div className="flex flex-row query-menu-bar">
+            <div className="flex justify-flex-end">
+              <input className="form-control flex flex-initial"
+                ref="customName"
+                type="text"
+                name="custom-name"
+                placeholder="Select a custom table name" />
+              <div>
+                <button className="btn" onClick={this.handleToggle}>
+                  Save {this.state.runText}
+                </button>
+                <button className="btn" onClick={this.handleRun}>
+                  Run {this.state.runText}
+                </button>
               </div>
             </div>
           </div>

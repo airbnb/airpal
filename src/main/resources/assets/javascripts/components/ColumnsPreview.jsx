@@ -74,8 +74,9 @@ let ColumnsPreview = React.createClass({
 
   _renderEmptyMessage() {
     return (
-      <div className="text-center">
-        <p>Please select a table.</p>
+      <div className="flex flex-row">
+        <div className='flex empty-columns' />
+        <div className='flex flex-initial empty-gutter' />
       </div>
     )
   },

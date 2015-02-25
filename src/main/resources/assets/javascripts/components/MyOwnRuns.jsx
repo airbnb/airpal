@@ -2,6 +2,8 @@ import React from 'react';
 import RunsTable from './RunsTable';
 import UserStore from '../stores/UserStore';
 
+let cx = React.addons.classSet;
+
 function getStateFromStore() {
   return {
     user: UserStore.getCurrentUser()
@@ -16,24 +18,39 @@ let MyOwnRuns = React.createClass({
   },
 
   componentDidMount() {
-    UserStore.listen(this._onChange);
+    UserStore.listen(this.onChange);
+    this.onChange();
   },
 
   componentWillUnmount() {
-    UserStore.unlisten(this._onChange);
+    UserStore.unlisten(this.onChange);
   },
 
   render() {
     let user = this.state.user;
+
     if (user.name === 'unknown') {
       // Still loading user...
-      return <span className="glyphicon glyphicon-repeat indicator-spinner"></span>;
-    } else {
-      return <RunsTable user={user.name} />;
+      let loading = cx({
+        'glyphicon': true,
+        'glyphicon-repeat': true,
+        'indicator-spinner': true
+      });
+
+      return (
+        <span className={loading} />
+      );
     }
+
+    return (
+      <RunsTable
+        user={user.name}
+        tableWidth={this.props.tableWidth}
+        tableHeight={this.props.tableHeight} />
+    );
   },
 
-  _onChange() {
+  onChange() {
     this.setState(getStateFromStore());
   }
 });
