@@ -73,11 +73,7 @@ class TableStore {
     this.tables.push(table);
 
     // Fetch the data from the new table
-    TableApiUtils.fetchTableData(table).then(
-      (table, column, data, partition) => {
-        TableActions.receivedTableData(table, column, data, partition);
-      }
-    );
+    TableApiUtils.getTableData(table);
   }
 
   onRemoveTable(name) {
