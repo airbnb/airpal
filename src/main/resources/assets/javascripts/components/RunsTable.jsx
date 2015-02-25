@@ -9,6 +9,15 @@ import { ProgressBar } from 'react-bootstrap';
 import UpdateWidthMixin from '../mixins/UpdateWidthMixin';
 
 let cx = React.addons.classSet;
+let isColumnResizing = false;
+let columnWidths = {
+  user: 80,
+  query: 400,
+  status: 80,
+  started: 220,
+  duration: 80,
+  output: 180,
+};
 
 // State actions
 function getRuns(user) {
@@ -58,16 +67,26 @@ let RunsTable = React.createClass({
       <div className='flex'>
         <Table className='flex'
           rowHeight={40}
+          headerHeight={40}
           rowGetter={this.rowGetter}
           rowsCount={this.state.runs.length}
           width={this.state.width}
-          maxHeight={400}
-          ownerHeight={400}
-          headerHeight={40}>
+          height={140}
+          overflowY='auto'
+          overflowX='auto'
+          isColumnResizing={isColumnResizing}
+          onColumnResizeEndCallback={this.onColumnResizeEndCallback}>
           {getColumns(this.props.user != null)}
         </Table>
       </div>
     );
+  },
+
+  onColumnResizeEndCallback(newColumnWidth, dataKey) {
+    columnWidths[dataKey] = newColumnWidth;
+    isColumnResizing = false;
+    // TODO: move to store + state
+    this.forceUpdate();
   },
 
   rowGetter(rowIndex) {
@@ -91,44 +110,56 @@ function getColumns(forCurrentUser) {
   return _.compact([
     (forCurrentUser ? null : <Column
       label="User"
-      width={80}
+      width={columnWidths.user}
       dataKey="user"
       cellRenderer={getRenderer('user')}
       key={i++}
+      fixed={true}
+      isResizable={true}
     />),
     <Column
       label="Query"
-      width={forCurrentUser ? 400 : 320}
+      width={forCurrentUser ? columnWidths.query : 320}
       dataKey="query"
       cellRenderer={getRenderer('query')}
       key={i++}
+      fixed={true}
+      isResizable={true}
     />,
     <Column
       label="Status"
-      width={80}
+      width={columnWidths.status}
       dataKey="status"
       cellRenderer={getRenderer('status')}
       key={i++}
+      fixed={true}
+      isResizable={true}
     />,
     <Column
       label="Started"
-      width={220}
+      width={columnWidths.started}
       dataKey="started"
       cellRenderer={getRenderer('started')}
       key={i++}
+      fixed={true}
+      isResizable={true}
     />,
     <Column
       label="Duration"
-      width={80}
+      width={columnWidths.duration}
       dataKey="duration"
       key={i++}
+      fixed={true}
+      isResizable={true}
     />,
     <Column
       label="Output"
-      width={180}
+      width={columnWidths.output}
       dataKey="output"
       cellRenderer={getRenderer('output')}
       key={i++}
+      fixed={true}
+      isResizable={true}
     />,
   ]);
 }
