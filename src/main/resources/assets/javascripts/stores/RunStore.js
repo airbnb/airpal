@@ -72,11 +72,15 @@ class RunStore {
     if (this.hasFetchedHistory) return;
     this.hasFetchedHistory = true;
 
-    RunApiUtils.fetchHistory();
+    RunApiUtils.fetchHistory().then((results) => {
+      RunActions.addMultipleRuns(results);
+    });
   }
 
   onExecute({ query, tmpTable }) {
-    RunApiUtils.execute(query, tmpTable);
+    RunApiUtils.execute(query, tmpTable).then((runObject) => {
+      RunActions.addRun(runObject);
+    });
 
     // Do not emit event
     return false;
