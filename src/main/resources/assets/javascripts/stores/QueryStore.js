@@ -36,6 +36,7 @@ class QueryStore {
   onDestroyQuery(uuid) {
     QueryApiUtils.destroyQuery(uuid).then(() => {
       this.collection.remove(uuid);
+      this.getInstance().emitChange();
     });
     return false;
   }
