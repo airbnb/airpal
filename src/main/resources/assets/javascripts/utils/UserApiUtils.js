@@ -1,11 +1,7 @@
+import xhr from './xhr';
+
 export default {
   fetchCurrentUser() {
-    return new Promise((resolve) => {
-      $.ajax({
-        type: 'GET',
-        url: './api/user',
-        success: resolve
-      });
-    });
+    return xhr('/api/user');
   }
 };

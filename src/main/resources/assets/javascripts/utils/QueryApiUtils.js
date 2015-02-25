@@ -1,52 +1,39 @@
 import _ from 'lodash';
+import checkResults from './checkResults';
+import xhr from './xhr';
 
 let QueryApiUtils = {
   fetchSavedQueries() {
-    return new Promise((resolve) => {
-      $.ajax({
-        type: 'GET',
-        url: './api/query/saved',
-        contentType: 'application/json',
-
-        success(results) {
-          if (_.isEmpty(results)) return;
-          resolve(results);
-        }
-      });
-    });
+    return xhr('/api/query/saved').then(checkResults);
   },
 
   createQuery(data) {
-    return new Promise((resolve) => {
-      $.ajax({
-        type: 'POST',
-        url: './api/query/saved',
-        data,
+    let formData = Object.keys(data).reduce((encoded, key) => {
+      return `${encoded}&${key}=${data[key]}`
+    }, '');
 
-        success(uuid) {
-          let query = {
-            uuid,
-            name: data.name,
-            description: data.description,
+    return xhr('/api/query/saved', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: formData
+    }).then((uuid) => {
+      return {
+        uuid,
+        name: data.name,
+        description: data.description,
 
-            queryWithPlaceholders: {
-              query: data.query
-            }
-          };
-
-          resolve(query);
+        queryWithPlaceholders: {
+          query: data.query
         }
-      });
+      };
     });
   },
 
   destroyQuery(uuid) {
-    return new Promise((resolve) => {
-      $.ajax({
-        type: 'DELETE',
-        url: `./api/query/saved/${uuid}`,
-        success: resolve
-      });
+    return xhr(`/api/query/saved/${uuid}`, {
+      method: 'delete'
     });
   }
 };

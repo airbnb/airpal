@@ -3,6 +3,7 @@
  */
 
 import 'es6-shim';
+import 'whatwg-fetch';
 import AirpalApp from './components/AirpalApp.jsx';
 import React from 'react';
 
