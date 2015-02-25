@@ -1,6 +1,6 @@
 import React from 'react';
+import UserActions from '../actions/UserActions';
 import UserStore from '../stores/UserStore';
-import UserApiUtils from '../utils/UserApiUtils';
 
 // State actions
 function getStateFromStore() {
@@ -16,12 +16,9 @@ let Header = React.createClass({
     return getStateFromStore();
   },
 
-  componentWillMount() {
-    UserApiUtils.getCurrentUser();
-  },
-
   componentDidMount() {
     UserStore.listen(this._onChange);
+    UserActions.fetchCurrentUser();
   },
 
   componentWillUnmount() {
