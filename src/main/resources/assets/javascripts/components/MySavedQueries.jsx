@@ -1,5 +1,4 @@
 import React from 'react';
-import QueryApiUtils from '../utils/QueryApiUtils';
 import QueryStore from '../stores/QueryStore';
 import QueryActions from '../actions/QueryActions';
 import RunActions from '../actions/RunActions';
@@ -88,7 +87,7 @@ let MySavedQueries = React.createClass({
   },
 
   _fetchQueries() {
-    QueryApiUtils.fetchSavedQueries();
+    QueryActions.fetchSavedQueries();
   },
 
   _onSelectQuery(query) {

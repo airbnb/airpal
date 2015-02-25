@@ -5,6 +5,7 @@ class QueryActions {
     this.generateActions(
       'receivedQuery',
       'receivedQueries',
+      'fetchSavedQueries',
       'fetchedSavedQueries',
       'selectQuery',
       'destroyQuery',
