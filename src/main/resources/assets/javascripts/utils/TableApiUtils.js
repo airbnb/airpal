@@ -39,7 +39,7 @@ export default {
           });
         });
     });
-  }
+  },
 
   getTablePreviewData(table, partition) {
     return new Promise((resolve) => {
