@@ -8,6 +8,7 @@ class UserStore {
   constructor() {
     this.user = UserStore.getDefaultUser();
     this.bindAction(UserActions.receivedCurrentUser, this.onReceivedCurrentUser);
+    this.bindAction(UserActions.fetchCurrentUser, this.onFetchCurrentUser);
   }
 
   onReceivedCurrentUser(user) {
