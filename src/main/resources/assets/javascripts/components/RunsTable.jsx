@@ -116,7 +116,7 @@ function getColumns(forCurrentUser) {
       isResizable={true} />),
     <Column
       label="Query"
-      width={forCurrentUser ? columnWidths.query : 320}
+      width={columnWidths.query}
       dataKey="query"
       cellRenderer={getRenderer('query')}
       key={i++}
@@ -229,6 +229,7 @@ let CellRenderers = {
     let currentUser = rowData._currentUser;
     let killable = currentUser && currentUser === run.user;
     let output = cellData;
+
     if (output && output.location) {
       return (
         <a href={output.location} target="_blank">
@@ -236,21 +237,32 @@ let CellRenderers = {
         </a>
       );
     } else if (run.state === 'RUNNING') {
+      let running = cx({
+        'runs-table-progress': true,
+        'runs-table-progress-killable': killable
+      });
+
+      let remove = cx({
+        'glyphicon': true,
+        'glyphicon-remove': true,
+        'text-danger': true
+      });
+
       return (
-        <div className={cx({
-          'runs-table-progress': true,
-          'runs-table-progress-killable': killable
-        })}>
+        <div className={running}>
           <ProgressBar now={getProgressFromStats(run.queryStats)} />
-          {killable ?
-            <span className="glyphicon glyphicon-remove text-danger"
-              title="Kill query"
-              onClick={killRun.bind(null, run.uuid)}></span>
-          : null}
+          {killable &&
+          <span className={remove}
+            title="Kill query"
+            onClick={killRun.bind(null, run.uuid)} />}
         </div>
         );
     } else if (run.state === 'FAILED') {
-      return <span title={run.error.message}>{run.error.message}</span>;
+      return (
+        <span title={run.error.message}>
+          {run.error.message}
+        </span>
+      );
     }
   },
 
