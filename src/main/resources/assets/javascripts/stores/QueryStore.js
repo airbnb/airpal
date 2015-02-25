@@ -26,17 +26,24 @@ class QueryStore {
     this.collection.add(queries);
   }
 
-  onReceiveDestroyedQuery(uuid) {
-    this.collection.remove(uuid);
-  }
-
   onCreateQuery(data) {
-    QueryApiUtils.createQuery(data);
+    QueryApiUtils.createQuery(data).then((query) => {
+      QueryActions.receivedQuery(query);
+    });
     return false;
   }
 
   onDestroyQuery(uuid) {
-    QueryApiUtils.destroyQuery(uuid);
+    QueryApiUtils.destroyQuery(uuid).then(() => {
+      this.collection.remove(uuid);
+    });
+    return false;
+  }
+
+  onFetchSavedQueries() {
+    QueryApiUtils.fetchSavedQueries().then((results) => {
+      QueryActions.receivedQueries(results);
+    });
     return false;
   }
 
