@@ -1,7 +1,4 @@
-/**
- * FQN
- */
-import _ from "lodash";
+import _ from 'lodash';
 
 function validFqnPart(part) {
   return _.isString(part) && !_.isEmpty(part);
