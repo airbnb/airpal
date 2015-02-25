@@ -1674,7 +1674,7 @@ $.extend(Selectize.prototype, {
    * @param {object} $item
    * @param {object} e (optional)
    */
-  setActiveItem: function($item, e) {
+  setActiveItem: function($item, e, silent) {
     var self = this;
     var eventName;
     var i, idx, begin, end, item, swap;
@@ -1726,7 +1726,9 @@ $.extend(Selectize.prototype, {
       $(self.$activeItems).removeClass('active');
       self.$activeItems = [$item.addClass('active')[0]];
     }
-    self.trigger('optionActive', $(self.$activeItems[0]));
+    if (!silent) {
+      self.trigger('optionActive', $(self.$activeItems[0]));
+    }
 
     // ensure control has focus
     self.hideInput();
@@ -2238,7 +2240,7 @@ $.extend(Selectize.prototype, {
    *
    * @param {string} value
    */
-  addItem: function(value) {
+  addItem: function(value, silent) {
     debounce_events(this, ['change'], function() {
       var $item, $option;
       var self = this;
@@ -2279,7 +2281,9 @@ $.extend(Selectize.prototype, {
         }
 
         self.updatePlaceholder();
-        self.trigger('item_add', value, $item);
+        if (!silent) {
+          self.trigger('item_add', value, $item);
+        }
         self.updateOriginalInput();
       }
     });

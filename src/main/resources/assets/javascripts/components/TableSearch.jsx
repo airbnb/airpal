@@ -54,6 +54,7 @@ let TableSearch = React.createClass({
   render() {
     let partitionPlaceholder;
     let partitionsDisabled = true;
+    let activePartition;
 
     if (_.isEmpty(this.state.table)) {
       partitionPlaceholder = "No table selected";
@@ -62,6 +63,7 @@ let TableSearch = React.createClass({
     } else {
       partitionPlaceholder = "Select a partition";
       partitionsDisabled = false;
+      activePartition = this.state.table.activePartition;
     }
 
     return (
@@ -71,6 +73,7 @@ let TableSearch = React.createClass({
             <div className="form-group">
               <label htmlFor="tables-input">Tables:</label>
               <SearchInputField
+                ref="tableSelectize"
                 placeholder="Select a table"
                 selectizeOptions={this.tableSelectizeOptions} />
             </div>
@@ -79,8 +82,10 @@ let TableSearch = React.createClass({
             <div className="form-group">
               <label htmlFor="tables-input">Partition:</label>
               <SearchInputField
+                ref="partitionSelectize"
                 placeholder={partitionPlaceholder}
                 disabled={partitionsDisabled}
+                activeOption={activePartition}
                 selectizeOptions={this.partitionSelectizeOptions} />
             </div>
           </form>
@@ -183,6 +188,8 @@ let TableSearch = React.createClass({
 
   partitionSelectizeOptions() {
     let partitions = [];
+    const self = this;
+
     if (!_.isEmpty(this.state.table)) {
       partitions = this.state.table.partitions;
     }
@@ -224,26 +231,39 @@ let TableSearch = React.createClass({
       },
 
       onItemAdd(partition, $element) {
-        console.log('partition#onItemAdd', partition, $element);
+        if (!self.state.table) {
+          return;
+        }
         TableActions.selectPartition({
-          name: partition,
+          partition: partition,
+          table: self.state.table.name,
         });
-        //highlightOnlyOption(this, $element);
+        highlightOnlyOption(this, $element);
       },
 
       onOptionActive($activeOption) {
+        if (!self.state.table) {
+          return;
+        }
+
         const itemName = getActiveItemName(this);
 
         if ($activeOption == null) {
-          TableActions.unselectPartition(itemName)
+          TableActions.unselectPartition({
+            partition: itemName,
+            table: self.state.table.name,
+          });
         } else {
           //if (!TableStore.containsTable(itemName)) {
             //TableActions.unselectTable(itemName);
           //} else {
-          TableActions.selectPartition(itemName);
+          TableActions.selectPartition({
+            partition: itemName,
+            table: self.state.table.name,
+          });
           //}
         }
-      }
+      },
     });
   },
 

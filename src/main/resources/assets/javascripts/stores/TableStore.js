@@ -49,6 +49,7 @@ class TableStore {
     }
 
     table.active = false;
+    table.activePartition = null;
 
     this.activeTable = null;
   }
@@ -59,21 +60,28 @@ class TableStore {
 
     // Mark the table as active
     let table = this.getByName(name);
-    table.active = true;
 
+    if (!table) {
+      return;
+    }
+
+    table.active = true;
+    this.markMostRecentPartitionAsActive(table);
     this.activeTable = table;
   }
 
-  markActivePartition(partition) {
-    if (this.activeTable !== null) {
-      this.activeTable.activePartition = partition;
+  markActivePartition(table, partition) {
+    const table = this.getByName(table);
+    if (table !== null && !!partition) {
+      table.activePartition = partition;
     }
   }
 
-  unmarkActivePartition() {
-    if (this.activeTable !== null) {
-      this.activeTable.activePartition = null;
-      this.activeTable.data = this.activeTable.defaultData;
+  unmarkActivePartition(tableName, partition) {
+    const table = this.getByName(tableName);
+    if (table !== null && table.activePartition == partition) {
+      table.activePartition = null;
+      table.data = table.defaultData;
     }
   }
 
@@ -128,24 +136,35 @@ class TableStore {
     this.unmarkActive(name);
   }
 
-  onSelectPartition(partition) {
-    console.log('partition selected', partition, arguments);
-    if (!partition) {
+  onSelectPartition(data) {
+    if (!data || !data.partition || !data.table) {
       return;
     }
 
+    const {partition, table: tableName} = data;
     const [name, value] = partition.split('=');
+    const table = this.getByName(tableName);
 
-    this.markActivePartition(partition);
+    if (!table) {
+      return;
+    }
+
+    this.markActivePartition(tableName, partition);
 
     TableApiUtils.getTablePreviewData(
-      this.activeTable,
+      table,
       {name, value});
   }
 
-  onUnselectPartition(partition) {
-    console.log('partition unselected', partition, arguments);
-    this.unmarkActivePartition(partition);
+  onUnselectPartition(data) {
+    if (!data || !data.partition || !data.table) {
+      return;
+    }
+
+    const {partition, table} = data;
+    const [name, value] = partition.split('=');
+
+    this.unmarkActivePartition(table, partition);
   }
 
   onReceivedTableData({ table: refTable, columns, data, partitions }) {
@@ -169,20 +188,48 @@ class TableStore {
       defaultData: data,
     });
 
-    if (!_.isEmpty(partitions)) {
-      this.markActivePartition();
+    this.markMostRecentPartitionAsActive(table);
+  }
+
+  markMostRecentPartitionAsActive(table) {
+    // We special case common date partitions for usability.
+    let datePartition = null;
+
+    if (!table || !table.partitions || _.isEmpty(table.partitions)) {
+      return;
+    }
+
+    _.first(table.partitions, function(partition) {
+      if (partition.name === 'ds') {
+        datePartition = 'ds';
+        return true;
+      } else if (partition.name === 'd') {
+        datePartition = 'd';
+        return true;
+      }
+    });
+
+    if (datePartition != null) {
+      const datePartitions = _.where(table.partitions, { name: datePartition });
+      const recentPartitions = _.sortBy(datePartitions, (partition) => partition.value);
+      const recentPartition = _.last(recentPartitions);
+      const recentPartitionStr = [recentPartition.name, recentPartition.value].join('=');
+
+      table.activePartition = recentPartitionStr;
+
+      this.onSelectPartition({
+        table: table.name,
+        partition: recentPartitionStr,
+      });
     }
   }
 
   onReceivedPartitionData({ table: refTable, partition: {name, value}, data }) {
     const table = this.getByName(refTable.name);
-    console.log('onReceivedPartitionData triggered', refTable, table, refTable.activePartition);
 
     if (table === undefined || table.activePartition !== [name, value].join('=')) {
       return;
     }
-
-    console.log('onReceivedPartitionData actually triggered');
 
     _.extend(table, {
       data: data,
