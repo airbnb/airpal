@@ -1,6 +1,8 @@
-var alt = require('../alt');
-var UserActions = require('../actions/UserActions');
-var RunApiUtils = require('../utils/RunApiUtils');
+import alt from '../alt';
+import RunActions from '../actions/RunActions';
+import UserActions from '../actions/UserActions';
+import UserApiUtils from '../utils/UserApiUtils';
+import RunApiUtils from '../utils/RunApiUtils';
 
 class UserStore {
   constructor() {
@@ -12,7 +14,16 @@ class UserStore {
     this.user = user;
 
     // Now fetch queries for that user.
-    RunApiUtils.fetchForUser(this.user);
+    RunApiUtils.fetchForUser(this.user).then((results) => {
+      RunActions.addMultipleRuns(results);
+    });
+  }
+
+  onFetchCurrentUser() {
+    UserApiUtils.fetchCurrentUser().then((user) => {
+      UserActions.receivedCurrentUser(user);
+    });
+    return false;
   }
 
   static getDefaultUser() {
@@ -31,4 +42,4 @@ class UserStore {
   }
 }
 
-module.exports = alt.createStore(UserStore, 'UserStore');
+export default alt.createStore(UserStore, 'UserStore');
