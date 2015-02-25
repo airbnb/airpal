@@ -52,13 +52,6 @@ public class PreviewTableCache
                     {
                         return queryRows(buildQueryWithLimit(key, previewLimit));
                     }
-
-//                    @Override
-//            public List<List<Object>> load(Table tbl) throws Exception {
-//                return queryRows(String.format("SELECT * FROM %s LIMIT %d",
-//                        Util.fqn(tbl.getSchema(), tbl.getTable()),
-//                        previewLimit));
-//            }
         };
 
         this.previewTableCache = CacheBuilder.newBuilder()
