@@ -8,4 +8,8 @@ public class Util {
     public static String fqn(String databaseName, String tableName) {
         return FQN_JOINER.join(databaseName, tableName);
     }
+
+    public static String fqn(String connectorId, String databaseName, String tableName) {
+        return FQN_JOINER.join(connectorId, databaseName, tableName);
+    }
 }

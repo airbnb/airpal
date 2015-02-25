@@ -171,17 +171,11 @@ let TableSearch = React.createClass({
   },
 
   _renderPartitionOptions(item, escape) {
-    let lastUpdatedRepresentation = '';
-
-    if (item.lastUpdated != null) {
-      lastUpdatedRepresentation = moment(item.lastUpdated).
-        format('MMM Do YYYY, h:mm:ss a z');
-    }
-
+    const strVal = [item.name, item.value].join('=');
     return (
       '<div class="row">' +
         '<div class="col-sm-6 col-name"><span>' +
-          escape(item.name + '=' + item.value) +
+          escape(strVal) +
         '</span></div>' +
       '</div>'
     );
@@ -196,11 +190,11 @@ let TableSearch = React.createClass({
     return _.extend({}, commonSelectizeOptions, {
       preload: 'focus',
       openOnFocus: true,
-      valueField: 'value',
-      labelField: 'value',
+      valueField: 'partitionValue',
+      labelField: 'partitionValue',
 
       searchField: [
-        'value',
+        'partitionValue',
       ],
 
       sortField: [
@@ -227,6 +221,28 @@ let TableSearch = React.createClass({
         _.defer(function() {
           callback(partitions);
         });
+      },
+
+      onItemAdd(partition, $element) {
+        console.log('partition#onItemAdd', partition, $element);
+        TableActions.selectPartition({
+          name: partition,
+        });
+        //highlightOnlyOption(this, $element);
+      },
+
+      onOptionActive($activeOption) {
+        const itemName = getActiveItemName(this);
+
+        if ($activeOption == null) {
+          TableActions.unselectPartition(itemName)
+        } else {
+          //if (!TableStore.containsTable(itemName)) {
+            //TableActions.unselectTable(itemName);
+          //} else {
+          TableActions.selectPartition(itemName);
+          //}
+        }
       }
     });
   },

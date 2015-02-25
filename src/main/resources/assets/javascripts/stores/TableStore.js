@@ -20,6 +20,16 @@ class TableStore {
     return _.find(this.tables, { name });
   }
 
+  getPartitionByValue(value) {
+    const table = this.activeTable;
+
+    if (_.isEmpty(table) || _.isEmpty(table.partitions)) {
+      return undefined;
+    }
+
+    return _.find(table.partitions, { value });
+  }
+
   unmarkActiveTables() {
     this.tables.forEach((table) => {
       if (table.active) {
@@ -52,6 +62,19 @@ class TableStore {
     table.active = true;
 
     this.activeTable = table;
+  }
+
+  markActivePartition(partition) {
+    if (this.activeTable !== null) {
+      this.activeTable.activePartition = partition;
+    }
+  }
+
+  unmarkActivePartition() {
+    if (this.activeTable !== null) {
+      this.activeTable.activePartition = null;
+      this.activeTable.data = this.activeTable.defaultData;
+    }
   }
 
   onAddTable(table) {
@@ -105,6 +128,26 @@ class TableStore {
     this.unmarkActive(name);
   }
 
+  onSelectPartition(partition) {
+    console.log('partition selected', partition, arguments);
+    if (!partition) {
+      return;
+    }
+
+    const [name, value] = partition.split('=');
+
+    this.markActivePartition(partition);
+
+    TableApiUtils.getTablePreviewData(
+      this.activeTable,
+      {name, value});
+  }
+
+  onUnselectPartition(partition) {
+    console.log('partition unselected', partition, arguments);
+    this.unmarkActivePartition(partition);
+  }
+
   onReceivedTableData({ table: refTable, columns, data, partitions }) {
     // Get the right table first
     let table = this.getByName(refTable.name);
@@ -117,8 +160,32 @@ class TableStore {
     table = _.extend(table, {
       columns: columns,
       data: data,
-      partitions: partitions,
+      partitions: partitions.map(function(partition) {
+        return _.extend({}, partition, {
+          partitionValue: [partition.name, partition.value].join('='),
+        });
+      }),
       columnWidths: columns.map(() => 120),
+      defaultData: data,
+    });
+
+    if (!_.isEmpty(partitions)) {
+      this.markActivePartition();
+    }
+  }
+
+  onReceivedPartitionData({ table: refTable, partition: {name, value}, data }) {
+    const table = this.getByName(refTable.name);
+    console.log('onReceivedPartitionData triggered', refTable, table, refTable.activePartition);
+
+    if (table === undefined || table.activePartition !== [name, value].join('=')) {
+      return;
+    }
+
+    console.log('onReceivedPartitionData actually triggered');
+
+    _.extend(table, {
+      data: data,
     });
   }
 

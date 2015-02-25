@@ -6,10 +6,16 @@ function fetchColumData(table) {
   });
 }
 
-function fetchPreviewData(table) {
+function fetchPreviewData(table, partition) {
+  partition = partition || {};
+
   return $.ajax({
     type: 'GET',
-    url: table.url + '/preview'
+    url: table.url + '/preview',
+    data: {
+      partitionName: partition.name,
+      partitionValue: partition.value,
+    },
   });
 }
 
@@ -34,4 +40,13 @@ export default {
         });
     });
   }
+
+  getTablePreviewData(table, partition) {
+    return new Promise((resolve) => {
+      $.when(fetchPreviewData(table, partition))
+        .then(function(dataArr) {
+          resolve(table, partition, dataArr);
+        });
+    });
+  },
 };

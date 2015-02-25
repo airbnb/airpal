@@ -10,6 +10,8 @@ import com.airbnb.airpal.presto.metadata.PreviewTableCache;
 import com.airbnb.airpal.presto.metadata.SchemaCache;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -30,6 +32,7 @@ import javax.ws.rs.core.Response;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -128,11 +131,31 @@ public class TablesResource
     public Response getTablePreview(
             @Auth AirpalUser user,
             @PathParam("schema") String schema,
-            @PathParam("tableName") String tableName)
+            @PathParam("tableName") String tableName,
+            @QueryParam("connectorId") String connectorId,
+            @QueryParam("partitionName") final String partitionName,
+            @QueryParam("partitionValue") String partitionValue)
             throws ExecutionException
     {
+        List<HivePartition> partitions = columnCache.getPartitions(schema, tableName);
+
+        Optional<HivePartition> partition = FluentIterable.from(partitions).firstMatch(
+                new Predicate<HivePartition>()
+                {
+                    @Override
+                    public boolean apply(HivePartition input)
+                    {
+                        return Objects.equals(input.getName(), partitionName);
+                    }
+                });
+
         if (isAuthorizedRead(user, defaultCatalog, schema, tableName)) {
-            return Response.ok(previewTableCache.getPreview(schema, tableName)).build();
+            return Response.ok(previewTableCache.getPreview(
+                    Optional.fromNullable(connectorId).or("hive"),
+                    schema,
+                    tableName,
+                    partition,
+                    partitionValue)).build();
         }
         else {
             return Response.status(Response.Status.FORBIDDEN).build();
