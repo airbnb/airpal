@@ -10,16 +10,41 @@ let QueryInformation = React.createClass({
 
   getInitialState() {
     return {
-      selectedTab: 1
+      selectedTab: 1,
+      tableWidth: 400,
+      tableHeight: 240
     };
   },
 
   componentDidMount() {
     RunActions.connect();
+    this.update();
+
+    let win = window;
+
+    if (win.addEventListener) {
+      win.addEventListener('resize', this.onResize, false);
+    } else if (win.attachEvent) {
+      win.attachEvent('onresize', this.onResize);
+    } else {
+      win.onresize = this.onResize;
+    }
   },
 
   componentWillUnmount() {
     RunActions.disconnect();
+  },
+
+  onResize() {
+    clearTimeout(this.updateTimer);
+    this.updateTimer = setTimeout(this.update, 16);
+  },
+
+  update() {
+    this.setState({
+      tableWidth: this.getDOMNode().offsetWidth,
+      tableHeight: this.getDOMNode().offsetHeight,
+    });
   },
 
   render() {
@@ -34,7 +59,10 @@ let QueryInformation = React.createClass({
             <TabPane className="flex query-information-table-tab"
               eventKey={1}
               tab="My Recent">
-                {selectedTab === 1 && <MyOwnRuns />}
+                {selectedTab === 1 &&
+                  <MyOwnRuns
+                    tableWidth={this.state.tableWidth}
+                    tableHeight={this.state.tableHeight} />}
             </TabPane>
             <TabPane className='flex query-information-table-tab'
               eventKey={2}
@@ -44,7 +72,10 @@ let QueryInformation = React.createClass({
             <TabPane className="flex query-information-table-tab"
               eventKey={3}
               tab="All">
-                {selectedTab === 3 && <AllRunningQueries />}
+                {selectedTab === 3 &&
+                  <AllRunningQueries
+                    tableWidth={this.state.tableWidth}
+                    tableHeight={this.state.tableHeight} />}
             </TabPane>
         </TabbedArea>
       </div>

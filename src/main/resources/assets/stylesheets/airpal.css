@@ -153,7 +153,6 @@ body {
 
 .query-information-table-tab {
   max-height: initial;
-  margin-top: 20px;
 }
 
 .tab-container {
@@ -169,7 +168,11 @@ body {
 .tab-container .tab-content {
   display: flex;
   overflow: scroll;
-  margin-top: 20px;
+  margin-top: 43px;
+}
+
+.tab-container .tab-pane {
+  padding: 0;
 }
 
 .tab-container .nav {
@@ -204,4 +207,13 @@ body {
   color: #565a5c;
   border-bottom: 3px solid #565a5c;
   border-radius: 0;
+}
+
+.airpal-table .public_fixedDataTable_main {
+  border-left-color: transparent;
+  border-right-color: transparent;
+}
+
+.airpal-table .public_fixedDataTableCell_cellContent {
+  padding: 3px 8px;
 }

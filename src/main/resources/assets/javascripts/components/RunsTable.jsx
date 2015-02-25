@@ -61,19 +61,17 @@ let RunsTable = React.createClass({
       return this.renderEmptyMessage();
     }
 
-    // Need to make sure to wrap `Table` in a parent element so we can
-    // compute the natural width of the component.
     return (
-      <div className='flex'>
-        <Table className='flex'
+      <div className='flex airpal-table'>
+        <Table
           rowHeight={40}
-          headerHeight={40}
+          headerHeight={25}
           rowGetter={this.rowGetter}
           rowsCount={this.state.runs.length}
-          width={this.state.width}
-          height={140}
-          overflowY='auto'
+          width={this.props.tableWidth}
+          maxHeight={this.props.tableHeight}
           overflowX='auto'
+          overflowY='auto'
           isColumnResizing={isColumnResizing}
           onColumnResizeEndCallback={this.onColumnResizeEndCallback}>
           {getColumns(this.props.user != null)}
@@ -85,8 +83,7 @@ let RunsTable = React.createClass({
   onColumnResizeEndCallback(newColumnWidth, dataKey) {
     columnWidths[dataKey] = newColumnWidth;
     isColumnResizing = false;
-    // TODO: move to store + state
-    this.forceUpdate();
+    this.forceUpdate(); // TODO: move to store + state
   },
 
   rowGetter(rowIndex) {
@@ -95,7 +92,9 @@ let RunsTable = React.createClass({
 
   renderEmptyMessage() {
     return (
-      <p className="info text-center">No queries to show</p>
+      <p className="info text-center">
+        No queries to show
+      </p>
     );
   },
 
@@ -114,53 +113,43 @@ function getColumns(forCurrentUser) {
       dataKey="user"
       cellRenderer={getRenderer('user')}
       key={i++}
-      fixed={true}
-      isResizable={true}
-    />),
+      isResizable={true} />),
     <Column
       label="Query"
       width={forCurrentUser ? columnWidths.query : 320}
       dataKey="query"
       cellRenderer={getRenderer('query')}
       key={i++}
-      fixed={true}
       isResizable={true}
-    />,
+      flexGrow={2} />,
     <Column
       label="Status"
       width={columnWidths.status}
       dataKey="status"
       cellRenderer={getRenderer('status')}
       key={i++}
-      fixed={true}
-      isResizable={true}
-    />,
+      isResizable={true} />,
     <Column
       label="Started"
       width={columnWidths.started}
       dataKey="started"
       cellRenderer={getRenderer('started')}
       key={i++}
-      fixed={true}
-      isResizable={true}
-    />,
+      isResizable={true} />,
     <Column
       label="Duration"
       width={columnWidths.duration}
       dataKey="duration"
       key={i++}
-      fixed={true}
-      isResizable={true}
-    />,
+      isResizable={true} />,
     <Column
       label="Output"
       width={columnWidths.output}
       dataKey="output"
       cellRenderer={getRenderer('output')}
       key={i++}
-      fixed={true}
       isResizable={true}
-    />,
+      flexGrow={1} />,
   ]);
 }
 
@@ -205,13 +194,19 @@ function killRun(uuid) {
 
 let CellRenderers = {
   user(cellData) {
-    return <span title={cellData}>{cellData}</span>;
+    return (
+      <span title={cellData}>
+        {cellData}
+      </span>
+    );
   },
 
   query(query) {
     return (
       <a href="#" onClick={selectQuery.bind(null, query)}>
-        <code title={query}>{query}</code>
+        <code title={query}>
+          {query}
+        </code>
       </a>
     );
   },
