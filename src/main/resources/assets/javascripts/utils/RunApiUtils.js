@@ -14,7 +14,7 @@ export default {
   },
 
   fetchForUser(user) {
-    return xhr(`/api/users/${user.name}/active-queries`).then(checkResults);
+    return xhr(`/api/users/${user.name}/queries`).then(checkResults);
   },
 
   fetchHistory() {

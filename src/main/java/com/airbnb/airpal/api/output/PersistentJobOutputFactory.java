@@ -6,30 +6,29 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import java.net.URI;
-import java.util.List;
 import java.util.UUID;
 
 public class PersistentJobOutputFactory
 {
     private final AmazonS3 s3Client;
-    private final List<URI> corsAllowedHosts;
     private final String s3Bucket;
+    private final String createTableDestinationSchema;
 
     @Inject
     public PersistentJobOutputFactory(AmazonS3 s3Client,
-                                      @Named("corsAllowedHosts") List<URI> corsAllowedHosts,
-                                      @Named("s3Bucket") String s3Bucket)
+            @Named("s3Bucket") String s3Bucket,
+            @Named("createTableDestinationSchema") String createTableDestinationSchema)
     {
         this.s3Client = s3Client;
-        this.corsAllowedHosts = corsAllowedHosts;
         this.s3Bucket = s3Bucket;
+        this.createTableDestinationSchema = createTableDestinationSchema;
     }
 
     public PersistentJobOutput create(final String tmpTable,
                                       final UUID jobUUID)
     {
         if (!Strings.isNullOrEmpty(tmpTable)) {
-            return new HiveTablePersistentOutput(jobUUID, tmpTable);
+            return new HiveTablePersistentOutput(jobUUID, tmpTable, createTableDestinationSchema);
         } else {
             return new CSVPersistentOutput(null, "csv", null);
         }

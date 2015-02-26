@@ -13,7 +13,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import java.net.URI;
-import java.util.List;
 
 public class AirpalConfiguration extends Configuration
 {
@@ -76,8 +75,7 @@ public class AirpalConfiguration extends Configuration
     @Getter
     @Setter
     @JsonProperty
-    @NotNull
-    private List<URI> airpalHosts;
+    private String createTableDestinationSchema = "airpal";
 
     @Getter
     @Setter

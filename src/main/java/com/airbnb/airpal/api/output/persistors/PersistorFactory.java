@@ -15,7 +15,7 @@ public class PersistorFactory
             case "csv":
                 return csvPersistorFactory.getPersistor(job, jobOutput);
             case "hive":
-                return new HiveTablePersistor();
+                return new HiveTablePersistor(jobOutput);
             default:
                 throw new IllegalArgumentException();
         }
