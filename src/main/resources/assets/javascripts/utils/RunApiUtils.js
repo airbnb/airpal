@@ -1,65 +1,29 @@
-import RunActions from "../actions/RunActions";
-import _ from "lodash";
+import _ from 'lodash';
+import checkResults from './checkResults';
+import xhr from './xhr';
 
 export default {
   execute(query, tmpTable) {
-    return new Promise((resolve) => {
-      $.ajax({
-        type: 'PUT',
-        url: './api/execute',
-        contentType: 'application/json',
-
-        data: JSON.stringify({
-          query,
-          tmpTable
-        }),
-
-        success(runObject, status, xhr) {
-          resolve(runObject);
-        }
-      });
+    return xhr('/api/execute', {
+      method: 'put',
+      body: JSON.stringify({
+        query,
+        tmpTable
+      })
     });
   },
 
   fetchForUser(user) {
-    return new Promise((resolve) => {
-      $.ajax({
-        type: 'GET',
-        url: `./api/users/${user.name}/active-queries`,
-        contentType: 'application/json',
-
-        success(results, status, xhr) {
-          if (_.isEmpty(results)) return;
-          resolve(results);
-        }
-      });
-    });
+    return xhr(`/api/users/${user.name}/active-queries`).then(checkResults);
   },
 
   fetchHistory() {
-    return new Promise((resolve) => {
-      $.ajax({
-        type: 'GET',
-        url: './api/query/history',
-        contentType: 'application/json',
-
-        success(results) {
-          if (_.isEmpty(results)) return;
-          resolve(results);
-        }
-      });
-    });
+    return xhr('./api/query/history').then(checkResults);
   },
 
   kill(uuid) {
-    $.ajax({
-      type: 'DELETE',
-      url: './api/queries/' + uuid,
-      contentType: 'application/json',
-
-      success() {
-        // Just let the SSE handle updates.
-      }
+    return xhr(`/api/queries/${uuid}`, {
+      method: 'delete'
     });
   }
 };

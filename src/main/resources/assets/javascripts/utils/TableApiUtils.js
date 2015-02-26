@@ -1,52 +1,34 @@
-// Fetch the column data
-function fetchColumData(table) {
-  return $.ajax({
-    type: 'GET',
-    url: table.url + '/columns'
-  });
-}
+import xhr from './xhr';
 
-function fetchPreviewData(table, partition) {
-  partition = partition || {};
+const fetchColumData = (table) => xhr(`${table.url}/columns`);
 
-  return $.ajax({
-    type: 'GET',
-    url: table.url + '/preview',
-    data: {
-      partitionName: partition.name,
-      partitionValue: partition.value,
-    },
-  });
-}
+const fetchPreviewData = (table, partition = {}) => {
+  let url = `${table.url}/preview`;
+  if (partition.name && partition.value) {
+    url += '?' +
+      `partitionName=${partition.name}&` +
+      `partitionValue=${partition.value}`;
+  }
 
-function fetchPartitionData(table) {
-  return $.ajax({
-    type: 'GET',
-    url: table.url + '/partitions'
-  });
-}
+  return xhr(url);
+};
+
+const fetchPartitionData = (table) => xhr(`${table.url}/partitions`);
 
 export default {
   fetchTableData(table) {
-    return new Promise((resolve) => {
-      $.when(fetchColumData(table), fetchPreviewData(table), fetchPartitionData(table))
-        .then(function(columnArr, dataArr, partitionArr) {
-          resolve({
-            table: table,
-            columns: columnArr[0],
-            data: dataArr[0],
-            partitions: partitionArr[0]
-          });
-        });
+    return Promise.all([
+      fetchColumData(table),
+      fetchPreviewData(table),
+      fetchPartitionData(table)
+    ]).then(([columns, data, partitions]) => {
+      return { table, columns, data, partitions };
     });
   },
 
   fetchTablePreviewData(table, partition) {
-    return new Promise((resolve) => {
-      $.when(fetchPreviewData(table, partition))
-        .then(function(dataArr) {
-          resolve({table, partition, data: dataArr});
-        });
+    return fetchPreviewData(table, partition).then((data) => {
+      return { table, partition, data };
     });
-  },
+  }
 };

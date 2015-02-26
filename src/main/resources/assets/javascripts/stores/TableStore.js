@@ -3,6 +3,7 @@ import TableActions from '../actions/TableActions';
 import TableApiUtils from '../utils/TableApiUtils';
 import _ from 'lodash';
 import alt from '../alt';
+import logError from '../utils/logError'
 
 class TableStore {
   constructor() {
@@ -108,7 +109,7 @@ class TableStore {
       ({table, columns, data, partitions}) => {
         TableActions.receivedTableData(table, columns, data, partitions);
       }
-    );
+    ).catch(logError);
   }
 
   onRemoveTable(name) {
@@ -155,7 +156,7 @@ class TableStore {
       ({table, partition, data}) => {
         TableActions.receivedPartitionData({table, partition, data});
       }
-    );
+    ).catch(logError);
   }
 
   onUnselectPartition(data) {

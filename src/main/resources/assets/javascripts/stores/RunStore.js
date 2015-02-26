@@ -2,6 +2,7 @@ import alt from '../alt';
 import FluxCollection from '../utils/FluxCollection';
 import RunActions from '../actions/RunActions';
 import RunApiUtils from '../utils/RunApiUtils';
+import logError from '../utils/logError'
 
 class RunStore {
   constructor() {
@@ -74,15 +75,21 @@ class RunStore {
 
     RunApiUtils.fetchHistory().then((results) => {
       RunActions.addMultipleRuns(results);
-    });
+    }).catch(logError);
   }
 
   onExecute({ query, tmpTable }) {
     RunApiUtils.execute(query, tmpTable).then((runObject) => {
       RunActions.addRun(runObject);
-    });
+    }).catch(logError);
 
     // Do not emit event
+    return false;
+  }
+
+  onKill(uuid) {
+    RunApiUtils.kill(uuid);
+
     return false;
   }
 

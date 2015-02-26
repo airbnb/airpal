@@ -2,6 +2,7 @@ import alt from '../alt'
 import FluxCollection from '../utils/FluxCollection'
 import QueryActions from '../actions/QueryActions'
 import QueryApiUtils from '../utils/QueryApiUtils'
+import logError from '../utils/logError'
 
 class QueryStore {
   constructor() {
@@ -29,7 +30,7 @@ class QueryStore {
   onCreateQuery(data) {
     QueryApiUtils.createQuery(data).then((query) => {
       QueryActions.receivedQuery(query);
-    });
+    }).catch(logError);
     return false;
   }
 
@@ -37,14 +38,14 @@ class QueryStore {
     QueryApiUtils.destroyQuery(uuid).then(() => {
       this.collection.remove(uuid);
       this.getInstance().emitChange();
-    });
+    }).catch(logError);
     return false;
   }
 
   onFetchSavedQueries() {
     QueryApiUtils.fetchSavedQueries().then((results) => {
       QueryActions.receivedQueries(results);
-    });
+    }).catch(logError);
     return false;
   }
 
