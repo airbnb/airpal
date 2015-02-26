@@ -86,6 +86,12 @@ class RunStore {
     return false;
   }
 
+  onKill(uuid) {
+    RunApiUtils.kill(uuid);
+
+    return false;
+  }
+
   // Yeah baby. We're ready to rambo! The SSEConnection has made a connection
   // to the API endpoint and now we should start getting updates (if any runs
   // are running of course).

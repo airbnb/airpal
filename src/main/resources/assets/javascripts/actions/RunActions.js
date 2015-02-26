@@ -8,6 +8,7 @@ class RunActions {
       'connect',
       'disconnect',
       'fetchHistory',
+      'kill',
       'onError',
       'onOpen',
       'resetOnlineStatus',
@@ -18,10 +19,6 @@ class RunActions {
 
   execute({ query, tmpTable }) {
     this.dispatch({ query, tmpTable });
-  }
-
-  kill(uuid) {
-    RunApiUtils.kill(uuid);
   }
 
   onMessage(data) {
