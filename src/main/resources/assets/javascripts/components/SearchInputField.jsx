@@ -87,6 +87,22 @@ let SearchInputField = React.createClass({
 
     this.$selectize.settings.load = nextSelectizeOpts.load;
 
+    console.log('activeOption', nextProps.activeOption, nextProps, this.props);
+    if (nextProps.activeOption) {
+      window.$selectize = this.$selectize;
+      this.$selectize.load(function(callback) {
+        nextSelectizeOpts.load(null, callback);
+      });
+      _.defer(function() {
+        this.$selectize.addItem(nextProps.activeOption, true);
+        const $item = this.$selectize.getItem(nextProps.activeOption);
+        console.log('in defer', $item, nextProps, this.props);
+        if (!_.isEmpty($item)) {
+          this.$selectize.setActiveItem($item[0], undefined, true);
+        }
+      }.bind(this));
+    }
+
     if (this.props.disabled !== nextProps.disabled) {
       if (!nextProps.disabled) {
         this.$selectize.enable();

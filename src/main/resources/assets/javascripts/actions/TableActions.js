@@ -6,7 +6,9 @@ class TableActions {
       'addTable',
       'removeTable',
       'selectTable',
-      'unselectTable'
+      'unselectTable',
+      'selectPartition',
+      'unselectPartition'
     );
   }
 
@@ -16,6 +18,10 @@ class TableActions {
 
   receivedTableData(table, columns, data, partitions) {
     this.dispatch({ table, columns, data, partitions });
+  }
+
+  receivedPartitionData({table, partition, data}) {
+    this.dispatch({ table, partition, data });
   }
 }
 
