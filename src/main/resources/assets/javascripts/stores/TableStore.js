@@ -74,8 +74,8 @@ class TableStore {
 
     // Fetch the data from the new table
     TableApiUtils.fetchTableData(table).then(
-      (table, column, data, partition) => {
-        TableActions.receivedTableData(table, column, data, partition);
+      ({table, columns, data, partitions}) => {
+        TableActions.receivedTableData(table, columns, data, partitions);
       }
     );
   }
