@@ -151,9 +151,11 @@ class TableStore {
 
     this.markActivePartition(tableName, partition);
 
-    TableApiUtils.getTablePreviewData(
-      table,
-      {name, value});
+    TableApiUtils.fetchTablePreviewData(table, {name, value}).then(
+      ({table, partition, data}) => {
+        TableActions.receivedPartitionData({table, partition, data});
+      }
+    );
   }
 
   onUnselectPartition(data) {

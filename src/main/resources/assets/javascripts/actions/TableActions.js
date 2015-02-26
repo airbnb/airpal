@@ -20,7 +20,7 @@ class TableActions {
     this.dispatch({ table, columns, data, partitions });
   }
 
-  receivedPartitionData(table, partition, data) {
+  receivedPartitionData({table, partition, data}) {
     this.dispatch({ table, partition, data });
   }
 }

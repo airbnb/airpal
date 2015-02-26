@@ -41,11 +41,11 @@ export default {
     });
   },
 
-  getTablePreviewData(table, partition) {
+  fetchTablePreviewData(table, partition) {
     return new Promise((resolve) => {
       $.when(fetchPreviewData(table, partition))
         .then(function(dataArr) {
-          resolve(table, partition, dataArr);
+          resolve({table, partition, data: dataArr});
         });
     });
   },
