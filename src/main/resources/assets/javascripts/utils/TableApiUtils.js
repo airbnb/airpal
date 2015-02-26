@@ -25,7 +25,12 @@ export default {
     return new Promise((resolve) => {
       $.when(fetchColumData(table), fetchPreviewData(table), fetchPartitionData(table))
         .then(function(columnArr, dataArr, partitionArr) {
-          resolve(table, columnArr[0], dataArr[0], partitionArr[0]);
+          resolve({
+            table: table,
+            columns: columnArr[0],
+            data: dataArr[0],
+            partitions: partitionArr[0]
+          });
         });
     });
   }
