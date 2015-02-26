@@ -254,9 +254,6 @@ let TableSearch = React.createClass({
             table: self.state.table.name,
           });
         } else {
-          //if (!TableStore.containsTable(itemName)) {
-            //TableActions.unselectTable(itemName);
-          //} else {
           TableActions.selectPartition({
             partition: itemName,
             table: self.state.table.name,
