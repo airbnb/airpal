@@ -3,10 +3,14 @@ import xhr from './xhr';
 const fetchColumData = (table) => xhr(`${table.url}/columns`);
 
 const fetchPreviewData = (table, partition = {}) => {
-  return xhr(`${table.url}/preview`, {
-    partitionName: partition.name,
-    partitionValue: partition.value
-  });
+  let url = `${table.url}/preview`;
+  if (partition.name && partition.value) {
+    url += '?' +
+      `partitionName=${partition.name}&` +
+      `partitionValue=${partition.value}`;
+  }
+
+  return xhr(url);
 };
 
 const fetchPartitionData = (table) => xhr(`${table.url}/partitions`);
