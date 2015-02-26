@@ -27,7 +27,7 @@ export default {
   },
 
   fetchTablePreviewData(table, partition) {
-    return fetchPreviewData.then((data) => {
+    return fetchPreviewData(table, partition).then((data) => {
       return { table, partition, data };
     });
   }
