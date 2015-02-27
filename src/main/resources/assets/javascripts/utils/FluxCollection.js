@@ -83,7 +83,7 @@ class FluxCollection {
   // @return {Object} the store
   update(uuid, changedObject, options = {}) {
     // Find the correct entry and update it with the new info
-    let model = _.find(this.collection, { uuid: uuid });
+    let model = _.find(this.collection, { uuid: uuid }) || {};
 
     // Apply all the data to the object
     model = _.assign(model, changedObject);
