@@ -5,7 +5,7 @@ import QueryActions from '../actions/QueryActions';
 import RunActions from '../actions/RunActions';
 import RunStore from '../stores/RunStore';
 import { Table, Column } from 'fixed-data-table';
-import { ProgressBar } from 'react-bootstrap';
+import { Modal, ModalTrigger, ProgressBar } from 'react-bootstrap';
 import UpdateWidthMixin from '../mixins/UpdateWidthMixin';
 
 let cx = React.addons.classSet;
@@ -24,6 +24,18 @@ function getRuns(user) {
     });
   }
 }
+
+let ErrorModal = React.createClass({
+  render() {
+    return (
+      <Modal {...this.props} title="Error" animation={false}>
+        <div className="modal-body">
+          {this.props.message}
+        </div>
+      </Modal>
+    );
+  }
+});
 
 let RunsTable = React.createClass({
   displayName: 'RunsTable',
@@ -227,8 +239,14 @@ let CellRenderers = {
           : null}
         </div>
         );
+
+    // XXX this needs to be a modal...we can use a custom modal here or something experimental
     } else if (run.state === 'FAILED') {
-      return <span title={run.error.message}>{run.error.message}</span>;
+      return (
+        <ModalTrigger modal={<ErrorModal message={run.error.message} />}>
+          <span title={run.error.message}>{run.error.message}</span>
+        </ModalTrigger>
+      );
     }
   },
 
