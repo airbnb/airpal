@@ -201,12 +201,18 @@ let CellRenderers = {
     let currentUser = rowData._currentUser;
     let killable = currentUser && currentUser === run.user;
     let output = cellData;
-    if (output && output.location) {
-      return (
-        <a href={output.location} target="_blank">
-          Download CSV
-        </a>
-      );
+    if (output && output.location && (run.state !== 'FAILED')) {
+      if (output.location.indexOf('http') != -1) {
+        return (
+          <a href={output.location} target="_blank">
+            Download CSV
+          </a>
+        );
+      } else {
+        return (
+          <span>{output.location}</span>
+        );
+      }
     } else if (run.state === 'RUNNING') {
       return (
         <div className={cx({
