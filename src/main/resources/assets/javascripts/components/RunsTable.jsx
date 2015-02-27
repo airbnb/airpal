@@ -202,7 +202,7 @@ let CellRenderers = {
     let killable = currentUser && currentUser === run.user;
     let output = cellData;
     if (output && output.location && (run.state !== 'FAILED')) {
-      if (output.location.indexOf('http') != -1) {
+      if (output.location[0] === '/' || output.location.indexOf('http') != -1) {
         return (
           <a href={output.location} target="_blank">
             Download CSV
