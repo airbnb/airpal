@@ -311,9 +311,9 @@ public class AirpalModule extends AbstractModule
 
     @Provides
     @Singleton
-    public CSVPersistorFactory provideCSVPersistorFactory(ExpiringFileStore fileStore)
+    public CSVPersistorFactory provideCSVPersistorFactory(ExpiringFileStore fileStore, AmazonS3 s3Client, @Named("s3Bucket") String s3Bucket)
     {
-        return new CSVPersistorFactory(config.isUseS3(), fileStore);
+        return new CSVPersistorFactory(config.isUseS3(), s3Client, s3Bucket, fileStore);
     }
 
     @Provides
