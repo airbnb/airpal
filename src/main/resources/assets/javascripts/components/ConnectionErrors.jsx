@@ -9,6 +9,9 @@ let ConnectionErrors = React.createClass({
 
   componentDidMount() {
     RunStore.listen(this._changeStatus);
+
+    // Hide the alert 5 seconds later.
+    setTimeout(() => RunActions.resetOnlineStatus(), 5000);
   },
 
   componentWillUnmount() {
@@ -16,17 +19,17 @@ let ConnectionErrors = React.createClass({
   },
 
   render() {
-    let cx = React.addons.classSet, classes, alertClasses;
+    let cx = React.addons.classSet;
 
     // Define the main classes
-    classes = cx({
+    let classes = cx({
       'row': true,
       'connection-errors': true,
       'hidden': (!this.state.online && !this.state.offline)
     });
 
     // Define the alert classes
-    alertClasses = cx({
+    let alertClasses = cx({
       'alert': true,
       'alert-success': this.state.online,
       'alert-danger': this.state.offline
