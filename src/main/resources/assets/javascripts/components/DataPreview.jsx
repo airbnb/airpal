@@ -73,15 +73,14 @@ let DataPreview = React.createClass({
 
   _renderColumns() {
     return (
-      <div>
+      <div className='flex airpal-table'>
         <Table
+          headerHeight={25}
           rowHeight={40}
           rowGetter={this.rowGetter}
           rowsCount={this.state.table.data.length}
-          width={this.state.width}
-          maxHeight={230}
-          ownerHeight={230}
-          headerHeight={40}
+          width={this.props.tableWidth}
+          maxHeight={this.props.tableHeight}
           isColumnResizing={isColumnResizing}
           onColumnResizeEndCallback={this._onColumnResizeEndCallback}>
           {getColumns(this.state.table.columns, this.state.table.columnWidths)}

@@ -67,29 +67,27 @@ let TableSearch = React.createClass({
     }
 
     return (
-      <section className="row table-search-row">
-        <div className="panel-body">
-          <form className="col-sm-7" role="form">
-            <div className="form-group">
-              <label htmlFor="tables-input">Tables:</label>
-              <SearchInputField
-                ref="tableSelectize"
-                placeholder="Select a table"
-                selectizeOptions={this.tableSelectizeOptions} />
-            </div>
-          </form>
-          <form className="col-sm-5" role="form">
-            <div className="form-group">
-              <label htmlFor="tables-input">Partition:</label>
-              <SearchInputField
-                ref="partitionSelectize"
-                placeholder={partitionPlaceholder}
-                disabled={partitionsDisabled}
-                activeOption={activePartition}
-                selectizeOptions={this.partitionSelectizeOptions} />
-            </div>
-          </form>
-        </div>
+      <section className="flex flex-initial flex-column table-search-row">
+        <form className="flex" role="form">
+          <div className="flex flex-column form-group">
+            <label htmlFor="tables-input">Tables</label>
+            <SearchInputField
+              ref="tableSelectize"
+              placeholder="Select a table"
+              selectizeOptions={this.tableSelectizeOptions} />
+          </div>
+        </form>
+        <form className="flex" role="form">
+          <div className="flex flex-column form-group">
+            <label htmlFor="tables-input">Partition</label>
+            <SearchInputField
+              ref="partitionSelectize"
+              placeholder={partitionPlaceholder}
+              disabled={partitionsDisabled}
+              activeOption={activePartition}
+              selectizeOptions={this.partitionSelectizeOptions} />
+          </div>
+        </form>
       </section>
     );
   },
@@ -117,7 +115,7 @@ let TableSearch = React.createClass({
         'remove_button': {},
 
         'header': {
-          headers: ['Table', 'Usages in Airpal']
+          headers: ['Table', 'Usages']
         }
       },
 
@@ -169,8 +167,8 @@ let TableSearch = React.createClass({
   _renderTableOptions(item, escape) {
     return (
       '<div class="row">' +
-        '<div class="col-sm-6 col-name"><span>' + escape(item.fqn) + '</span></div>' +
-        '<div class="col-sm-3"><span>' + escape(item.usages) + '</span></div>' +
+        '<div class="col-sm-9 col-name"><span>' + escape(item.fqn) + '</span></div>' +
+        '<div class="col-sm-2"><span>' + escape(item.usages) + '</span></div>' +
       '</div>'
     );
   },

@@ -1,3 +1,7 @@
+body {
+  font-family: 'Lato', sans-serif;
+}
+
 .panel-compressed {
   margin-bottom: 10px;
   word-wrap: break-word;
@@ -38,4 +42,236 @@
 
 .columns-container {
   overflow-x: hidden;
+}
+
+.scroll-container {
+  overflow-y: scroll;
+}
+
+.flex {
+  flex: 1;
+  display: flex;
+}
+
+.flex-initial {
+  flex: initial;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.justify-flex-end {
+  justify-content: flex-end;
+}
+
+.airpal-app {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  color: #5d5c5c;
+}
+
+.header {
+  padding: 20px;
+  border-bottom: 1px solid #d6d9dc;
+}
+
+.header h4,
+.header .menu {
+  font-weight: 900;
+}
+
+.header h4 {
+  margin: 0;
+  color: #207dd4;
+}
+
+.header .menu {
+  color: #a4a9b6;
+}
+
+.header .permissions {
+  margin-left: 20px;
+}
+
+.header .glyphicon {
+  margin-right: 5px;
+}
+
+.left {
+  width: 280px;
+}
+
+.right {
+  border-left: 1px solid #d6d9dc;
+}
+
+.btn {
+  font-weight: 900;
+}
+
+.btn,
+.form-control {
+  border-radius: 2px;
+  background-image: linear-gradient(#fff, #fafafa);
+  color: #82878b;
+  background: #fff;
+  border: 1px solid #d5d8db;
+  font-size: 12px;
+}
+
+.form-control {
+  box-shadow: none;
+  border-radius: 20px;
+  padding: 0px 12px;
+  height: 30px;
+  font-size: 12px;
+  width: 260px;
+  margin-right: 20px;
+  margin-top: 1px;
+}
+
+.left .form-control {
+  width: 100%;
+}
+
+.btn.btn-success {
+  background: #45a4fe;
+  color: #fff;
+  border-color: #207dd4;
+}
+
+.editor-container .ace_editor {
+  border: none;
+  background-color: #eff1f6;
+}
+
+.editor-container .ace_editor .ace_gutter {
+  color: rgba(0,0,0,0.2);
+  background-color: rgba(173, 183, 204, 0.07);
+}
+
+.editor-container .ace_editor .ace_cursor {
+  color: #45a4fe;
+}
+
+.editor-container .ace_editor .ace_marker-layer .ace_active-line,
+.editor-container .ace_editor .ace_gutter-active-line {
+  background-color: rgba(255,255,255,0.6);
+}
+
+.editor-menu {
+  background-image: linear-gradient(#fff, #f7f8fb);
+  border-bottom: 1px solid #d6d9dc;
+  border-top: 1px solid #d6d9dc;
+  padding: 8px;
+}
+
+.airpal-table .public_fixedDataTableCell_cellContent {
+  padding: 3px 8px;
+}
+
+.airpal-table .public_fixedDataTableRow_highlighted,
+.airpal-table .public_fixedDataTableRow_highlighted .public_fixedDataTableCell_main {
+  background-color: #eff1f6;
+}
+
+.airpal-table .public_fixedDataTable_header, .public_fixedDataTable_header .public_fixedDataTableCell_main {
+  background-image: linear-gradient(#fff, #f7f8fb);
+}
+
+.airpal-table .public_fixedDataTable_header .public_fixedDataTableCell_cellContent {
+  padding: 3px 8px;
+  font-weight: 300;
+  text-transform: uppercase;
+  font-size: 10px;
+  color: #82878b;
+}
+
+.airpal-table code {
+  color: rgba(32, 125, 212, 0.87);
+  background-color: rgba(69, 164, 254, 0.13);
+}
+
+.airpal-table .label-success {
+  color: #a6aaad;
+  background-color: #fff;
+  border: 1px solid #d5d8db;
+}
+
+.airpal-table .btn {
+  padding: 2px 6px;
+  color: rgba(130, 135, 139, 0.71);
+}
+
+.airpal-table .btn .glyphicon {
+  margin-left: 4px;
+}
+
+.airpal-table .public_fixedDataTable_main {
+  border-left: none;
+  border-right: none;
+}
+
+.query-information .nav {
+  position: relative;
+  top: -44px;
+  flex: initial;
+}
+
+.query-information .tab-content {
+  position: relative;
+  top: -44px;
+}
+
+.query-information .nav:before {
+  display: none;
+}
+
+.query-information-table-tab {
+  padding: 0;
+}
+
+.nav-pills > li > a {
+  padding: 10px 8px;
+}
+
+.nav-pills > li > a,
+.nav-pills > li > a:hover,
+.nav-pills > li > a:focus {
+  border-radius: 0;
+  background: none;
+  color: #d3d3d3;
+}
+
+.nav-pills > li.active > a,
+.nav-pills > li.active > a:hover,
+.nav-pills > li.active > a:focus {
+  background: none;
+  color: #207dd4;
+  border-bottom: 3px solid #45a4fe;
+  border-radius: 0;
+}
+
+.column-item {
+  padding: 3px;
+  font-size: 11px;
+  border-top: 1px solid #d6d9dc;
+}
+
+.column-item:hover {
+  background-color: #eff1f6;
+}
+
+.columns-label {
+  font-weight: 900;
+  margin-bottom: 7px;
 }

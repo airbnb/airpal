@@ -27,35 +27,20 @@ let Header = React.createClass({
 
   render() {
     return (
-      <header className="row header-row">
-
-        <div className="col-sm-9">
-          <h1>Airpal</h1>
+      <header className='flex flex-row'>
+        <div className='flex'>
+          <h4 className='brand'>Airpal</h4>
         </div>
-
-        <div className="col-sm-3">
-
-          <div className="row user-info">
-            <div className="col-sm-6">
-              <dl>
-                <dt>Username</dt>
-                <dd className="user-name">{this.state.user.name}</dd>
-              </dl>
-            </div>
-
-            <div className="col-sm-6">
-              <p>
-                <strong>Access Level &nbsp;</strong><br />
-                <span className="user-permissions">
-                  {this.state.user.executionPermissions.accessLevel}
-                </span>
-              </p>
-            </div>
-
+        <div className='flex justify-flex-end menu'>
+          <div className='flex flex-initial'>
+            <i className='glyphicon glyphicon-user' />
+            {this.state.user.name}
           </div>
-
+          <div className='flex flex-initial permissions'>
+            <i className='glyphicon glyphicon-lock' />
+            {this.state.user.executionPermissions.accessLevel}
+          </div>
         </div>
-
       </header>
     );
   },

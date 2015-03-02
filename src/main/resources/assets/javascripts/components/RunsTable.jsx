@@ -9,6 +9,15 @@ import { Modal, ModalTrigger, ProgressBar } from 'react-bootstrap';
 import UpdateWidthMixin from '../mixins/UpdateWidthMixin';
 
 let cx = React.addons.classSet;
+let isColumnResizing = false;
+let columnWidths = {
+  user: 80,
+  query: 400,
+  status: 80,
+  started: 220,
+  duration: 80,
+  output: 180,
+};
 
 // State actions
 function getRuns(user) {
@@ -67,19 +76,28 @@ let RunsTable = React.createClass({
 //    Need to make sure to wrap `Table` in a parent element so we can
 //    compute the natural width of the component.
     return (
-      <div>
+      <div className='flex airpal-table'>
         <Table
+          headerHeight={25}
           rowHeight={40}
           rowGetter={this.rowGetter}
           rowsCount={this.state.runs.length}
-          width={this.state.width}
-          maxHeight={400}
-          ownerHeight={400}
-          headerHeight={40}>
+          width={this.props.tableWidth}
+          maxHeight={this.props.tableHeight}
+          overflowX='auto'
+          overflowY='auto'
+          isColumnResizing={isColumnResizing}
+          onColumnResizeEndCallback={this.onColumnResizeEndCallback}>
           {getColumns(this.props.user != null)}
         </Table>
       </div>
     );
+  },
+
+  onColumnResizeEndCallback(newColumnWidth, dataKey) {
+    columnWidths[dataKey] = newColumnWidth;
+    isColumnResizing = false;
+    this.forceUpdate(); // TODO: move to store + state
   },
 
   rowGetter(rowIndex) {
@@ -103,44 +121,50 @@ function getColumns(forCurrentUser) {
   return _.compact([
     (forCurrentUser ? null : <Column
       label="User"
-      width={80}
+      width={columnWidths.user}
       dataKey="user"
       cellRenderer={getRenderer('user')}
       key={i++}
+      isResizable={true}
     />),
     <Column
       label="Query"
-      width={forCurrentUser ? 400 : 320}
+      width={columnWidths.query}
       dataKey="query"
       cellRenderer={getRenderer('query')}
       key={i++}
+      isResizable={true}
     />,
     <Column
       label="Status"
-      width={80}
+      width={columnWidths.status}
       dataKey="status"
       cellRenderer={getRenderer('status')}
       key={i++}
+      isResizable={true}
     />,
     <Column
       label="Started"
-      width={220}
+      width={columnWidths.started}
       dataKey="started"
       cellRenderer={getRenderer('started')}
       key={i++}
+      isResizable={true}
     />,
     <Column
       label="Duration"
-      width={80}
+      width={columnWidths.duration}
       dataKey="duration"
       key={i++}
+      isResizable={true}
     />,
     <Column
       label="Output"
-      width={180}
+      width={columnWidths.output}
       dataKey="output"
       cellRenderer={getRenderer('output')}
       key={i++}
+      isResizable={true}
     />,
   ]);
 }
@@ -216,8 +240,9 @@ let CellRenderers = {
     if (output && output.location && (run.state !== 'FAILED')) {
       if (output.location[0] === '/' || output.location.indexOf('http') != -1) {
         return (
-          <a href={output.location} target="_blank">
+          <a href={output.location} target="_blank" className='btn'>
             Download CSV
+            <i className='glyphicon glyphicon-download' />
           </a>
         );
       } else {

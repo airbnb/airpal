@@ -16,11 +16,11 @@ let MyOwnRuns = React.createClass({
   },
 
   componentDidMount() {
-    UserStore.listen(this._onChange);
+    UserStore.listen(this.onChange);
   },
 
   componentWillUnmount() {
-    UserStore.unlisten(this._onChange);
+    UserStore.unlisten(this.onChange);
   },
 
   render() {
@@ -29,11 +29,16 @@ let MyOwnRuns = React.createClass({
       // Still loading user...
       return <span className="glyphicon glyphicon-repeat indicator-spinner"></span>;
     } else {
-      return <RunsTable user={user.name} />;
+      return (
+        <RunsTable
+          user={user.name}
+          tableWidth={this.props.tableWidth}
+          tableHeight={this.props.tableHeight} />
+      );
     }
   },
 
-  _onChange() {
+  onChange() {
     this.setState(getStateFromStore());
   }
 });

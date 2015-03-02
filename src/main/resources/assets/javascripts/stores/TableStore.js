@@ -13,6 +13,10 @@ class TableStore {
     this.activeTable = null;
   }
 
+  static getAll() {
+    return this.tables;
+  }
+
   getByName(name) {
     if (_.isEmpty(this.tables)) {
       return undefined;
@@ -247,6 +251,18 @@ class TableStore {
     }
 
     table.columnWidths[columnIdx] = width;
+  }
+
+  onFetchTables() {
+    TableApiUtils.fetchTables().then((tables) => {
+      tables.map((table) => {
+
+      });
+    }).catch(logError);
+  }
+
+  static getAll() {
+    return this.tables;
   }
 
   static getActiveTable() {
