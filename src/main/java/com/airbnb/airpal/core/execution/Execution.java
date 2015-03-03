@@ -3,6 +3,7 @@ package com.airbnb.airpal.core.execution;
 import com.airbnb.airpal.api.Job;
 import com.airbnb.airpal.api.JobState;
 import com.airbnb.airpal.api.event.JobUpdateEvent;
+import com.airbnb.airpal.api.output.InvalidQueryException;
 import com.airbnb.airpal.api.output.builders.FileTooLargeException;
 import com.airbnb.airpal.api.output.builders.JobOutputBuilder;
 import com.airbnb.airpal.api.output.builders.OutputBuilderFactory;
@@ -88,17 +89,20 @@ public class Execution implements Callable<Job>
     {
         final String userQuery = QUERY_SPLITTER.splitToList(getJob().getQuery()).get(0);
         final JobOutputBuilder outputBuilder;
+        job.setQueryStats(createNoOpQueryStats());
+        
         try {
             outputBuilder = outputBuilderFactory.forJob(job);
         }
         catch (IOException e) {
             throw new ExecutionFailureException(job, "Could not create output builder for job", e);
         }
+        catch (InvalidQueryException e) {
+            throw new ExecutionFailureException(job, e.getMessage(), e);
+        }
 
         final Persistor persistor = persistorFactory.getPersistor(job, job.getOutput());
         final String query = job.getOutput().processQuery(userQuery);
-
-        job.setQueryStats(createNoOpQueryStats());
 
         if (!persistor.canPersist(authorizer)) {
             throw new ExecutionFailureException(job, "Not authorized to create tables", null);

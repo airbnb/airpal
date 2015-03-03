@@ -41,7 +41,7 @@ public class PersistentJobOutputFactory
         } else if (location.isAbsolute()) {
             return new CSVPersistentOutput(location, type, description);
         } else {
-            return new HiveTablePersistentOutput(location, type, description);
+            return  new HiveTablePersistentOutput(location, type, description);
         }
     }
 }
