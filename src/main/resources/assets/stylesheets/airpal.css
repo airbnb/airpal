@@ -225,6 +225,11 @@ body {
   border-right: none;
 }
 
+.airpal-table .editor-menu {
+  color: #a4a9b6;
+  font-size: 13px;
+}
+
 .query-information .nav {
   position: relative;
   top: -44px;
