@@ -1,6 +1,7 @@
 import alt from '../alt';
 import FluxCollection from '../utils/FluxCollection';
 import RunActions from '../actions/RunActions';
+import TabActions from '../actions/TabActions';
 import RunApiUtils from '../utils/RunApiUtils';
 import logError from '../utils/logError'
 
@@ -80,6 +81,7 @@ class RunStore {
 
   onExecute({ query, tmpTable }) {
     RunApiUtils.execute(query, tmpTable).then((runObject) => {
+      TabActions.selectTab(1);
       RunActions.addRun(runObject);
     }).catch(logError);
 
