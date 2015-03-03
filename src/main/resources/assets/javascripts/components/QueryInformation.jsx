@@ -1,18 +1,25 @@
 import React from 'react';
+
 import RunActions from '../actions/RunActions';
+import TabActions from '../actions/TabActions';
+
 import { TabbedArea, TabPane } from 'react-bootstrap';
 import MyOwnRuns from './MyOwnRuns';
 import MySavedQueries from './MySavedQueries';
 import AllRunningQueries from './AllRunningQueries';
 import DataPreview from './DataPreview';
+
 import TableStore from '../stores/TableStore';
+import TabStore from '../stores/TabStore';
+
+import TabConstants from '../constants/TabConstants';
 
 let QueryInformation = React.createClass({
   displayName: 'QueryInformation',
 
   getInitialState() {
     return {
-      selectedTab: 1,
+      selectedTab: TabStore.getSelectedTab(),
       tableWidth: 400,
       tableHeight: 240,
       dataPreview: TableStore.getActiveTable()
@@ -22,6 +29,8 @@ let QueryInformation = React.createClass({
   componentDidMount() {
     RunActions.connect();
     TableStore.listen(this.onChange);
+    TabStore.listen(this.onTabChange);
+
     this.update();
 
     let win = window;
@@ -38,6 +47,7 @@ let QueryInformation = React.createClass({
   componentWillUnmount() {
     RunActions.disconnect();
     TableStore.unlisten(this.onChange);
+    TabStore.unlisten(this.onTabChange);
   },
 
   update() {
@@ -49,13 +59,21 @@ let QueryInformation = React.createClass({
   },
 
   onChange() {
-    var table = TableStore.getActiveTable();
+    const table = TableStore.getActiveTable();
     if (!table) return;
     if (this.state.dataPreview && table.name === this.state.dataPreview.name) return;
+
     this.setState({
-      selectedTab: 4,
-      dataPreview: TableStore.getActiveTable()
+      dataPreview: table,
     });
+
+    TabActions.selectTab.defer(TabConstants.DATA_PREVIEW);
+  },
+
+  onTabChange() {
+    const selectedTab = TabStore.getSelectedTab();
+
+    this.setState({selectedTab});
   },
 
   onResize() {
@@ -107,7 +125,7 @@ let QueryInformation = React.createClass({
   },
 
   onTabSelect(selectedTab) {
-    this.setState({ selectedTab });
+    TabActions.selectTab(selectedTab);
   }
 });
 

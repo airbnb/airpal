@@ -12,6 +12,7 @@ import static java.lang.String.format;
 public class HiveTableOutputBuilder
         implements JobOutputBuilder
 {
+    private final String destinationSchema;
     private final String tmpTableName;
 
     @Override
@@ -27,7 +28,7 @@ public class HiveTableOutputBuilder
     @Override
     public String processQuery(String query)
     {
-        String tableFqn = format("airpal.%s", tmpTableName);
+        String tableFqn = format("%s.%s", destinationSchema, tmpTableName);
         return format("CREATE TABLE %s AS %s", tableFqn, query);
     }
 
