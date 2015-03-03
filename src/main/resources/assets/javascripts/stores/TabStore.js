@@ -1,14 +1,13 @@
-import alt from '../alt'
-import FluxCollection from '../utils/FluxCollection'
-import TabActions from '../actions/TabActions'
-import QueryApiUtils from '../utils/QueryApiUtils'
-import logError from '../utils/logError'
+import alt from '../alt';
+import FluxCollection from '../utils/FluxCollection';
+import TabActions from '../actions/TabActions';
+import TabConstants from '../constants/TabConstants';
 
 class TabStore {
   constructor() {
     this.bindActions(TabActions);
 
-    this.selectedTab = 1;
+    this.selectedTab = TabConstants.MY_RECENT_QUERIES;
   }
 
   onSelectTab(tab) {

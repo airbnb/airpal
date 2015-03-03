@@ -12,6 +12,8 @@ import DataPreview from './DataPreview';
 import TableStore from '../stores/TableStore';
 import TabStore from '../stores/TabStore';
 
+import TabConstants from '../constants/TabConstants';
+
 let QueryInformation = React.createClass({
   displayName: 'QueryInformation',
 
@@ -65,7 +67,7 @@ let QueryInformation = React.createClass({
       dataPreview: table,
     });
 
-    TabActions.selectTab.defer(4);
+    TabActions.selectTab.defer(TabConstants.DATA_PREVIEW);
   },
 
   onTabChange() {
