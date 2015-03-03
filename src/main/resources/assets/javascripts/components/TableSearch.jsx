@@ -167,8 +167,8 @@ let TableSearch = React.createClass({
   _renderTableOptions(item, escape) {
     return (
       '<div class="row">' +
-        '<div class="col-sm-9 col-name"><span>' + escape(item.fqn) + '</span></div>' +
-        '<div class="col-sm-2"><span>' + escape(item.usages) + '</span></div>' +
+        '<div class="col-sm-11 col-name"><span>' + escape(item.fqn) + '</span></div>' +
+        '<div class="col-sm-1"><span>' + escape(item.usages) + '</span></div>' +
       '</div>'
     );
   },
@@ -177,7 +177,7 @@ let TableSearch = React.createClass({
     const strVal = [item.name, item.value].join('=');
     return (
       '<div class="row">' +
-        '<div class="col-sm-6 col-name"><span>' +
+        '<div class="col-sm-11 col-name"><span>' +
           escape(strVal) +
         '</span></div>' +
       '</div>'

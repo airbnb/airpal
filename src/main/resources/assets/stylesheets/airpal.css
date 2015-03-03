@@ -27,6 +27,10 @@ body {
   position: relative;
 }
 
+.editor-container .editor-resize-handles {
+  border-bottom: 3px solid #adcffa;
+}
+
 .editor-container .ace_editor {
   border-radius: 0;
   margin-bottom: 0;
@@ -41,7 +45,7 @@ body {
 }
 
 .columns-container {
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 .scroll-container {
@@ -273,5 +277,25 @@ body {
 
 .columns-label {
   font-weight: 900;
-  margin-bottom: 7px;
+  margin-bottom: 25px;
+}
+
+.left .scroll-container {
+  min-height: 400px;
+  padding-bottom: 60px;
+}
+
+.left .selectize-dropdown {
+  box-shadow: none;
+  width: 520px !important;
+}
+
+.left .selectize-dropdown .selectize-dropdown-content {
+  max-height: 440px;
+}
+
+.left .selectize-header {
+  color: #82878b;
+  border-bottom: 1px solid #d6d9dc;
+  background-image: linear-gradient(#fff, #f7f8fb);
 }

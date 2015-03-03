@@ -74,14 +74,16 @@ let ColumnsPreview = React.createClass({
         <div className='columns-label'>
           Columns
         </div>
-        {columns}
+        <div className='scroll-container'>
+          {columns}
+        </div>
       </div>
     );
   },
 
   _renderEmptyMessage() {
     return (
-      <div className="text-center">
+      <div className="flex text-center">
         <p>Please select a table.</p>
       </div>
     )
