@@ -300,3 +300,7 @@ body {
   border-bottom: 1px solid #d6d9dc;
   background-image: linear-gradient(#fff, #f7f8fb);
 }
+
+.selectize-control.multi .selectize-input > div {
+  padding: 1px 3px 1px 6px;
+}
