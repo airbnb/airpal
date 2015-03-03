@@ -71,20 +71,19 @@ class TableStore {
     }
 
     table.active = true;
-    this.markMostRecentPartitionAsActive(table);
     this.activeTable = table;
   }
 
   markActivePartition(table, partition) {
     const table = this.getByName(table);
-    if (table !== null && !!partition) {
+    if (table && !!partition) {
       table.activePartition = partition;
     }
   }
 
   unmarkActivePartition(tableName, partition) {
     const table = this.getByName(tableName);
-    if (table !== null && table.activePartition == partition) {
+    if (table && table.activePartition == partition) {
       table.activePartition = null;
       table.data = table.defaultData;
     }
@@ -117,11 +116,17 @@ class TableStore {
   }
 
   onRemoveTable(name) {
-    let table;
+    let table = this.getByName(name);
 
-    if (this.getByName(name) === undefined) {
+    if (table === undefined) {
       return;
     }
+
+    if (table.activePartition) {
+      table.activePartition = null;
+    }
+
+    this.unmarkActiveTables();
 
     // Remove the table from the collection
     this.tables = _.reject(this.tables, { name });
