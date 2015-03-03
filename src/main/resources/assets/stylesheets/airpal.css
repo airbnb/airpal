@@ -27,10 +27,6 @@ body {
   position: relative;
 }
 
-.editor-container .editor-resize-handles {
-  border-bottom: 3px solid #adcffa;
-}
-
 .editor-container .ace_editor {
   border-radius: 0;
   margin-bottom: 0;
