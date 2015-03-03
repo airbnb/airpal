@@ -45,7 +45,7 @@ let QueryInformation = React.createClass({
   componentWillUnmount() {
     RunActions.disconnect();
     TableStore.unlisten(this.onChange);
-    TabStore.unlisten(this.onChange);
+    TabStore.unlisten(this.onTabChange);
   },
 
   update() {
