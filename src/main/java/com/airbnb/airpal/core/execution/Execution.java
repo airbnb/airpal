@@ -90,7 +90,7 @@ public class Execution implements Callable<Job>
         final String userQuery = QUERY_SPLITTER.splitToList(getJob().getQuery()).get(0);
         final JobOutputBuilder outputBuilder;
         job.setQueryStats(createNoOpQueryStats());
-        
+
         try {
             outputBuilder = outputBuilderFactory.forJob(job);
         }
