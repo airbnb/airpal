@@ -33,6 +33,7 @@ function getColumns(columns, widths) {
         key={i}
         isResizable={true}
         cellRenderer={cellRenderer}
+        minWidth={80}
         />
     );
   });
