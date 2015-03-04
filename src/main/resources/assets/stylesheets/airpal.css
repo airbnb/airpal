@@ -252,7 +252,6 @@ body {
 .airpal-table .public_fixedDataTable_header .public_fixedDataTableCell_cellContent {
   padding: 3px 8px;
   font-weight: 300;
-  text-transform: uppercase;
   font-size: 10px;
   color: #82878b;
 }
