@@ -13,7 +13,7 @@ let isColumnResizing = false;
 let columnWidths = {
   user: 180,
   query: 400,
-  status: 80,
+  status: 90,
   started: 220,
   duration: 80,
   output: 180,
@@ -136,7 +136,7 @@ function getColumns(forCurrentUser) {
       key={i++}
       isResizable={true}
       minWidth={80}
-      flexGrow={2}
+      flexGrow={1}
     />,
     <Column
       label="Status"

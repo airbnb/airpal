@@ -31,7 +31,9 @@ let MySavedQueries = React.createClass({
   render() {
     return (
       <div className='panel-body'>
-        {this.renderChildren()}
+        <div className='scroll-container'>
+          {this.renderChildren()}
+        </div>
       </div>
     );
   },
@@ -43,14 +45,14 @@ let MySavedQueries = React.createClass({
       return this.state.queries.map((query) => {
         let queryText = query.queryWithPlaceholders.query;
         return (
-          <div className='row'>
-            <div className="col-md-12">
+          <div className='saved-container'>
+            <div>
               <h4>{query.name}</h4>
               <p>{query.description}</p>
             </div>
-            <div className="col-md-12">
+            <div className='clearfix'>
               <pre onClick={this._onSelectQuery.bind(null, queryText)}>
-                {truncate(queryText, 750)}
+                <code>{truncate(queryText, 750)}</code>
               </pre>
               <ButtonToolbar className="pull-right">
                 <Button
@@ -60,7 +62,7 @@ let MySavedQueries = React.createClass({
                 </Button>
                 <Button
                   bsSize="xsmall"
-                  bsStyle="primary"
+                  bsStyle="success"
                   onClick={this._runQuery.bind(null, queryText)}>
                     Run
                 </Button>

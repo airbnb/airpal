@@ -100,7 +100,7 @@ let QueryInformation = React.createClass({
                     tableWidth={this.state.tableWidth}
                     tableHeight={this.state.tableHeight} />}
             </TabPane>
-            <TabPane
+            <TabPane className='saved-queries'
               eventKey={2}
               tab="My saved queries">
                 {selectedTab === 2 && <MySavedQueries />}

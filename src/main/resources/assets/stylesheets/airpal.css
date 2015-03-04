@@ -289,6 +289,54 @@ body {
   background-image: none;
 }
 
+.query-information > div {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+}
+
+.query-information .saved-container .btn-toolbar {
+  position: relative;
+  top: -40px;
+  right: 10px;
+}
+
+.query-information .saved-queries {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex: 1;
+  flex: 1;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+}
+
+.query-information .saved-queries pre {
+  background-color: #eff1f6;
+  border-color: #d6d9dc;
+}
+
+.query-information .saved-queries code {
+  color: rgba(32, 125, 212, 0.87);
+}
+
+.query-information .saved-queries .scroll-container {
+  padding-bottom: 20px;
+}
+
+.saved-queries.tab-pane.fade {
+  display: none;
+}
+
+.saved-queries.tab-pane.fade.active {
+  display: -webkit-flex;
+  display: flex;
+}
+
+.query-information-table-tab.tab-pane {
+  margin-top: -44px;
+}
+
 .query-information .nav {
   position: relative;
   top: -44px;
@@ -297,8 +345,15 @@ body {
 }
 
 .query-information .tab-content {
-  position: relative;
-  top: -44px;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+}
+
+.query-information .tab-pane {
+  max-height: initial;
+  height: 100%;
 }
 
 .query-information .nav:before {
@@ -373,10 +428,8 @@ body {
   padding: 1px 3px 1px 6px;
 }
 
-/* firefox magic */
+/* firefox flex box magic */
 @-moz-document url-prefix() {
-  /* not proud of this ;_; */
-
   .left .columns-container .scroll-container {
     padding-bottom: 93%;
     height: 1px;
@@ -384,5 +437,22 @@ body {
 
   .left .scroll-container {
     padding-bottom: 90px;
+  }
+
+  .query-information nav {
+    flex: initial;
+  }
+
+  .query-information > div {
+    position: relative;
+    flex: 1 1 0%;
+  }
+
+  .query-information .saved-queries {
+    top: 0px;
+    right: 0px;
+    left: 0px;
+    bottom: 0px;
+    position: absolute;
   }
 }
