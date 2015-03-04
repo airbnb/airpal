@@ -11,7 +11,7 @@ import UpdateWidthMixin from '../mixins/UpdateWidthMixin';
 let cx = React.addons.classSet;
 let isColumnResizing = false;
 let columnWidths = {
-  user: 80,
+  user: 180,
   query: 400,
   status: 80,
   started: 220,
