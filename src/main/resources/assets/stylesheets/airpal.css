@@ -316,6 +316,10 @@ body {
   background-image: linear-gradient(#fff, #f7f8fb);
 }
 
+.selectize-control.multi .selectize-input>div.active {
+  background-color: #45a4fe;
+}
+
 .selectize-control.multi .selectize-input > div {
   padding: 1px 3px 1px 6px;
 }
