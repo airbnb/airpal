@@ -24,9 +24,9 @@ let AirpalApp = React.createClass({
         <div className='flex flex-row flex-initial header'>
           <Header />
         </div>
-        <div className='flex flex-row'>
-          <div className='flex flex-column flex-initial left'>
-            <div className='flex flex-column panel-body'>
+        <div className='flex flex-row content'>
+          <div className='flex flex-column flex-initial left scroll-container'>
+            <div className='panel-body'>
               <TableSearch />
               <ColumnsPreview />
             </div>

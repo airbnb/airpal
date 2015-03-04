@@ -70,11 +70,11 @@ let ColumnsPreview = React.createClass({
 
     // Render the template
     return (
-      <div className="flex flex-column columns-container">
+      <div className="columns-container">
         <div className='columns-label'>
           Columns
         </div>
-        <div className='scroll-container'>
+        <div>
           {columns}
         </div>
       </div>

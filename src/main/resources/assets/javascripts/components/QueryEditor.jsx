@@ -47,7 +47,7 @@ let QueryEditor = React.createClass({
 
   render() {
     return (
-      <div className="flex flex-initial flex-column scroll-container">
+      <div className="flex flex-initial flex-column">
         <div ref="queryContainer" className="editor-container clearfix">
           <pre ref="queryEditor" className="editor">
             SELECT COUNT(1) FROM users

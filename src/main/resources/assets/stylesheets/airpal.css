@@ -41,7 +41,7 @@ body {
 }
 
 .columns-container {
-  overflow: hidden;
+  padding-bottom: 10px;
 }
 
 .scroll-container {
@@ -111,6 +111,10 @@ body {
 
 .header .glyphicon {
   margin-right: 5px;
+}
+
+.content {
+  overflow: hidden;
 }
 
 .left {
@@ -231,6 +235,9 @@ body {
 .airpal-table .editor-menu {
   color: #a4a9b6;
   font-size: 13px;
+  border-bottom: none;
+  background-color: white;
+  background-image: none;
 }
 
 .query-information .nav {
@@ -286,7 +293,7 @@ body {
 
 .columns-label {
   font-weight: 900;
-  margin-bottom: 25px;
+  margin-bottom: 5px;
 }
 
 .left .scroll-container {

@@ -67,27 +67,23 @@ let TableSearch = React.createClass({
     }
 
     return (
-      <section className="flex flex-initial flex-column table-search-row">
-        <form className="flex" role="form">
-          <div className="flex flex-column form-group">
-            <label htmlFor="tables-input">Tables</label>
-            <SearchInputField
-              ref="tableSelectize"
-              placeholder="Select a table"
-              selectizeOptions={this.tableSelectizeOptions} />
-          </div>
-        </form>
-        <form className="flex" role="form">
-          <div className="flex flex-column form-group">
-            <label htmlFor="tables-input">Partition</label>
-            <SearchInputField
-              ref="partitionSelectize"
-              placeholder={partitionPlaceholder}
-              disabled={partitionsDisabled}
-              activeOption={activePartition}
-              selectizeOptions={this.partitionSelectizeOptions} />
-          </div>
-        </form>
+      <section className="table-search-row">
+        <div className="flex flex-column form-group">
+          <label htmlFor="tables-input">Tables</label>
+          <SearchInputField
+            ref="tableSelectize"
+            placeholder="Select a table"
+            selectizeOptions={this.tableSelectizeOptions} />
+        </div>
+        <div className="flex flex-column form-group">
+          <label htmlFor="tables-input">Partition</label>
+          <SearchInputField
+            ref="partitionSelectize"
+            placeholder={partitionPlaceholder}
+            disabled={partitionsDisabled}
+            activeOption={activePartition}
+            selectizeOptions={this.partitionSelectizeOptions} />
+        </div>
       </section>
     );
   },
