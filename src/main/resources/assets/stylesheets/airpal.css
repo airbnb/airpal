@@ -236,6 +236,7 @@ body {
 .query-information .nav {
   position: relative;
   top: -44px;
+  -webkit-flex: initial;
   flex: initial;
 }
 
