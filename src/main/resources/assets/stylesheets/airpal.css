@@ -49,23 +49,29 @@ body {
 }
 
 .flex {
+  -webkit-flex: 1;
   flex: 1;
+  display: -webkit-flex;
   display: flex;
 }
 
 .flex-initial {
+  -webkit-flex: initial;
   flex: initial;
 }
 
 .flex-row {
+  -webkit-flex-direction: row;
   flex-direction: row;
 }
 
 .flex-column {
+  -webkit-flex-direction: column;
   flex-direction: column;
 }
 
 .justify-flex-end {
+  -webkit-justify-content: flex-end;
   justify-content: flex-end;
 }
 
@@ -75,6 +81,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
+  display: -webkit-flex;
   display: flex;
   color: #5d5c5c;
 }
