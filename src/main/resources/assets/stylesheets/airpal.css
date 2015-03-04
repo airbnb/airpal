@@ -2,6 +2,10 @@ body {
   font-family: 'Lato', sans-serif;
 }
 
+.text-light {
+  color: #d3d3d3;
+}
+
 .panel-compressed {
   margin-bottom: 10px;
   word-wrap: break-word;
@@ -32,7 +36,7 @@ body {
   margin-bottom: 0;
 }
 
-.table-search-row .panel-body {
+.table-search-row.panel-body {
   padding-bottom: 0;
 }
 
@@ -41,6 +45,7 @@ body {
 }
 
 .columns-container {
+  padding-top: 0;
   padding-bottom: 10px;
 }
 
@@ -68,6 +73,10 @@ body {
 .flex-column {
   -webkit-flex-direction: column;
   flex-direction: column;
+}
+
+.justify-center {
+  justify-content: center;
 }
 
 .justify-flex-end {
@@ -150,6 +159,43 @@ body {
   margin-top: 1px;
 }
 
+.form-control:focus,
+.selectize-input.focus {
+  border-color: #45a4fe;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+.selectize-dropdown [data-selectable] .highlight {
+  background: #45a4fe;
+  -webkit-border-radius: 1px;
+  -moz-border-radius: 1px;
+  border-radius: 1px;
+  color: white;
+  padding: 0 3px;
+}
+
+.selectize-control.multi .selectize-input>div.item {
+  max-width: 230px;
+  overflow: hidden;
+}
+
+.selectize-control.plugin-remove_button [data-value] .remove {
+  background: #d7d8dc;
+}
+
+.selectize-control.plugin-remove_button [data-value] .remove:hover {
+  background: #dcdce0;
+}
+
+.selectize-control.plugin-remove_button [data-value].active .remove {
+  background-color: #3b99f2;
+}
+
+.selectize-dropdown-content .row.active {
+  background-color: #eff1f6;
+}
+
 .left .form-control {
   width: 100%;
 }
@@ -177,6 +223,10 @@ body {
 .editor-container .ace_editor .ace_marker-layer .ace_active-line,
 .editor-container .ace_editor .ace_gutter-active-line {
   background-color: rgba(255,255,255,0.6);
+}
+
+.editor-container .editor-resize-handle {
+  color: #a4a9b6;
 }
 
 .editor-menu {
@@ -293,12 +343,12 @@ body {
 
 .columns-label {
   font-weight: 900;
-  margin-bottom: 5px;
+  margin-bottom: 20px;
 }
 
 .left .scroll-container {
   min-height: 400px;
-  padding-bottom: 60px;
+  padding-bottom: 10px;
 }
 
 .left .selectize-dropdown {
@@ -322,4 +372,18 @@ body {
 
 .selectize-control.multi .selectize-input > div {
   padding: 1px 3px 1px 6px;
+}
+
+/* firefox magic */
+@-moz-document url-prefix() {
+  /* not proud of this ;_; */
+
+  .left .columns-container .scroll-container {
+    padding-bottom: 93%;
+    height: 1px;
+  }
+
+  .left .scroll-container {
+    padding-bottom: 90px;
+  }
 }

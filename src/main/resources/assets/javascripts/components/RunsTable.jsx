@@ -106,7 +106,7 @@ let RunsTable = React.createClass({
 
   renderEmptyMessage() {
     return (
-      <p className="info text-center">No queries to show</p>
+      <p className="info panel-body text-light text-center">No queries to show</p>
     );
   },
 
@@ -136,6 +136,7 @@ function getColumns(forCurrentUser) {
       key={i++}
       isResizable={true}
       minWidth={80}
+      flexGrow={2}
     />,
     <Column
       label="Status"
@@ -171,6 +172,7 @@ function getColumns(forCurrentUser) {
       key={i++}
       isResizable={true}
       minWidth={80}
+      flexGrow={1}
     />,
   ]);
 }

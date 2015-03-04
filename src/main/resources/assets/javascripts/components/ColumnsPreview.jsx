@@ -70,11 +70,11 @@ let ColumnsPreview = React.createClass({
 
     // Render the template
     return (
-      <div className="columns-container">
+      <div className="flex flex-column columns-container panel-body">
         <div className='columns-label'>
           Columns
         </div>
-        <div>
+        <div className='scroll-container'>
           {columns}
         </div>
       </div>
@@ -83,7 +83,7 @@ let ColumnsPreview = React.createClass({
 
   _renderEmptyMessage() {
     return (
-      <div className="flex text-center">
+      <div className="flex justify-center text-light panel-body text-center">
         <p>Please select a table.</p>
       </div>
     )

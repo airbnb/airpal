@@ -66,7 +66,7 @@ let QueryEditor = React.createClass({
           <div className='flex' />
           <div className='flex justify-flex-end'>
             <input ref="customName" type="text" name="custom-name" className="form-control"
-              placeholder="Set custom table name" />
+              placeholder="Temporary table name for query results" />
             <div className="btn-toolbar">
               <div className="btn-group">
                 <button className="btn btn-primary"
@@ -122,7 +122,8 @@ let QueryEditor = React.createClass({
   },
 
   handleResizeShrink($event) {
-    this._resizeEditor(-120);
+    let $el = $(this.refs.queryEditor.getDOMNode());
+    this._resizeEditor(-$el.height()/2);
   },
 
   handleResizeGrow($event) {
@@ -134,12 +135,15 @@ let QueryEditor = React.createClass({
   // Resizes the editor based on the given pixels
   // @param {integer} the amount of pixels to increase/decrease the editor
   _resizeEditor(pixels) {
-
     let $el = $(this.refs.queryEditor.getDOMNode());
+    let newHeight = $el.height() + pixels;
+
+    // 30 is the min_height
+    if (newHeight < 30) return;
 
     // Animate the editor height
     $el.animate({
-      height: $el.height() + pixels
+      height: newHeight
     },
       {
         duration: 300,
@@ -147,6 +151,7 @@ let QueryEditor = React.createClass({
         // Notify the AceEditor on completion that it has resized
         complete: function() {
           this.editor.resize(true);
+          $(window).trigger('resize');
         }.bind(this)
       }
     );

@@ -67,7 +67,7 @@ let TableSearch = React.createClass({
     }
 
     return (
-      <section className="table-search-row">
+      <section className="flex flex-column flex-initial table-search-row panel-body">
         <div className="flex flex-column form-group">
           <label htmlFor="tables-input">Tables</label>
           <SearchInputField

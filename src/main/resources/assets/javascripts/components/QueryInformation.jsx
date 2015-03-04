@@ -42,6 +42,8 @@ let QueryInformation = React.createClass({
     } else {
       win.onresize = this.onResize;
     }
+
+    $(window).on('resize', this.update);
   },
 
   componentWillUnmount() {

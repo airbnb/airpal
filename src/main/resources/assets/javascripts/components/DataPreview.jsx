@@ -66,7 +66,7 @@ let DataPreview = React.createClass({
   /* Internal Helpers ------------------------------------------------------- */
   _renderEmptyMessage() {
     return (
-      <div className="text-center">
+      <div className="panel-body text-light text-center">
         <p>Please select a table.</p>
       </div>
     )
