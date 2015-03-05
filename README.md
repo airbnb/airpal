@@ -15,7 +15,7 @@ queries run within the tool.
 * [Launching](#steps-to-launch)
 * [Presto Compatibility Chart](#compatibility-chart)
 
-![Airpal UI](screenshots/airpal.png)
+![Airpal UI](screenshots/demo.gif)
 
 ## Features
 
