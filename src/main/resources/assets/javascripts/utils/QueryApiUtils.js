@@ -9,7 +9,9 @@ let QueryApiUtils = {
 
   createQuery(data) {
     let formData = Object.keys(data).reduce((encoded, key) => {
-      return `${encoded}&${key}=${data[key]}`
+      const encKey = encodeURIComponent(key);
+      const encData = encodeURIComponent(data[key]);
+      return `${encoded}&${encKey}=${encData}`
     }, '');
 
     return xhr('/api/query/saved', {
