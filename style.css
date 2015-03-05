@@ -18,7 +18,7 @@ div {
   left: 8%;
   background-size: contain;
   position: absolute;
-  background-image: url('/belo.png');
+  background-image: url('./belo.png');
 }
 
 nav {
