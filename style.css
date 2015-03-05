@@ -80,6 +80,12 @@ nav {
   margin-bottom: 23px;
 }
 
+.hero > h4 > a {
+  color: inherit;
+  border-bottom: 2px dotted #4aa7ff;
+  text-decoration: none;
+}
+
 .hero .subtitle {
   margin-top: 0;
   font-weight: 100;
