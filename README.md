@@ -15,6 +15,8 @@ queries run within the tool.
 * [Launching](#steps-to-launch)
 * [Presto Compatibility Chart](#compatibility-chart)
 
+![Airpal UI](screenshots/airpal.png)
+
 ## Features
 
 * Optional [Access Control](docs/USER_ACCOUNTS.md)
@@ -112,3 +114,11 @@ java -Ddw.prestoCoordinator=http://presto-coordinator-url.com \
 Airpal Version | Presto Versions Tested
 ---------------|-----------------------
 0.1            | 0.77, 0.87
+
+## Contributors
+
+Andy Kramolisch | [@andykram](/andykram)
+Harry Shoff     | [@hshoff](/hshoff)
+Josh Perez      | [@goatslacker](/goatslacker)
+Spike Brehm     | [@spikebrehm](/spikebrehm)
+Stefan Vermaas  | [@stefanvermaas](/stefanvermaas)

@@ -126,7 +126,7 @@ function getColumns(forCurrentUser) {
       cellRenderer={getRenderer('user')}
       key={i++}
       isResizable={true}
-      minWidth={80}
+      minWidth={5}
     />),
     <Column
       label="Query"
@@ -135,8 +135,7 @@ function getColumns(forCurrentUser) {
       cellRenderer={getRenderer('query')}
       key={i++}
       isResizable={true}
-      minWidth={80}
-      flexGrow={1}
+      minWidth={5}
     />,
     <Column
       label="Status"
@@ -145,7 +144,7 @@ function getColumns(forCurrentUser) {
       cellRenderer={getRenderer('status')}
       key={i++}
       isResizable={true}
-      minWidth={80}
+      minWidth={5}
     />,
     <Column
       label="Started"
@@ -154,7 +153,7 @@ function getColumns(forCurrentUser) {
       cellRenderer={getRenderer('started')}
       key={i++}
       isResizable={true}
-      minWidth={80}
+      minWidth={5}
     />,
     <Column
       label="Duration"
@@ -162,7 +161,7 @@ function getColumns(forCurrentUser) {
       dataKey="duration"
       key={i++}
       isResizable={true}
-      minWidth={80}
+      minWidth={5}
     />,
     <Column
       label="Output"
@@ -171,8 +170,7 @@ function getColumns(forCurrentUser) {
       cellRenderer={getRenderer('output')}
       key={i++}
       isResizable={true}
-      minWidth={80}
-      flexGrow={1}
+      minWidth={5}
     />,
   ]);
 }
