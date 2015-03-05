@@ -15,6 +15,8 @@ queries run within the tool.
 * [Launching](#steps-to-launch)
 * [Presto Compatibility Chart](#compatibility-chart)
 
+![Airpal UI](screenshots/airpal.png)
+
 ## Features
 
 * Optional [Access Control](docs/USER_ACCOUNTS.md)
