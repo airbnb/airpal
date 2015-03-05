@@ -11,6 +11,16 @@ div {
   box-sizing: border-box;
 }
 
+.brand {
+  width: 50px;
+  height: 55px;
+  top: 0;
+  left: 8%;
+  background-size: contain;
+  position: absolute;
+  background-image: url('/belo.png');
+}
+
 nav {
   text-align: right;
   display: -webkit-flex;
@@ -87,10 +97,13 @@ nav {
 }
 
 .hero .subtitle {
+  text-align: center;
   margin-top: 0;
   font-weight: 100;
   font-size: 21px;
   margin-bottom: 15px;
+  padding: 0 30px;
+
 }
 
 .features {
