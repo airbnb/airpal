@@ -45,7 +45,7 @@ let ColumnsPreview = React.createClass({
         }).sortBy('name').value();
 
     columns = _.chain(partitions.concat(normalCols)).reduce(function(m, col) {
-      let reuseGroup = (m.length > 0) && (m[m.length - 1].length < 4), group = reuseGroup ? m[m.length - 1] : [], val;
+      let reuseGroup = (m.length > 0) && (m[m.length - 1].length < 1), group = reuseGroup ? m[m.length - 1] : [], val;
 
       group.push(
         <Column
@@ -62,19 +62,28 @@ let ColumnsPreview = React.createClass({
       return m;
     }, []).map(function(col, i) {
       return (
-        <div className="row" key={'col-row-'+i}>
+        <div key={'col-row-'+i}>
           {col}
         </div>
       );
     }).value();
 
     // Render the template
-    return (<div className="columns-container">{columns}</div>);
+    return (
+      <div className="flex flex-column columns-container panel-body">
+        <div className='columns-label'>
+          Columns
+        </div>
+        <div className='scroll-container'>
+          {columns}
+        </div>
+      </div>
+    );
   },
 
   _renderEmptyMessage() {
     return (
-      <div className="text-center">
+      <div className="flex justify-center text-light panel-body text-center">
         <p>Please select a table.</p>
       </div>
     )

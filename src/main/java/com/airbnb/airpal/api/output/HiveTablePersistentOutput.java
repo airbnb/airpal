@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import static java.lang.String.format;
 
@@ -17,8 +18,12 @@ import static java.lang.String.format;
 @JsonTypeName("hive")
 public class HiveTablePersistentOutput implements PersistentJobOutput
 {
+    private final static Pattern INVALID_TABLE_CHARS = Pattern.compile("\\s");
+
     private final UUID jobUUID;
+    @Getter
     private final String tmpTableName;
+    @Getter
     private final String destinationSchema;
 
     @Getter
@@ -35,6 +40,7 @@ public class HiveTablePersistentOutput implements PersistentJobOutput
             this.location = new URI(format("%s.%s", destinationSchema, tmpTableName));
         }
         catch (URISyntaxException e) {
+            this.location = null;
             log.error("Couldn't create hive output", e);
         }
         this.destinationSchema = destinationSchema;
@@ -65,6 +71,7 @@ public class HiveTablePersistentOutput implements PersistentJobOutput
     public String processQuery(String query)
     {
         String tableFqn = format("%s.%s", destinationSchema, tmpTableName);
+
         return format("CREATE TABLE %s AS %s", tableFqn, query);
     }
 }

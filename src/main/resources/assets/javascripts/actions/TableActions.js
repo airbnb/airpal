@@ -1,4 +1,5 @@
 import alt from '../alt';
+import logError from '../utils/logError'
 
 class TableActions {
   constructor() {
@@ -8,8 +9,10 @@ class TableActions {
       'selectTable',
       'unselectTable',
       'selectPartition',
-      'unselectPartition'
+      'unselectPartition',
+      'fetchTables'
     );
+
   }
 
   setTableColumnWidth(columnIdx, width) {

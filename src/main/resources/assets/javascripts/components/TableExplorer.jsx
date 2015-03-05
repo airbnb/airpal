@@ -1,20 +1,52 @@
 import React from 'react';
-import TableInfo from './TableInfo';
-import TableSearch from './TableSearch';
+import TableActions from '../actions/TableActions';
+import TableStore from '../stores/TableStore';
+import TableApiUtils from '../utils/TableApiUtils';
+import { Table, Column } from 'fixed-data-table';
+
+function getState() {
+  return {
+    table: TableStore.getActiveTable(),
+    tables: TableStore.getAll()
+  };
+}
 
 let TableExplorer = React.createClass({
   displayName: 'TableExplorer',
 
+  getInitialState() {
+    return getState();
+  },
+
+  componentDidMount() {
+    TableStore.listen(this.update);
+    TableApiUtils.fetchTables().then((tables) => {
+      this.setState({ tables });
+    })
+  },
+
+  componentWillUnmount() {
+    TableStore.unlisten(this.update);
+  },
+
+  update() {
+    this.setState(getState());
+  },
+
+  load(query, callback) {
+    $.ajax({
+      url: './api/table',
+      type: 'GET',
+      error() { callback(); },
+      success(res) {
+        callback(res);
+      }
+    });
+  },
+
   render() {
     return (
-      <div className="panel panel-default panel-container">
-        <div className='panel-heading'>
-          <h3 className='panel-title'>
-            Table explorer
-          </h3>
-        </div>
-        <TableSearch />
-        <TableInfo />
+      <div className='flex'>
       </div>
     );
   }

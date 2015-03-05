@@ -33,6 +33,7 @@ function getColumns(columns, widths) {
         key={i}
         isResizable={true}
         cellRenderer={cellRenderer}
+        minWidth={80}
         />
     );
   });
@@ -65,7 +66,7 @@ let DataPreview = React.createClass({
   /* Internal Helpers ------------------------------------------------------- */
   _renderEmptyMessage() {
     return (
-      <div className="text-center">
+      <div className="panel-body text-light text-center">
         <p>Please select a table.</p>
       </div>
     )
@@ -73,15 +74,17 @@ let DataPreview = React.createClass({
 
   _renderColumns() {
     return (
-      <div>
+      <div className='flex flex-column airpal-table'>
+        <div className='editor-menu'>
+          <strong>{this.state.table && this.state.table.name}</strong>
+        </div>
         <Table
+          headerHeight={25}
           rowHeight={40}
           rowGetter={this.rowGetter}
           rowsCount={this.state.table.data.length}
-          width={this.state.width}
-          maxHeight={230}
-          ownerHeight={230}
-          headerHeight={40}
+          width={this.props.tableWidth}
+          maxHeight={this.props.tableHeight - 39}
           isColumnResizing={isColumnResizing}
           onColumnResizeEndCallback={this._onColumnResizeEndCallback}>
           {getColumns(this.state.table.columns, this.state.table.columnWidths)}

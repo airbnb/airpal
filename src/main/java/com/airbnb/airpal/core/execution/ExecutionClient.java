@@ -169,7 +169,7 @@ public class ExecutionClient
             usageStore.markUsage(t);
         }
 
-        if (job.getOutput() instanceof HiveTablePersistentOutput) {
+        if (job.getOutput() instanceof HiveTablePersistentOutput && job.getOutput().getLocation() != null) {
             String[] parts = job.getOutput().getLocation().toString().split("\\.");
             if (parts.length == 2) {
                 Map<String, List<String>> cache = schemaCache.getSchemaMap("hive");

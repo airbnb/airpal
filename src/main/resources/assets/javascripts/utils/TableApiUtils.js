@@ -30,5 +30,9 @@ export default {
     return fetchPreviewData(table, partition).then((data) => {
       return { table, partition, data };
     });
+  },
+
+  fetchTables() {
+    return xhr('/api/table?query=a');
   }
 };

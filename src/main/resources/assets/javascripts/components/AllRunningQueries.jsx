@@ -8,7 +8,11 @@ let AllRunningQueries = React.createClass({
   },
 
   render() {
-    return <RunsTable />;
+    return (
+      <RunsTable
+        tableWidth={this.props.tableWidth}
+        tableHeight={this.props.tableHeight} />
+    );
   }
 });
 

@@ -12,14 +12,14 @@ let Column = React.createClass({
   render() {
     // Return the template
     return (
-      <div className="col-sm-3">
-        <div className="panel panel-default panel-compressed">
-
-          <div className="panel-body">
-            <strong>{this.props.name}</strong> ({this.props.type}) {
-              this.props.partition ? '(Partition)' : null}
+      <div>
+        <div className="flex justify-flex-end column-item">
+          <div className='flex'>
+            <strong>{this.props.name}</strong>
           </div>
-
+          <div>
+            <small>{this.props.type} {this.props.partition ? '(Partition)' : null}</small>
+          </div>
         </div>
       </div>
     );
