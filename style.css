@@ -1,0 +1,146 @@
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: 'Lato', sans-serif;
+  color: #a4a9b6;
+}
+
+div {
+  box-sizing: border-box;
+}
+
+nav {
+  text-align: right;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: row;
+  flex-direction: row;
+  -webkit-justify-content: flex-end;
+  justify-content: flex-end;
+}
+
+.color-dark-gray {
+  color: #82878b;
+}
+
+.color-blue {
+  color: #2180d8;
+}
+
+.color-light-blue {
+  color: #45a5ff;
+}
+
+.border-blue {
+  border-color: #2180d8;
+}
+
+.container {
+  margin: 0 auto;
+  max-width: 1280px;
+}
+
+.nav-container .container {
+  margin: 0;
+  padding: 10px;
+}
+
+.nav-container a {
+  color: #45a5ff;
+  text-decoration: none;
+  margin-right: 15px;
+  display: inline-block;
+}
+
+.page-container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+}
+
+.btn {
+  padding: 10px 20px;
+  font-weight: 900;
+  border: 4px solid;
+  text-decoration: none;
+}
+
+.hero,
+.nav-container {
+  background-color: #f8f9fb;
+}
+
+.hero > h1 {
+  margin-top: -45px;
+  font-size: 70px;
+  margin-bottom: 23px;
+}
+
+.hero .subtitle {
+  margin-top: 0;
+  font-weight: 100;
+  font-size: 21px;
+  margin-bottom: 15px;
+}
+
+.features {
+  padding: 20px;
+}
+
+.features > div {
+  line-height: 1.3em;
+  padding: 0 40px 40px;
+}
+
+.callouts {
+  margin-top: 50px;
+}
+
+.flex-center {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+}
+
+.flex {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: column;
+  flex-direction: column;
+}
+
+.flex-row {
+  -webkit-flex-direction: row;
+  flex-direction: row;
+}
+
+.flex-1 {
+  -webkit-flex: 1;
+  flex: 1;
+}
+
+.flex-2 {
+  -webkit-flex: 2;
+  flex: 2;
+}
+
+.flex-3 {
+  -webkit-flex: 3;
+  flex: 3;
+}
+
+.flex-initial {
+  -webkit-flex: initial;
+  flex: initial;
+}
+
+
