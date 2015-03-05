@@ -117,8 +117,8 @@ Airpal Version | Presto Versions Tested
 
 ## Contributors
 
-- Andy Kramolisch [@andykram](/andykram)
-- Harry Shoff [@hshoff](/hshoff)
-- Josh Perez [@goatslacker](/goatslacker)
-- Spike Brehm [@spikebrehm](/spikebrehm)
-- Stefan Vermaas [@stefanvermaas](/stefanvermaas)
+- Andy Kramolisch [0andykram](https://github.com/andykram)
+- Harry Shoff [@hshoff](https://github.com/hshoff)
+- Josh Perez [@goatslacker](https://github.com/goatslacker)
+- Spike Brehm [@spikebrehm](https://github.com/spikebrehm)
+- Stefan Vermaas [@stefanvermaas](https://github.com/stefanvermaas)
