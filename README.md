@@ -58,6 +58,12 @@ queries run within the tool.
     ./gradlew clean shadowJar
     ```
 
+    Specify Presto version by `-Dairpal.prestoVersion`:
+
+    ```
+    ./gradlew -Dairpal.prestoVersion=0.85 clean shadowJar
+    ```
+
 1. Create a MySQL database for Airpal. We recommend you call it `airpal` and will assume that for future steps.
 
 1. Create a `reference.yml` file to store your configuration options.
