@@ -69,7 +69,7 @@ nav {
   margin: 0 auto;
 }
 
-.nav-container a {
+.link {
   color: #45a5ff;
   text-decoration: none;
   margin-right: 15px;
@@ -96,7 +96,16 @@ nav {
   background-color: #f8f9fb;
 }
 
+.hero {
+  overflow: hidden;
+}
+
+.hero .github {
+  margin-bottom: 20px;
+}
+
 .hero  h1 {
+  width: 99.5%;
   margin-top: 0;
   font-size: 70px;
   margin-bottom: 23px;
@@ -119,7 +128,7 @@ nav {
 }
 
 .features {
-  padding: 20px;
+  padding: 40px 20px 20px;
   overflow: hidden;
 }
 
@@ -128,6 +137,45 @@ nav {
   line-height: 1.3em;
   padding: 0 40px 20px;
   float: left;
+  text-align: center;
+}
+
+.browser {
+  border-radius: 2px 2px 0 0;
+  background: #f5f6f8;
+  height: 30px;
+  text-align: left;
+}
+
+.dot {
+  margin: 8px 0 0 4px;
+  display: inline-block;
+  background: green;
+  height: 12px;
+  width: 12px;
+  border-radius: 20px;
+}
+
+.dot:first-child {
+  margin: 8px 0 0 8px;
+}
+
+.dot-green {
+  background-color: #85d350;
+}
+
+.dot-red {
+  background-color: #d75342;
+}
+
+.dot-yellow {
+  background-color: #f7bf3d;
+}
+
+.github {
+  height: 30px;
+  text-align: center;
+  margin-bottom: 40px;
 }
 
 @media (max-width: 680px) {
@@ -138,6 +186,12 @@ nav {
 
 .callouts {
   margin-top: 50px;
+}
+
+.footer {
+  padding-top: 30px;
+  border-top: 1px solid #f8f9fb;
+  margin-top: 20px;
 }
 
 .flex-center {
