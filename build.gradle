@@ -10,6 +10,13 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '1.2.0'
 }
 
+ext {
+    prestoVersion = "0.77"
+    if (System.properties['airpal.prestoVersion'] != null) {
+        prestoVersion = System.properties['airpal.prestoVersion']
+    }
+}
+
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'com.github.johnrengelman.shadow'
@@ -55,15 +62,15 @@ dependencies {
     compile group: 'io.dropwizard', name: 'dropwizard-metrics-graphite', version:'0.7.1'
     compile group: 'io.dropwizard.modules', name: 'dropwizard-flyway', version:'0.7.0-1'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version:'2.3.2'
-    compile(group: 'com.facebook.presto', name: 'presto-client', version:'0.77') {
+    compile(group: 'com.facebook.presto', name: 'presto-client', version:prestoVersion) {
         exclude(group: 'org.eclipse.jetty')
     }
-    compile group: 'com.facebook.presto', name: 'presto-spi', version:'0.77'
-    compile(group: 'com.facebook.presto', name: 'presto-main', version:'0.77') {
+    compile group: 'com.facebook.presto', name: 'presto-spi', version:prestoVersion
+    compile(group: 'com.facebook.presto', name: 'presto-main', version:prestoVersion) {
         exclude(module: 'javax.servlet-api')
         exclude(group: 'org.eclipse.jetty')
     }
-    compile group: 'com.facebook.presto', name: 'presto-parser', version:'0.77'
+    compile group: 'com.facebook.presto', name: 'presto-parser', version:prestoVersion
     compile group: 'com.hubspot.rosetta', name: 'RosettaJdbi', version:'2.1-SNAPSHOT'
     compile group: 'net.sf.opencsv', name: 'opencsv', version:'2.3'
     compile group: 'com.amazonaws', name: 'aws-java-sdk', version:'1.6.8'
