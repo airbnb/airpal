@@ -7,35 +7,47 @@
   <link rel='stylesheet' href='//fonts.googleapis.com/css?family=Lato:400,900'>
   <link rel=stylesheet href=style.css>
 
-  <div class='page-container flex'>
-    <div class='nav-container flex'>
+  <div>
+    <div class='nav-container'>
       <nav class='container'>
-        <a href='http://nerds.airbnb.com/airpal' target='_blank'>
-          Overview
-        </a>
-        <a href='https://github.com/airbnb/airpal/tree/master/docs' target='_blank'>
-          Documentation
-        </a>
-        <a href='https://github.com/airbnb/airpal/' target='_blank'>
-          Github
-        </a>
+        <div class='pull-left'>
+          <a href='http://nerds.airbnb.com' target='_blank'>
+            <div class='brand'></div>
+          </a>
+        </div>
+        <div class='links'>
+          <a href='http://nerds.airbnb.com/airpal' target='_blank'>
+            Overview
+          </a>
+          <a href='https://github.com/airbnb/airpal/tree/master/docs' target='_blank'>
+            Documentation
+          </a>
+          <a href='https://github.com/airbnb/airpal/' target='_blank'>
+            Github
+          </a>
+        </div>
       </nav>
     </div>
-    <div class='flex-center flex-3 hero'>
-      <h1 class='color-blue'>Airpal</h1>
-      <h4 class='subtitle color-dark-gray'>
-        A web-based query execution tool built
-        on top of Facebook's <a href='https://prestodb.io/' target='_blank'>PrestoDB</a>.
-      </h4>
-      <div class='callouts'>
-        <a href='https://github.com/airbnb/airpal#airpal' target='_blank'
-           class='btn color-blue border-blue'>
-            Get Started
-        </a>
+    <div class='hero'>
+      <div class='container text-center'>
+        <h1 class='color-blue'>Airpal</h1>
+        <h4 class='subtitle color-dark-gray'>
+          A web-based query execution tool built
+          on top of Facebook's <a href='https://prestodb.io/' target='_blank'>PrestoDB</a>.
+        </h4>
+        <div class='callouts'>
+          <a href='https://github.com/airbnb/airpal#airpal' target='_blank'
+             class='btn color-blue border-blue'>
+              Get Started
+          </a>
+        </div>
+        <div class='demo'>
+          <img src='./demo.gif' />
+        </div>
       </div>
     </div>
-    <div class='flex flex-row flex-1 container features'>
-      <div class='flex flex-1'>
+    <div class='flex-row container features'>
+      <div>
         <h3 class='color-dark-gray'>Facilitate Analysis</h3>
         <p>
           No more copying and pasting in the
@@ -46,7 +58,7 @@
           on your desktop.
         </p>
       </div>
-      <div class='flex flex-1'>
+      <div>
         <h3 class='color-dark-gray'>Drive SQL Adoption</h3>
         <p>
           At organizations with different levels
@@ -55,7 +67,7 @@
           and write queries.
         </p>
       </div>
-      <div class='flex flex-1'>
+      <div>
         <h3 class='color-dark-gray'>Manage Access</h3>
         <p>
           Airpal can act as a security layer on top of
@@ -66,9 +78,6 @@
       </div>
     </div>
   </div>
-  <a href='http://nerds.airbnb.com' target='_blank'>
-    <div class='brand'></div>
-  </a>
 
   <script>
     var _gaq = _gaq || [];

@@ -14,21 +14,33 @@ div {
 .brand {
   width: 50px;
   height: 55px;
-  top: 0;
-  left: 8%;
+  float: left;
   background-size: contain;
-  position: absolute;
   background-image: url('./belo.png');
+}
+
+.demo {
+  display: inline-block;
+  max-width: 940px;
+  min-width: 370px;
+  margin: 60px 10px;
+  margin-bottom: 40px;
+  border: 1px solid #d6d9dc;
+  border-radius: 2px;
+  box-shadow: 0 4px 15px 0px #D6D9DC;
+}
+
+.demo img {
+  width: 100%;
+  height: auto;
 }
 
 nav {
   text-align: right;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-flex-direction: row;
-  flex-direction: row;
-  -webkit-justify-content: flex-end;
-  justify-content: flex-end;
+}
+
+.links {
+  padding-top: 20px;
 }
 
 .color-dark-gray {
@@ -53,8 +65,8 @@ nav {
 }
 
 .nav-container .container {
-  margin: 0;
-  padding: 10px;
+  height: 55px;
+  margin: 0 auto;
 }
 
 .nav-container a {
@@ -84,13 +96,13 @@ nav {
   background-color: #f8f9fb;
 }
 
-.hero > h1 {
-  margin-top: -45px;
+.hero  h1 {
+  margin-top: 0;
   font-size: 70px;
   margin-bottom: 23px;
 }
 
-.hero > h4 > a {
+.hero  h4 > a {
   color: inherit;
   border-bottom: 2px dotted #4aa7ff;
   text-decoration: none;
@@ -108,11 +120,20 @@ nav {
 
 .features {
   padding: 20px;
+  overflow: hidden;
 }
 
 .features > div {
+  width: 33%;
   line-height: 1.3em;
-  padding: 0 40px 40px;
+  padding: 0 40px 20px;
+  float: left;
+}
+
+@media (max-width: 680px) {
+  .features > div {
+    width: 100%;
+  }
 }
 
 .callouts {
@@ -160,6 +181,14 @@ nav {
 .flex-initial {
   -webkit-flex: initial;
   flex: initial;
+}
+
+.pull-left {
+  float: left;
+}
+
+.text-center {
+  text-align: center;
 }
 
 
