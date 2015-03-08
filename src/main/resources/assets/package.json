@@ -60,7 +60,6 @@
     "brace": "^0.4.0",
     "es6-shim": "^0.25.3",
     "fixed-data-table": "^0.1.0",
-    "flux": "^2.0.1",
     "jquery": "~1.9.0",
     "keymirror": "^0.1.0",
     "lodash": "^2.4.1",
