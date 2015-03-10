@@ -5,7 +5,7 @@ and table it is in. These restrictions also support limiting access
 to views, based on the view's fully qualified name.
 This functionality is mostly provided by [Apache
 Shiro](http://shiro.apache.org/), and is configured by specifying an INI
-file in the Airpal configuration under [`shiro > iniConfigs`](https://github.com/airbnb/airpal/blob/master/reference.yml#L26).
+file in the Airpal configuration under [`shiro > iniConfigs`](https://github.com/airbnb/airpal/blob/master/reference.example.yml#L22).
 The [shiro docs](http://shiro.apache.org/reference.html) provide
 information on configuring shiro.
 
