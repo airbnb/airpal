@@ -1,15 +1,25 @@
 import alt from '../alt'
 import FluxCollection from '../utils/FluxCollection'
 import QueryActions from '../actions/QueryActions'
-import QueryApiUtils from '../utils/QueryApiUtils'
-import logError from '../utils/logError'
 
 class QueryStore {
   constructor() {
-    this.bindActions(QueryActions);
+    // handle store listeners
+    this.bindListeners({
+      onSelectQuery: QueryActions.SELECT_QUERY,
+      onReceivedQueries: QueryActions.RECEIVED_QUERIES,
+      onReceivedQuery: QueryActions.RECEIVED_QUERY,
+      onDestroyQuery: QueryActions.DESTROY_QUERY
+    });
 
+    // export methods we can use
+    this.exportPublicMethods({
+      getSelectedQuery: this.getSelectedQuery,
+      getCollection: this.getCollection
+    });
+
+    // state
     this.selectedQuery = null;
-
     this.collection = new FluxCollection({
       comparator: (model, index) => -1 * index
     });
@@ -27,33 +37,15 @@ class QueryStore {
     this.collection.add(queries);
   }
 
-  onCreateQuery(data) {
-    QueryApiUtils.createQuery(data).then((query) => {
-      QueryActions.receivedQuery(query);
-    }).catch(logError);
-    return false;
-  }
-
   onDestroyQuery(uuid) {
-    QueryApiUtils.destroyQuery(uuid).then(() => {
-      this.collection.remove(uuid);
-      this.getInstance().emitChange();
-    }).catch(logError);
-    return false;
+    this.collection.remove(uuid);
   }
 
-  onFetchSavedQueries() {
-    QueryApiUtils.fetchSavedQueries().then((results) => {
-      QueryActions.receivedQueries(results);
-    }).catch(logError);
-    return false;
-  }
-
-  static getSelectedQuery() {
+  getSelectedQuery() {
     return this.getState().selectedQuery;
   }
 
-  static getCollection() {
+  getCollection() {
     return this.getState().collection;
   }
 }
