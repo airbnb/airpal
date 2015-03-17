@@ -20,9 +20,7 @@ let TableExplorer = React.createClass({
 
   componentDidMount() {
     TableStore.listen(this.update);
-    TableApiUtils.fetchTables().then((tables) => {
-      this.setState({ tables });
-    })
+    TableActions.fetchTables();
   },
 
   componentWillUnmount() {

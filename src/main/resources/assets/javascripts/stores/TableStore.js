@@ -1,20 +1,31 @@
 import FQN from '../utils/fqn';
 import TableActions from '../actions/TableActions';
-import TableApiUtils from '../utils/TableApiUtils';
 import _ from 'lodash';
 import alt from '../alt';
-import logError from '../utils/logError'
 
 class TableStore {
   constructor() {
-    this.bindActions(TableActions);
+    this.bindListeners({
+      onAddTable: TableActions.ADD_TABLE,
+      onRemoveTable: TableActions.REMOVE_TABLE,
+      onSelectTable: TableActions.SELECT_TABLE,
+      onUnselectTable: TableActions.UNSELECT_TABLE,
+      onSelectPartition: TableActions.SELECT_PARTITION,
+      onUnselectPartition: TableActions.UNSELECT_PARTITION,
+      onFetchTables: TableActions.FETCH_TABLES,
+      onSetTableColumnWidth: TableActions.SET_TABLE_COLUMN_WIDTH,
+      onReceivedTableData: TableActions.RECEIVED_TABLE_DATA,
+      onReceivedPartitionData: TableActions.RECEIVED_PARITION_DATA
+    });
+
+    this.exportPublicMethods({
+      getActiveTable: this.getActiveTable,
+      getAll: this.getAll,
+      containsTable: this.containsTable
+    });
 
     this.tables = [];
     this.activeTable = null;
-  }
-
-  static getAll() {
-    return this.tables;
   }
 
   getByName(name) {
@@ -106,13 +117,6 @@ class TableStore {
 
     // Add the table to the collection
     this.tables.push(table);
-
-    // Fetch the data from the new table
-    TableApiUtils.fetchTableData(table).then(
-      ({table, columns, data, partitions}) => {
-        TableActions.receivedTableData(table, columns, data, partitions);
-      }
-    ).catch(logError);
   }
 
   onRemoveTable(name) {
@@ -159,13 +163,9 @@ class TableStore {
       return;
     }
 
-    this.markActivePartition(tableName, partition);
+    TableActions.fetchTablePreview(table, name, value);
 
-    TableApiUtils.fetchTablePreviewData(table, {name, value}).then(
-      ({table, partition, data}) => {
-        TableActions.receivedPartitionData({table, partition, data});
-      }
-    ).catch(logError);
+    this.markActivePartition(tableName, partition);
   }
 
   onUnselectPartition(data) {
@@ -236,6 +236,10 @@ class TableStore {
     }
   }
 
+  onFetchTables(tables) {
+    this.tables = tables;
+  }
+
   onReceivedPartitionData({ table: refTable, partition: {name, value}, data }) {
     const table = this.getByName(refTable.name);
 
@@ -258,23 +262,15 @@ class TableStore {
     table.columnWidths[columnIdx] = width;
   }
 
-  onFetchTables() {
-    TableApiUtils.fetchTables().then((tables) => {
-      tables.map((table) => {
-
-      });
-    }).catch(logError);
-  }
-
-  static getAll() {
+  getAll() {
     return this.tables;
   }
 
-  static getActiveTable() {
+  getActiveTable() {
     return this.getState().activeTable;
   }
 
-  static containsTable(name) {
+  containsTable(name) {
     let { tables } = this.getState();
 
     return !!_.find(tables, { name: name });
