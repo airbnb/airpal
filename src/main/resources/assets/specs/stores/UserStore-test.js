@@ -2,20 +2,13 @@
 
 jest.dontMock('../../javascripts/stores/UserStore');
 
-describe('UserStore', function() {
+describe('UserStore', () => {
+  const UserStore = require('../../javascripts/stores/UserStore');
 
-  var UserDispatcher, UserStore, callback;
-
-  beforeEach(function() {
-    UserDispatcher = require('../../javascripts/dispatchers/AppDispatcher');
-    UserStore = require('../../javascripts/stores/UserStore');
-    callback = UserDispatcher.register.mock.calls[0][0];
-  });
-
-  it('returns a default user', function() {
+  it('returns a default user', () => {
     console.info('it returns a default user');
 
-    var currentUser = UserStore.getCurrentUser();
+    const currentUser = UserStore.getCurrentUser();
     expect(currentUser['name']).toEqual('unknown');
   });
 });
