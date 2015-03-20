@@ -74,15 +74,12 @@
   },
   "jest": {
     "testDirectoryName": "specs",
-    "testPathIgnorePatterns": [
-      "node_modules",
-      "specs/support"
-    ],
-    "scriptPreprocessor": "<rootDir>/node_modules/babel-jest",
+    "scriptPreprocessor": "node_modules/babel-jest",
     "unmockedModulePathPatterns": [
-      "node_modules/react",
+      "node_modules/object-assign",
       "node_modules/alt",
       "javascripts/alt.js",
+      "node_modules/react",
       "lodash"
     ]
   }
