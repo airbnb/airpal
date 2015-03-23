@@ -15,7 +15,7 @@ class TableStore {
       onFetchTables: TableActions.FETCH_TABLES,
       onSetTableColumnWidth: TableActions.SET_TABLE_COLUMN_WIDTH,
       onReceivedTableData: TableActions.RECEIVED_TABLE_DATA,
-      onReceivedPartitionData: TableActions.RECEIVED_PARITION_DATA
+      onReceivedPartitionData: TableActions.RECEIVED_PARTITION_DATA
     });
 
     this.exportPublicMethods({
@@ -117,6 +117,8 @@ class TableStore {
 
     // Add the table to the collection
     this.tables.push(table);
+
+    TableActions.fetchTable(table);
   }
 
   onRemoveTable(name) {

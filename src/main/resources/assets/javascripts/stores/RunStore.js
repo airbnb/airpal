@@ -32,7 +32,7 @@ class RunStore {
       onResetOnlineStatus: RunActions.RESET_ONLINE_STATUS,
       onAddMultipleRuns: RunActions.ADD_MULTIPLE_RUNS,
       onAddRun: RunActions.ADD_RUN,
-      onMessage: RunActions.HANDLE_MESSAGE,
+      onMessage: RunActions.HANDLE_CONNECTION_MESSAGE,
       onFetchHistory: RunActions.FETCH_HISTORY,
       onExecute: RunActions.EXECUTE
     });
@@ -53,7 +53,7 @@ class RunStore {
   // Creates an SSE connection to the backend to make a real time stream
   // with the API
   onConnect() {
-    this.disconnect(); // Close any open connection
+    this.onDisconnect(); // Close any open connection
 
     // Create a new listener to the API endpoint
     this._eventSource = new EventSource('/api/updates/subscribe');
@@ -106,7 +106,7 @@ class RunStore {
   }
 
   onExecute() {
-    TabActions.selectTab(1);
+    TabActions.selectTab.defer(1);
   }
 
   getCollection() {

@@ -34,7 +34,7 @@ class RunActions {
     RunApiUtils.kill(uuid);
   }
 
-  handleMessage(data) {
+  handleConnectionMessage(data) {
     this.dispatch(data.job);
   }
 }

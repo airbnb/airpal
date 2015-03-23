@@ -10,7 +10,7 @@ class UserActions {
       this.actions.receivedCurrentUser(user);
 
       // Now fetch queries for that user.
-      return RunApiUtils.fetchForUser(this.user);
+      return RunApiUtils.fetchForUser(user);
     }).then((results) => {
       RunActions.addMultipleRuns(results);
     }).catch(logError);

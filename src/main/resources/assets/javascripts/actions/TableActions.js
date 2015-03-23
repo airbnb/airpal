@@ -5,6 +5,7 @@ import logError from '../utils/logError'
 class TableActions {
   constructor() {
     this.generateActions(
+      'addTable',
       'removeTable',
       'selectTable',
       'unselectTable',
@@ -13,7 +14,7 @@ class TableActions {
     );
   }
 
-  addTable(table) {
+  fetchTable(table) {
     // Fetch the data from the new table
     TableApiUtils.fetchTableData(table).then(
       ({table, columns, data, partitions}) => {
