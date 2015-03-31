@@ -1,34 +1,25 @@
 import alt from '../alt';
-import RunActions from '../actions/RunActions';
 import UserActions from '../actions/UserActions';
-import UserApiUtils from '../utils/UserApiUtils';
-import RunApiUtils from '../utils/RunApiUtils';
-import logError from '../utils/logError'
 
 class UserStore {
   constructor() {
-    this.user = UserStore.getDefaultUser();
-    this.bindAction(UserActions.receivedCurrentUser, this.onReceivedCurrentUser);
-    this.bindAction(UserActions.fetchCurrentUser, this.onFetchCurrentUser);
+    this.bindListeners({
+      onReceivedCurrentUser: UserActions.RECEIVED_CURRENT_USER
+    });
+
+    this.exportPublicMethods({
+      getDefaultUser: this.getDefaultUser,
+      getCurrentUser: this.getCurrentUser
+    });
+
+    this.user = this.getDefaultUser();
   }
 
   onReceivedCurrentUser(user) {
     this.user = user;
-
-    // Now fetch queries for that user.
-    RunApiUtils.fetchForUser(this.user).then((results) => {
-      RunActions.addMultipleRuns(results);
-    }).catch(logError);
   }
 
-  onFetchCurrentUser() {
-    UserApiUtils.fetchCurrentUser().then((user) => {
-      UserActions.receivedCurrentUser(user);
-    }).catch(logError);
-    return false;
-  }
-
-  static getDefaultUser() {
+  getDefaultUser() {
     return {
       name: 'unknown',
       executionPermissions: {
@@ -39,7 +30,7 @@ class UserStore {
     };
   }
 
-  static getCurrentUser() {
+  getCurrentUser() {
     return this.getState().user;
   }
 }

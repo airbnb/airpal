@@ -1,4 +1,5 @@
 import alt from '../alt';
+import TableApiUtils from '../utils/TableApiUtils';
 import logError from '../utils/logError'
 
 class TableActions {
@@ -9,10 +10,31 @@ class TableActions {
       'selectTable',
       'unselectTable',
       'selectPartition',
-      'unselectPartition',
-      'fetchTables'
+      'unselectPartition'
     );
+  }
 
+  fetchTable(table) {
+    // Fetch the data from the new table
+    TableApiUtils.fetchTableData(table).then(
+      ({table, columns, data, partitions}) => {
+        this.actions.receivedTableData(table, columns, data, partitions);
+      }
+    ).catch(logError);
+  }
+
+  fetchTables() {
+    TableApiUtils.fetchTables().then((tables) => {
+      this.dispatch(tables);
+    }).catch(logError);
+  }
+
+  fetchTablePreview(table, name, value) {
+    TableApiUtils.fetchTablePreviewData(table, {name, value}).then(
+      ({table, partition, data}) => {
+        this.actions.receivedPartitionData({table, partition, data});
+      }
+    ).catch(logError);
   }
 
   setTableColumnWidth(columnIdx, width) {

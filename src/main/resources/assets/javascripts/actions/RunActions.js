@@ -1,4 +1,6 @@
 import alt from '../alt';
+import RunApiUtils from '../utils/RunApiUtils';
+import logError from '../utils/logError'
 
 class RunActions {
   constructor() {
@@ -7,21 +9,32 @@ class RunActions {
       'addRun',
       'connect',
       'disconnect',
-      'fetchHistory',
-      'kill',
-      'onError',
-      'onOpen',
+      'handleConnectionError',
+      'handleConnectionOpen',
       'resetOnlineStatus',
       'wentOffline',
       'wentOnline'
     );
   }
 
-  execute({ query, tmpTable }) {
-    this.dispatch({ query, tmpTable });
+  fetchHistory() {
+    RunApiUtils.fetchHistory().then((results) => {
+      this.actions.addMultipleRuns(results);
+    }).catch(logError);
   }
 
-  onMessage(data) {
+  execute({ query, tmpTable }) {
+    RunApiUtils.execute(query, tmpTable).then((runObject) => {
+      this.dispatch();
+      this.actions.addRun(runObject);
+    }).catch(logError);
+  }
+
+  kill() {
+    RunApiUtils.kill(uuid);
+  }
+
+  handleConnectionMessage(data) {
     this.dispatch(data.job);
   }
 }
