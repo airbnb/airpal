@@ -35,7 +35,7 @@ let QueryEditor = React.createClass({
 
   componentWillUnmount() {
     QueryStore.unlisten(this._selectQuery);
-    QueryStore.listen(this._hideModal);
+    QueryStore.unlisten(this._hideModal);
   },
 
   getInitialState() {
