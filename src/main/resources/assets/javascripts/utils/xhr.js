@@ -16,7 +16,8 @@ const json = (response) => {
 
 const xhr = (url, params = {}) => {
   params = Object.assign({
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'same-origin'
   }, params);
 
   return fetch(url, params)
