@@ -30,7 +30,7 @@ class RunActions {
     }).catch(logError);
   }
 
-  kill() {
+  kill(uuid) {
     RunApiUtils.kill(uuid);
   }
 
