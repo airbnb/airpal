@@ -6,8 +6,8 @@ to views, based on the view's fully qualified name.
 This functionality is mostly provided by [Apache
 Shiro](http://shiro.apache.org/), and is configured by specifying an INI
 file in the Airpal configuration under [`shiro > iniConfigs`](https://github.com/airbnb/airpal/blob/master/reference.example.yml#L22).
-The [shiro docs](http://shiro.apache.org/reference.html) provide
-information on configuring shiro.
+The [Shiro docs](http://shiro.apache.org/reference.html) provide
+information on configuring Shiro.
 
 By default, Airpal is configured to use the provided
 [allow all](https://github.com/airbnb/airpal/blob/master/src/main/resources/shiro_allow_all.ini)
