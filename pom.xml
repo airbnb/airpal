@@ -166,7 +166,7 @@
     <repository>
       <id>bazaarvoice-deploy</id>
       <name>Bazaarboice Deploy</name>
-      <url>https://repo.bazaarvoice.com/nexus/content/groups/bazaarvoice/</url>
+      <url>https://repo.bazaarvoice.com/nexus/content/respositories/</url>
     </repository>
   </distributionManagement>
   <build>
@@ -189,7 +189,7 @@
           <createrepoOpts>--simple-md-filenames --no-database</createrepoOpts>
           <artifactItems>
             <artifactItem>
-              <groupId>com.airbnb.airpal</groupId>
+              <groupId>com.bazaarvoice.airbnb</groupId>
               <artifactId>airpal</artifactId>
               <version>0.1.0-SNAPSHOT</version>
               <type>rpm</type>
