@@ -143,6 +143,10 @@ ospackage {
 task writePom << {
     pom {
         project {
+            scm {
+                connection 'scm:git:git@github.com:louiswilliams/airpal.git'
+                tag 'airpal-0.1.0'
+            }
             parent {
                 groupId 'com.bazaarvoice.commons'
                 artifactId 'bv-super-pom'
@@ -157,7 +161,6 @@ task writePom << {
                     scope 'provided'
                 }
             }
-
         }
     }.withXml {
         asNode().with {
