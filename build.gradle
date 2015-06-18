@@ -158,7 +158,7 @@ task writePom << {
                 appendNode('repository').with {
                     appendNode('id','bazaarvoice-deploy')
                     appendNode('name', 'Bazaarboice Deploy')
-                    appendNode('url', 'https://repo.bazaarvoice.com/nexus/content/repositories/releases/')
+                    appendNode('url', 'https://repo.bazaarvoice.com/nexus/content/groups/bazaarvoice/')
                 }
             }
             appendNode('build').appendNode('plugins').with {
