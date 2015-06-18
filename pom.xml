@@ -166,7 +166,7 @@
     <repository>
       <id>bazaarvoice-deploy</id>
       <name>Bazaarboice Deploy</name>
-      <url>https://repo.bazaarvoice.com/nexus/content/respositories/</url>
+      <url>https://repo.bazaarvoice.com/nexus/content/respositories/releases/</url>
     </repository>
   </distributionManagement>
   <build>
