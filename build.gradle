@@ -143,6 +143,12 @@ ospackage {
 task writePom << {
     pom {
         project {
+            parent {
+                groupId 'com.bazaarvoice.commons'
+                artifactId 'bv-super-pom'
+                version '1.12'
+                relativePath 'true'
+            }
             dependencies {
                 dependency {
                     groupId 'org.projectlombok'
@@ -151,16 +157,10 @@ task writePom << {
                     scope 'provided'
                 }
             }
+
         }
     }.withXml {
         asNode().with {
-            appendNode('distributionManagement').with {
-                appendNode('repository').with {
-                    appendNode('id','bazaarvoice-deploy')
-                    appendNode('name', 'Bazaarboice Deploy')
-                    appendNode('url', 'https://repo.bazaarvoice.com/nexus/content/groups/bazaarvoice/')
-                }
-            }
             appendNode('build').appendNode('plugins').with {
                 appendNode('plugin').with {
                     appendNode('groupId', 'com.bazaarvoice.maven.plugins')
@@ -186,8 +186,7 @@ task writePom << {
                 }
             }
             appendNode('properties').with {
-                appendNode('maven.compiler.source', '1.7')
-                appendNode('maven.compiler.target', '1.7')
+                appendNode('java.minimum.version', '1.7')
             }
         }
     }.writeTo("pom.xml")
