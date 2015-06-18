@@ -154,6 +154,13 @@ task writePom << {
         }
     }.withXml {
         asNode().with {
+            appendNode('distributionManagement').with {
+                appendNode('repository').with {
+                    appendNode('id','bazaarvoice-deploy')
+                    appendNode('name', 'Bazaarboice Deploy')
+                    appendNode('url', 'https://repo.bazaarvoice.com:443/nexus/content/groups/bazaarvoice')
+                }
+            }
             appendNode('build').appendNode('plugins').with {
                 appendNode('plugin').with {
                     appendNode('groupId', 'com.bazaarvoice.maven.plugins')

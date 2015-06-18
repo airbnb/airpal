@@ -162,6 +162,13 @@
       <scope>compile</scope>
     </dependency>
   </dependencies>
+  <distributionManagement>
+    <repository>
+      <id>bazaarvoice-deploy</id>
+      <name>Bazaarboice Deploy</name>
+      <url>https://repo.bazaarvoice.com:443/nexus/content/groups/bazaarvoice</url>
+    </repository>
+  </distributionManagement>
   <build>
     <plugins>
       <plugin>
