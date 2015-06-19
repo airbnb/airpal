@@ -2,12 +2,14 @@ buildscript {
     repositories {
         mavenCentral()
     }
+
 }
 
 plugins {
     id 'pl.allegro.tech.build.axion-release' version '0.9.9'
     id 'com.moowork.node' version '0.8'
     id 'com.github.johnrengelman.shadow' version '1.2.0'
+    id 'nebula.os-package' version '2.2.6'
 }
 
 ext {
@@ -21,6 +23,9 @@ apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'com.moowork.node'
+apply plugin: 'os-package-base'
+apply plugin: 'maven'
+
 
 group = 'com.airbnb.airpal'
 
@@ -92,6 +97,7 @@ node {
     download   = System.properties['airpal.useLocalNode'] == null
 }
 
+
 task cleanAssets {
   delete file("src/main/resources/assets/build")
 }
@@ -120,6 +126,97 @@ shadowJar {
     exclude 'META-INF/LICENSE'
 
     zip64 true
+}
+
+ospackage {
+    packageName = 'airpal'
+    release = 1
+    version = "0.1"
+    os = LINUX
+    into '/usr/local/airpal'
+
+    from (shadowJar.outputs.files) {
+        into 'lib'
+    }
+}
+
+task writePom << {
+    pom {
+        project {
+            version '0.1.0.1'
+            scm {
+                connection 'scm:git:git@github.com:louiswilliams/airpal.git'
+                tag 'HEAD'
+            }
+            parent {
+                groupId 'com.bazaarvoice.commons'
+                artifactId 'bv-super-pom'
+                version '1.12'
+                relativePath 'true'
+            }
+            dependencies {
+                dependency {
+                    groupId 'org.projectlombok'
+                    artifactId 'lombok'
+                    version '1.16.4'
+                    scope 'provided'
+                }
+            }
+        }
+    }.withXml {
+        asNode().with {
+            appendNode('build').appendNode('plugins').with {
+                appendNode('plugin').with {
+                    appendNode('groupId', 'com.bazaarvoice.maven.plugins')
+                    appendNode('artifactId', 's3repo-maven-plugin')
+                    appendNode('version', '3.5')
+                    appendNode('executions').appendNode('execution').with {
+                        appendNode('phase', 'deploy')
+                        appendNode('goals').appendNode('goal', 'create-update')
+                    }
+                    appendNode('configuration').with {
+                        appendNode('allowCreateRepository', 'true')
+                        appendNode('s3RepositoryPath', 's3://nexus-private-artifacts/airpal/yum-repo')
+                        appendNode('createrepoOpts', '--simple-md-filenames --no-database')
+                        appendNode('artifactItems').appendNode('artifactItem').with {
+                            appendNode('groupId', 'com.airbnb.airpal')
+                            appendNode('artifactId', 'airpal')
+                            appendNode('version', '${project.version}')
+                            appendNode('type', 'rpm')
+                            appendNode('targetExtension', 'noarch.rpm')
+                        }
+                    }
+                }
+                appendNode('plugin').with {
+                    appendNode('groupId', 'org.codehaus.mojo')
+                    appendNode('artifactId', 'rpm-maven-plugin')
+                    appendNode('version', '2.1.3')
+                    appendNode('configuration').with {
+                        appendNode('group','com.airbnb.airpal')
+                        appendNode('name', 'airpal')
+                        appendNode('mappings').with {
+                            appendNode('mapping').with {
+                                appendNode('directory','/usr/local/airpal')
+                                appendNode('artifact')
+                            }
+                        }
+                    }
+                    appendNode('executions').appendNode('execution').with {
+                        appendNode('phase', 'package')
+                        appendNode('goals').appendNode('goal', 'attached-rpm')
+                    }
+                }
+                appendNode('plugin').with {
+                    appendNode('groupId', 'org.apache.maven.plugins')
+                    appendNode('artifactId', 'maven-release-plugin')
+                    appendNode('version', '2.5.2')
+                }
+            }
+            appendNode('properties').with {
+                appendNode('java.minimum.version', '1.7')
+            }
+        }
+    }.writeTo("pom.xml")
 }
 
 buildAssets.dependsOn installAssets
