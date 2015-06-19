@@ -9,7 +9,7 @@
   </parent>
   <groupId>com.airbnb.airpal</groupId>
   <artifactId>airpal</artifactId>
-  <version>0.1.0-SNAPSHOT</version>
+  <version>0.1.0.1</version>
   <scm>
     <connection>scm:git:git@github.com:louiswilliams/airpal.git</connection>
   </scm>
@@ -193,9 +193,8 @@
             <artifactItem>
               <groupId>com.airbnb.airpal</groupId>
               <artifactId>airpal</artifactId>
-              <version>0.1.0</version>
+              <version>0.1.0.1</version>
               <type>rpm</type>
-              <classifier>rpm</classifier>
               <targetExtension>noarch.rpm</targetExtension>
             </artifactItem>
           </artifactItems>

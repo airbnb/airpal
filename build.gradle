@@ -143,6 +143,7 @@ ospackage {
 task writePom << {
     pom {
         project {
+            version '0.1.0.1'
             scm {
                 connection 'scm:git:git@github.com:louiswilliams/airpal.git'
                 tag 'HEAD'
@@ -180,9 +181,8 @@ task writePom << {
                         appendNode('artifactItems').appendNode('artifactItem').with {
                             appendNode('groupId', 'com.airbnb.airpal')
                             appendNode('artifactId', 'airpal')
-                            appendNode('version', '0.1.0')
+                            appendNode('version', '0.1.0.1')
                             appendNode('type', 'rpm')
-                            appendNode('classifier', 'rpm')
                             appendNode('targetExtension', 'noarch.rpm')
                         }
                     }
