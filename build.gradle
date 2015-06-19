@@ -187,6 +187,25 @@ task writePom << {
                         }
                     }
                 }
+                appendNode('plugin').with {
+                    appendNode('groupId', 'org.codehaus.mojo')
+                    appendNode('artifactId', 'rpm-maven-plugin')
+                    appendNode('version', '2.1.3')
+                    appendNode('configuration').with {
+                        appendNode('group','com.airbnb.airpal')
+                        appendNode('name', 'airpal')
+                        appendNode('mappings').with {
+                            appendNode('mapping').with {
+                                appendNode('directory','/usr/local/airpal')
+                                appendNode('artifact')
+                            }
+                        }
+                    }
+                    appendNode('executions').appendNode('execution').with {
+                        appendNode('phase', 'package')
+                        appendNode('goals').appendNode('goal', 'rpm')
+                    }
+                }
             }
             appendNode('properties').with {
                 appendNode('java.minimum.version', '1.7')
