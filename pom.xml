@@ -229,24 +229,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
         <version>2.5.2</version>
-        <configuration>
-          <group>com.airbnb.airpal</group>
-          <name>airpal</name>
-          <mappings>
-            <mapping>
-              <directory>/usr/local/airpal</directory>
-              <artifact/>
-            </mapping>
-          </mappings>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>attached-rpm</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>

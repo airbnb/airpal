@@ -210,20 +210,6 @@ task writePom << {
                     appendNode('groupId', 'org.apache.maven.plugins')
                     appendNode('artifactId', 'maven-release-plugin')
                     appendNode('version', '2.5.2')
-                    appendNode('configuration').with {
-                        appendNode('group','com.airbnb.airpal')
-                        appendNode('name', 'airpal')
-                        appendNode('mappings').with {
-                            appendNode('mapping').with {
-                                appendNode('directory','/usr/local/airpal')
-                                appendNode('artifact')
-                            }
-                        }
-                    }
-                    appendNode('executions').appendNode('execution').with {
-                        appendNode('phase', 'package')
-                        appendNode('goals').appendNode('goal', 'attached-rpm')
-                    }
                 }
             }
             appendNode('properties').with {
