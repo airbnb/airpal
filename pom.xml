@@ -194,7 +194,7 @@
             <artifactItem>
               <groupId>com.airbnb.airpal</groupId>
               <artifactId>airpal</artifactId>
-              <version>0.1.0-SNAPSHOT</version>
+              <version>0.1.0</version>
               <type>rpm</type>
               <classifier>rpm</classifier>
               <targetExtension>noarch.rpm</targetExtension>
@@ -220,7 +220,30 @@
           <execution>
             <phase>package</phase>
             <goals>
-              <goal>rpm</goal>
+              <goal>attached-rpm</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.5.2</version>
+        <configuration>
+          <group>com.airbnb.airpal</group>
+          <name>airpal</name>
+          <mappings>
+            <mapping>
+              <directory>/usr/local/airpal</directory>
+              <artifact/>
+            </mapping>
+          </mappings>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>attached-rpm</goal>
             </goals>
           </execution>
         </executions>
