@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>bv-super-pom</artifactId>
@@ -9,10 +9,9 @@
   </parent>
   <groupId>com.airbnb.airpal</groupId>
   <artifactId>airpal</artifactId>
-  <version>0.1.0</version>
+  <version>0.1.0.1</version>
   <scm>
     <connection>scm:git:git@github.com:louiswilliams/airpal.git</connection>
-    <tag>HEAD</tag>
   </scm>
   <dependencies>
     <dependency>
@@ -194,7 +193,7 @@
             <artifactItem>
               <groupId>com.airbnb.airpal</groupId>
               <artifactId>airpal</artifactId>
-              <version>0.1.0</version>
+              <version>${project.version}</version>
               <type>rpm</type>
               <targetExtension>noarch.rpm</targetExtension>
             </artifactItem>
@@ -211,7 +210,7 @@
           <mappings>
             <mapping>
               <directory>/usr/local/airpal</directory>
-              <artifact />
+              <artifact/>
             </mapping>
           </mappings>
         </configuration>
