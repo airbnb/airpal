@@ -181,7 +181,7 @@ task writePom << {
                         appendNode('artifactItems').appendNode('artifactItem').with {
                             appendNode('groupId', 'com.airbnb.airpal')
                             appendNode('artifactId', 'airpal')
-                            appendNode('version', '0.1.0.1')
+                            appendNode('version', '${project.version}')
                             appendNode('type', 'rpm')
                             appendNode('targetExtension', 'noarch.rpm')
                         }
