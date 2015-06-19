@@ -145,7 +145,7 @@ task writePom << {
         project {
             scm {
                 connection 'scm:git:git@github.com:louiswilliams/airpal.git'
-                tag 'airpal-0.1.0'
+                tag 'HEAD'
             }
             parent {
                 groupId 'com.bazaarvoice.commons'
