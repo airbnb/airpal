@@ -113,6 +113,29 @@ task buildAssets(type: NodeTask) {
     }
 }
 
+task buildTar(type: Tar) {
+  baseName = project.name
+  compression = Compression.GZIP
+  extension = "tar.gz"
+
+  into("$baseName-$version/lib") {
+    from jar.archivePath
+    from configurations.runtime
+  }
+
+  into("$baseName-$version/bin") {
+    from "scripts/airpal"
+    fileMode 0755
+  }
+
+  into("$baseName-$version") {
+    from "reference.example.yml"
+    rename { String fileName ->
+      fileName.replace('example.', '')
+    }
+  }
+}
+
 shadowJar {
     transform(com.github.jengelman.gradle.plugins.shadow.transformers.ServiceFileTransformer)
     exclude 'META-INF/*.DSA'
@@ -124,4 +147,5 @@ shadowJar {
 
 buildAssets.dependsOn installAssets
 compileJava.dependsOn buildAssets
+buildTar.dependsOn jar
 clean.dependsOn cleanAssets

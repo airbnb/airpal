@@ -1,0 +1,4 @@
+#!/bin/sh
+
+cd $(dirname $0)/..
+exec java -Duser.timezone=UTC -cp "lib/*" com.airbnb.airpal.AirpalApplication "$@"
