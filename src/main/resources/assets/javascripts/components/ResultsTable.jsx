@@ -6,8 +6,6 @@ import QueryStore from '../stores/QueryStore';
 import TableActions from '../actions/TableActions';
 import UpdateWidthMixin from '../mixins/UpdateWidthMixin';
 
-let isColumnResizing = false;
-
 // State actions
 function getStateFromStore() {
   return {
@@ -31,11 +29,10 @@ function getColumns(columns, width) {
         width={width}
         dataKey={i}
         key={i}
-        isResizable={true}
         cellRenderer={cellRenderer}
         minWidth={80}
         />
-    ); // crying sad face
+    );
   });
 }
 
@@ -81,9 +78,7 @@ let ResultsTable = React.createClass({
           rowGetter={this.rowGetter}
           rowsCount={this.state.preview.data.length}
           width={this.props.tableWidth}
-          maxHeight={this.props.tableHeight - 39}
-          isColumnResizing={isColumnResizing}
-          onColumnResizeEndCallback={this._onColumnResizeEndCallback}>
+          maxHeight={this.props.tableHeight - 39}>
           {getColumns(this.state.preview.columns, 120)}
         </Table>
       </div>
@@ -114,10 +109,6 @@ let ResultsTable = React.createClass({
     this.setState(getStateFromStore());
   },
 
-  _onColumnResizeEndCallback(newColumnWidth, dataKey) {
-    isColumnResizing = false;
-    TableActions.setTableColumnWidth(dataKey, newColumnWidth);
-  }
 });
 
 export default ResultsTable;
