@@ -8,7 +8,7 @@ import java.net.URI;
 
 public interface Persistor
 {
-    public boolean canPersist(QueryExecutionAuthorizer authorizer);
+    boolean canPersist(QueryExecutionAuthorizer authorizer);
 
     URI persist(JobOutputBuilder outputBuilder, Job job);
 }

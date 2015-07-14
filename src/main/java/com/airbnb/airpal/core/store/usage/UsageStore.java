@@ -7,11 +7,11 @@ import java.util.Map;
 
 public interface UsageStore
 {
-    public long getUsages(Table table);
+    long getUsages(Table table);
 
-    public Map<Table, Long> getUsages(Iterable<Table> tables);
+    Map<Table, Long> getUsages(Iterable<Table> tables);
 
-    public void markUsage(Table table);
+    void markUsage(Table table);
 
-    public Duration window();
+    Duration window();
 }

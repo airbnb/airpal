@@ -10,12 +10,12 @@ import java.util.UUID;
 
 public interface QueryStore
 {
-    public List<SavedQuery> getSavedQueries(AirpalUser airpalUser);
-    public List<SavedQuery> getSavedQueries(AirpalUser airpalUser, List<PartitionedTable> tables);
+    List<SavedQuery> getSavedQueries(AirpalUser airpalUser);
+    List<SavedQuery> getSavedQueries(AirpalUser airpalUser, List<PartitionedTable> tables);
 
-    public boolean saveQuery(UserSavedQuery query);
+    boolean saveQuery(UserSavedQuery query);
 
-    public boolean deleteSavedQuery(AirpalUser airpalUser, UUID queryUUID);
+    boolean deleteSavedQuery(AirpalUser airpalUser, UUID queryUUID);
 
-    public SavedQuery getSavedQuery(UUID queryUUID);
+    SavedQuery getSavedQuery(UUID queryUUID);
 }

@@ -15,17 +15,17 @@ public interface ActiveJobsStore
      * @param user The user to retrieve jobs for.
      * @return All currently running jobs for this user.
      */
-    public Set<Job> getJobsForUser(AirpalUser user);
+    Set<Job> getJobsForUser(AirpalUser user);
 
     /**
      * Mark a job as having started.
      * @param job The job that has started.
      */
-    public void jobStarted(Job job);
+    void jobStarted(Job job);
 
     /**
      * Mark a job as having finished.
      * @param job The job that has finished.
      */
-    public void jobFinished(Job job);
+    void jobFinished(Job job);
 }

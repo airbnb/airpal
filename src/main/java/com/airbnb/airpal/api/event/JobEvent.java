@@ -4,5 +4,5 @@ import com.airbnb.airpal.api.Job;
 
 public interface JobEvent
 {
-    public Job getJob();
+    Job getJob();
 }
