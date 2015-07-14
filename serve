@@ -1,0 +1,5 @@
+#!/bin/bash
+
+java -server \
+     -Duser.timezone=UTC \
+     -cp build/libs/airpal-*-all.jar com.airbnb.airpal.AirpalApplication server reference.yml

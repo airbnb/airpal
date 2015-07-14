@@ -8,6 +8,7 @@ import MyOwnRuns from './MyOwnRuns';
 import MySavedQueries from './MySavedQueries';
 import AllRunningQueries from './AllRunningQueries';
 import DataPreview from './DataPreview';
+import ResultsTable from './ResultsTable';
 
 import TableStore from '../stores/TableStore';
 import TabStore from '../stores/TabStore';
@@ -118,6 +119,14 @@ let QueryInformation = React.createClass({
               tab="Data Preview">
                 {selectedTab === 4 &&
                   <DataPreview
+                    tableWidth={this.state.tableWidth}
+                    tableHeight={this.state.tableHeight}/>}
+            </TabPane>
+            <TabPane className="query-information-table-tab"
+              eventKey={5}
+              tab="Results">
+                {selectedTab === 5 &&
+                  <ResultsTable
                     tableWidth={this.state.tableWidth}
                     tableHeight={this.state.tableHeight}/>}
             </TabPane>
