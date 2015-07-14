@@ -19,7 +19,7 @@ let columnWidths = {
   status: 90,
   started: 220,
   duration: 80,
-  output: 180,
+  output: 230,
 };
 
 // State actions
