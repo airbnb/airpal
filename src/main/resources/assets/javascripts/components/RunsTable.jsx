@@ -3,6 +3,9 @@ import _ from 'lodash';
 import moment from 'moment';
 import QueryActions from '../actions/QueryActions';
 import RunActions from '../actions/RunActions';
+import TabActions from '../actions/TabActions';
+import TableActions from '../actions/TableActions';
+import TabConstants from '../constants/TabConstants';
 import RunStore from '../stores/RunStore';
 import { Table, Column } from 'fixed-data-table';
 import { Modal, ModalTrigger, ProgressBar } from 'react-bootstrap';
@@ -208,6 +211,21 @@ function selectQuery(query, e) {
   QueryActions.selectQuery(query);
 }
 
+function selectTable(table, e) {
+  e.preventDefault();
+  TableActions.addTable({
+    name: table
+  });
+  TableActions.selectTable(table);
+  TabActions.selectTab(TabConstants.DATA_PREVIEW);
+}
+
+function previewQueryResult(file, e) {
+  e.preventDefault();
+  QueryActions.loadQueryPreview(file);
+  TabActions.selectTab(TabConstants.QUERY_PREVIEW);
+}
+
 function killRun(uuid) {
   RunActions.kill(uuid);
 }
@@ -246,14 +264,21 @@ let CellRenderers = {
     if (output && output.location && (run.state !== 'FAILED')) {
       if (output.location[0] === '/' || output.location.indexOf('http') != -1) {
         return (
-          <a href={output.location} target="_blank" className='btn'>
-            Download CSV
-            <i className='glyphicon glyphicon-download' />
-          </a>
+          <div>
+            <a href={output.location} target="_blank" className='btn'>
+              Download CSV
+              <i className='glyphicon glyphicon-download' />
+            </a>
+            <a href="#" onClick={previewQueryResult.bind(null, output.location.split("/")[3])} className='btn'>
+              Preview Results
+            </a>
+          </div>
         );
       } else {
         return (
-          <span>{output.location}</span>
+          <a href="#" onClick={selectTable.bind(null, output.location)}>
+            <code title={output.location}>{output.location}</code>
+          </a>
         );
       }
     } else if (run.state === 'RUNNING') {

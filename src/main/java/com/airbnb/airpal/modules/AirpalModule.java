@@ -26,6 +26,7 @@ import com.airbnb.airpal.presto.metadata.PreviewTableCache;
 import com.airbnb.airpal.presto.metadata.SchemaCache;
 import com.airbnb.airpal.resources.ExecuteResource;
 import com.airbnb.airpal.resources.FilesResource;
+import com.airbnb.airpal.resources.ShortsResource;
 import com.airbnb.airpal.resources.HealthResource;
 import com.airbnb.airpal.resources.PingResource;
 import com.airbnb.airpal.resources.QueryResource;
@@ -95,6 +96,7 @@ public class AirpalModule extends AbstractModule
         bind(SessionResource.class).in(Scopes.SINGLETON);
         bind(SSEEventSourceServlet.class).in(Scopes.SINGLETON);
         bind(FilesResource.class).in(Scopes.SINGLETON);
+        bind(ShortsResource.class).in(Scopes.SINGLETON);
 
         bind(EnvironmentLoaderListener.class).in(Scopes.SINGLETON);
         bind(String.class).annotatedWith(Names.named("createTableDestinationSchema")).toInstance(config.getCreateTableDestinationSchema());

@@ -7,7 +7,8 @@ class QueryActions {
     this.generateActions(
       'receivedQuery',
       'receivedQueries',
-      'selectQuery'
+      'selectQuery',
+      'receivedQueryPreview'
     );
   }
 
@@ -26,6 +27,12 @@ class QueryActions {
   fetchSavedQueries() {
     QueryApiUtils.fetchSavedQueries().then((results) => {
       this.actions.receivedQueries(results);
+    }).catch(logError);
+  }
+
+  loadQueryPreview(file) {
+    QueryApiUtils.loadQueryPreview(file).then((results) => {
+      this.actions.receivedQueryPreview(results);
     }).catch(logError);
   }
 }

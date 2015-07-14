@@ -6,6 +6,7 @@ import com.airbnb.airpal.modules.AirpalModule;
 import com.airbnb.airpal.modules.DropwizardModule;
 import com.airbnb.airpal.resources.ExecuteResource;
 import com.airbnb.airpal.resources.FilesResource;
+import com.airbnb.airpal.resources.ShortsResource;
 import com.airbnb.airpal.resources.HealthResource;
 import com.airbnb.airpal.resources.PingResource;
 import com.airbnb.airpal.resources.QueriesResource;
@@ -87,6 +88,7 @@ public class AirpalApplication extends Application<AirpalConfiguration>
         environment.jersey().register(injector.getInstance(PingResource.class));
         environment.jersey().register(injector.getInstance(SessionResource.class));
         environment.jersey().register(injector.getInstance(FilesResource.class));
+        environment.jersey().register(injector.getInstance(ShortsResource.class));
 
         environment.jersey().register(new UserInjectableProvider(injector.getInstance(AirpalUserFactory.class)));
 

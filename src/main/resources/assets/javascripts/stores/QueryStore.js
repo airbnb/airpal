@@ -9,16 +9,19 @@ class QueryStore {
       onSelectQuery: QueryActions.SELECT_QUERY,
       onReceivedQueries: QueryActions.RECEIVED_QUERIES,
       onReceivedQuery: QueryActions.RECEIVED_QUERY,
-      onDestroyQuery: QueryActions.DESTROY_QUERY
+      onDestroyQuery: QueryActions.DESTROY_QUERY,
+      onLoadQueryPreview: QueryActions.RECEIVED_QUERY_PREVIEW,
     });
 
     // export methods we can use
     this.exportPublicMethods({
       getSelectedQuery: this.getSelectedQuery,
-      getCollection: this.getCollection
+      getCollection: this.getCollection,
+      getQueryPreview: this.getQueryPreview
     });
 
     // state
+    this.preview = null;
     this.selectedQuery = null;
     this.collection = new FluxCollection({
       comparator: (model, index) => -1 * index
@@ -37,6 +40,10 @@ class QueryStore {
     this.collection.add(queries);
   }
 
+  onLoadQueryPreview(preview) {
+    this.preview = preview;
+  }
+
   onDestroyQuery(uuid) {
     this.collection.remove(uuid);
   }
@@ -47,6 +54,16 @@ class QueryStore {
 
   getCollection() {
     return this.getState().collection;
+  }
+
+  getQueryPreview() {
+    let p = this.getState().preview;
+    if (p) {
+      return {
+        columns: p[0],
+        data: p.slice(1, p.length)
+      }
+    }
   }
 }
 
