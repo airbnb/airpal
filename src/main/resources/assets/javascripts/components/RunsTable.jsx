@@ -60,7 +60,9 @@ let RunsTable = React.createClass({
   },
 
   getInitialState() {
-    return this.getStateFromStore();
+    let initialState = this.getStateFromStore();
+    initialState.populatedRunFiles = [];
+    return initialState;
   },
 
   componentDidMount() {
@@ -115,6 +117,17 @@ let RunsTable = React.createClass({
 
   /* Store events */
   _onChange() {
+    if (this.state.runs.length > 0 && this.state.runs[0].output.location) {
+      let mostRecentRunFile = this.state.runs[0].output.location.split("/")[3];
+      if (this.state.populatedRunFiles.indexOf(mostRecentRunFile) == -1) {
+        this.setState({
+          populatedRunFiles:
+            this.state.populatedRunFiles.concat(mostRecentRunFile)
+        });
+        QueryActions.loadQueryPreview(mostRecentRunFile);
+      }
+    }
+
     this.setState(this.getStateFromStore());
   }
 });
