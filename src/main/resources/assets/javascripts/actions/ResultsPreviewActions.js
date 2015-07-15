@@ -5,7 +5,9 @@ import logError from '../utils/logError'
 class ResultsPreviewActions {
   constructor() {
     this.generateActions(
-      'receivedResultsPreview'
+      'receivedResultsPreview',
+      'selectPreviewQuery',
+      'clearResultsPreview'
     );
   }
 
