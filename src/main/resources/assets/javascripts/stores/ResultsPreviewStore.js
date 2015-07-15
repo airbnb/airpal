@@ -23,13 +23,7 @@ class ResultsPreviewStore {
   }
 
   getResultsPreview() {
-    let preview = this.getState().preview;
-    if (preview) {
-      return {
-        columns: preview[0],
-        data: preview.slice(1, preview.length)
-      }
-    }
+    return this.getState().preview;
   }
 }
 
