@@ -9,6 +9,7 @@ import UpdateWidthMixin from '../mixins/UpdateWidthMixin';
 // State actions
 function getStateFromStore() {
   return {
+    query: ResultsPreviewStore.getPreviewQuery(),
     preview: ResultsPreviewStore.getResultsPreview()
   };
 }
@@ -72,6 +73,9 @@ let ResultsTable = React.createClass({
   _renderColumns() {
     return (
       <div className='flex flex-column airpal-table'>
+        <div className='editor-menu'>
+          <strong>{this.state.query}</strong>
+        </div>
         <Table
           headerHeight={25}
           rowHeight={40}

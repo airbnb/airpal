@@ -221,9 +221,10 @@ function selectTable(table, e) {
   TabActions.selectTab(TabConstants.DATA_PREVIEW);
 }
 
-function previewQueryResult(file, e) {
+function previewQueryResult(file, query, e) {
   e.preventDefault();
   ResultsPreviewActions.loadResultsPreview(file);
+  ResultsPreviewActions.selectPreviewQuery(query);
   TabActions.selectTab(TabConstants.RESULTS_PREVIEW);
 }
 
@@ -270,7 +271,14 @@ let CellRenderers = {
               Download CSV
               <i className='glyphicon glyphicon-download' />
             </a>
-            <a href="#" onClick={previewQueryResult.bind(null, output.location.split("/")[3])} className='btn'>
+            <a 
+              href="#" 
+              onClick={previewQueryResult.bind(
+                null, 
+                output.location.split("/")[3], 
+                run.query
+              )} 
+              className='btn'>
               Preview Results
             </a>
           </div>
