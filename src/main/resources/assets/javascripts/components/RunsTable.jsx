@@ -2,6 +2,7 @@ import React from 'react/addons';
 import _ from 'lodash';
 import moment from 'moment';
 import QueryActions from '../actions/QueryActions';
+import ResultsPreviewActions from '../actions/ResultsPreviewActions';
 import RunActions from '../actions/RunActions';
 import TabActions from '../actions/TabActions';
 import TableActions from '../actions/TableActions';
@@ -222,8 +223,8 @@ function selectTable(table, e) {
 
 function previewQueryResult(file, e) {
   e.preventDefault();
-  QueryActions.loadQueryPreview(file);
-  TabActions.selectTab(TabConstants.QUERY_PREVIEW);
+  ResultsPreviewActions.loadResultsPreview(file);
+  TabActions.selectTab(TabConstants.RESULTS_PREVIEW);
 }
 
 function killRun(uuid) {

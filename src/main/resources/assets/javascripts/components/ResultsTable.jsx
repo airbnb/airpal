@@ -2,14 +2,14 @@ import React from 'react';
 import { Table, Column } from 'fixed-data-table';
 import _ from 'lodash';
 import FQN from '../utils/fqn';
-import QueryStore from '../stores/QueryStore';
+import ResultsPreviewStore from '../stores/ResultsPreviewStore';
 import TableActions from '../actions/TableActions';
 import UpdateWidthMixin from '../mixins/UpdateWidthMixin';
 
 // State actions
 function getStateFromStore() {
   return {
-    preview: QueryStore.getQueryPreview()
+    preview: ResultsPreviewStore.getResultsPreview()
   };
 }
 
@@ -45,11 +45,11 @@ let ResultsTable = React.createClass({
   },
 
   componentDidMount() {
-    QueryStore.listen(this._onChange);
+    ResultsPreviewStore.listen(this._onChange);
   },
 
   componentWillUnmount() {
-    QueryStore.unlisten(this._onChange);
+    ResultsPreviewStore.unlisten(this._onChange);
   },
 
   render() {

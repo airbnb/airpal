@@ -3,7 +3,7 @@ const TabConstants = {
   MY_SAVED_QUERIES: 2,
   ALL_QUERIES: 3,
   DATA_PREVIEW: 4,
-  QUERY_PREVIEW: 5,
+  RESULTS_PREVIEW: 5,
 };
 
 export default TabConstants;
