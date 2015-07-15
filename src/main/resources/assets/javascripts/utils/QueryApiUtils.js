@@ -37,12 +37,6 @@ let QueryApiUtils = {
     return xhr(`/api/query/saved/${uuid}`, {
       method: 'delete'
     });
-  },
-
-  loadQueryPreview(file) {
-    return xhr(`/api/shorts/${file}`, {
-      method: 'get'
-    });
   }
 };
 
