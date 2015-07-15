@@ -3,6 +3,7 @@ import RunActions from '../actions/RunActions';
 import { OverlayMixin } from 'react-bootstrap';
 import _ from 'lodash';
 import ace from 'brace';
+import ResultsPreviewActions from '../actions/ResultsPreviewActions'
 import QueryActions from '../actions/QueryActions'
 import QueryStore from '../stores/QueryStore';
 import QuerySaveModal from './QuerySaveModal';
@@ -104,7 +105,9 @@ let QueryEditor = React.createClass({
   },
 
   handleRun() {
+    ResultsPreviewActions.clearResultsPreview();
     QueryActions.selectQuery(this._getQuery());
+    ResultsPreviewActions.selectPreviewQuery(this._getQuery());
     RunActions.execute({
       query: this._getQuery(),
       tmpTable: this._getCustomTableName()

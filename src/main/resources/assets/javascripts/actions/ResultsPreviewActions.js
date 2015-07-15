@@ -5,7 +5,9 @@ import logError from '../utils/logError'
 class ResultsPreviewActions {
   constructor() {
     this.generateActions(
-      'receivedResultsPreview'
+      'receivedResultsPreview',
+      'selectPreviewQuery',
+      'clearResultsPreview'
     );
   }
 
@@ -13,6 +15,10 @@ class ResultsPreviewActions {
     ResultsPreviewApiUtils.loadResultsPreview(file).then((results) => {
       this.actions.receivedResultsPreview(results);
     }).catch(logError);
+  }
+
+  setTableColumnWidth(columnIdx, width) {
+    this.dispatch({ columnIdx, width });
   }
 }
 

@@ -41,7 +41,6 @@
   "devDependencies": {
     "babel-jest": "^4.0.0",
     "babelify": "^5.0.3",
-    "browser-sync": "~2.6.5",
     "browserify": "~5.10.1",
     "browserify-shim": "~3.7.0",
     "gulp": "^3.8.7",
