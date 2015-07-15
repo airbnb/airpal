@@ -6,7 +6,8 @@ class ResultsPreviewActions {
   constructor() {
     this.generateActions(
       'receivedResultsPreview',
-      'selectPreviewQuery'
+      'selectPreviewQuery',
+      'clearResultsPreview'
     );
   }
 

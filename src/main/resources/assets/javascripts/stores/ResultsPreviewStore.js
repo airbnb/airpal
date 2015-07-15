@@ -7,6 +7,7 @@ class ResultsPreviewStore {
     // handle store listeners
     this.bindListeners({
       onLoadResultsPreview: ResultsPreviewActions.RECEIVED_RESULTS_PREVIEW,
+      onClearPreview: ResultsPreviewActions.CLEAR_RESULTS_PREVIEW,
       onSelectPreviewQuery: ResultsPreviewActions.SELECT_PREVIEW_QUERY,
     });
 
@@ -19,6 +20,10 @@ class ResultsPreviewStore {
     // state
     this.preview = null;
     this.previewQuery = null;
+  }
+
+  onClearPreview() {
+    this.preview = null;
   }
 
   onSelectPreviewQuery(query) {

@@ -107,6 +107,7 @@ let QueryEditor = React.createClass({
   handleRun() {
     QueryActions.selectQuery(this._getQuery());
     ResultsPreviewActions.selectPreviewQuery(this._getQuery());
+    ResultsPreviewActions.clearResultsPreview();
     RunActions.execute({
       query: this._getQuery(),
       tmpTable: this._getCustomTableName()
