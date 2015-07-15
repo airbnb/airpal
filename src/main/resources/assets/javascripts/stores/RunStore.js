@@ -98,7 +98,7 @@ class RunStore {
   }
 
   onMessage(data) {
-    if (data.state == 'FINISHED') {
+    if (data.state == 'FINISHED' && data.output.location) {
       QueryActions.loadQueryPreview(data.output.location.split("/")[3]);
     }
     this.collection.update(data.uuid, data);
@@ -110,7 +110,7 @@ class RunStore {
   }
 
   onExecute() {
-    //TabActions.selectTab.defer(1);
+    TabActions.selectTab.defer(1);
   }
 
   getCollection() {
