@@ -1,4 +1,5 @@
 import alt from '../alt'
+import _ from 'lodash';
 import FluxCollection from '../utils/FluxCollection'
 import ResultsPreviewActions from '../actions/ResultsPreviewActions'
 
@@ -9,6 +10,7 @@ class ResultsPreviewStore {
       onLoadResultsPreview: ResultsPreviewActions.RECEIVED_RESULTS_PREVIEW,
       onClearPreview: ResultsPreviewActions.CLEAR_RESULTS_PREVIEW,
       onSelectPreviewQuery: ResultsPreviewActions.SELECT_PREVIEW_QUERY,
+      onSetTableColumnWidth: ResultsPreviewActions.SET_TABLE_COLUMN_WIDTH,
     });
 
     // export methods we can use
@@ -31,7 +33,15 @@ class ResultsPreviewStore {
   }
 
   onLoadResultsPreview(preview) {
-    this.preview = preview;
+    this.preview = _.extend(preview, {
+      columnWidths: preview.columns.map(() => 120),
+    });
+  }
+
+  onSetTableColumnWidth({ columnIdx, width }) {
+    if (this.preview) {
+       this.preview.columnWidths[columnIdx] = width;
+    }
   }
 
   getPreviewQuery() {

@@ -3,14 +3,16 @@ import { Table, Column } from 'fixed-data-table';
 import _ from 'lodash';
 import FQN from '../utils/fqn';
 import ResultsPreviewStore from '../stores/ResultsPreviewStore';
-import TableActions from '../actions/TableActions';
+import ResultsPreviewActions from '../actions/ResultsPreviewActions';
 import UpdateWidthMixin from '../mixins/UpdateWidthMixin';
+
+let isColumnResizing = false;
 
 // State actions
 function getStateFromStore() {
   return {
     query: ResultsPreviewStore.getPreviewQuery(),
-    preview: ResultsPreviewStore.getResultsPreview()
+    table: ResultsPreviewStore.getResultsPreview()
   };
 }
 
@@ -22,14 +24,15 @@ function cellRenderer(cellData, cellDataKey, rowData, rowIndex, columnData, widt
   );
 }
 
-function getColumns(columns, width) {
+function getColumns(columns, widths) {
   return columns.map(function(column, i) {
     return (
       <Column
-        label={column}
-        width={width}
+        label={column.name}
+        width={widths[i]}
         dataKey={i}
         key={i}
+        isResizable={true}
         cellRenderer={cellRenderer}
         minWidth={80}
         />
@@ -54,7 +57,7 @@ let ResultsTable = React.createClass({
   },
 
   render() {
-    if( this.state.preview && this.state.preview.data ) {
+    if( this.state.table && this.state.table.data ) {
       return this._renderColumns();
     } else {
       return this._renderEmptyMessage();
@@ -80,30 +83,32 @@ let ResultsTable = React.createClass({
           headerHeight={25}
           rowHeight={40}
           rowGetter={this.rowGetter}
-          rowsCount={this.state.preview.data.length}
+          rowsCount={this.state.table.data.length}
           width={this.props.tableWidth}
-          maxHeight={this.props.tableHeight - 39}>
-          {getColumns(this.state.preview.columns, 120)}
+          maxHeight={this.props.tableHeight - 39}
+          isColumnResizing={isColumnResizing}
+          onColumnResizeEndCallback={this._onColumnResizeEndCallback}>
+          {getColumns(this.state.table.columns, this.state.table.columnWidths)}
         </Table>
       </div>
     );
   },
 
   rowGetter(rowIndex) {
-    return this.state.preview.data[rowIndex];
+    return this.state.table.data[rowIndex];
   },
 
   _enhancedColumns() {
-    return _.map(this.state.preview.columns, function(column) {
+    return _.map(this.state.table.columns, function(column) {
       return column.name;
     });
   },
 
   _enhancedData() {
-    return _.map(this.state.preview.data, function(item) {
+    return _.map(this.state.table.data, function(item) {
       return _.transform(item, function(result, n, key) {
         let text = _.isBoolean(n) ? n.toString() : n;
-        result[this.state.preview.columns[key].name] = text;
+        result[this.state.table.columns[key].name] = text;
       }.bind(this));
     }.bind(this));
   },
@@ -113,6 +118,10 @@ let ResultsTable = React.createClass({
     this.setState(getStateFromStore());
   },
 
+  _onColumnResizeEndCallback(newColumnWidth, dataKey) {
+    isColumnResizing = false;
+    ResultsPreviewActions.setTableColumnWidth(dataKey, newColumnWidth);
+  }
 });
 
 export default ResultsTable;

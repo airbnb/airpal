@@ -16,6 +16,10 @@ class ResultsPreviewActions {
       this.actions.receivedResultsPreview(results);
     }).catch(logError);
   }
+
+  setTableColumnWidth(columnIdx, width) {
+    this.dispatch({ columnIdx, width });
+  }
 }
 
 export default alt.createActions(ResultsPreviewActions);

@@ -22,7 +22,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Path("/api/preview")
@@ -50,7 +52,12 @@ public class ResultsPreviewResource
             }
             final CSVReader reader = new CSVReader(new FileReader(file));
 
-            List<String> columns = Arrays.asList(reader.readNext());
+            List<Map<String, String>> columns = new ArrayList<>();
+            for (final String columnName: reader.readNext()) {
+                columns.add(new HashMap<String, String>(){{
+                    put("name", columnName);
+                }});
+            }
             List<List<String>> rows = new ArrayList<>();
             String[] currentLine = reader.readNext();
             for (int line = 0; line < lines && currentLine != null; line++) {
@@ -71,7 +78,7 @@ public class ResultsPreviewResource
     private static class PreviewResponse
     {
         @JsonProperty
-        private final List<String> columns;
+        private final List<Map<String, String>> columns;
 
         @JsonProperty
         private final List<List<String>> data;
