@@ -71,7 +71,7 @@ dependencies {
         exclude(group: 'org.eclipse.jetty')
     }
     compile group: 'com.facebook.presto', name: 'presto-parser', version:prestoVersion
-    compile group: 'com.hubspot.rosetta', name: 'RosettaJdbi', version:'2.1-SNAPSHOT'
+    compile group: 'com.hubspot.rosetta', name: 'RosettaJdbi', version:'3.10.1'
     compile group: 'net.sf.opencsv', name: 'opencsv', version:'2.3'
     compile group: 'com.amazonaws', name: 'aws-java-sdk', version:'1.6.8'
     compile group: 'org.apache.shiro', name: 'shiro-web', version:'1.2.3'

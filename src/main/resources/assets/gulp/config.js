@@ -5,14 +5,6 @@ var src = './javascripts';
 module.exports = {
   isDevelopment: isDevelopment,
 
-  browserSync: {
-    proxy: "localhost:8081",
-    files: [
-      dest + "/**",
-      "!" + dest + "/**.map"
-    ]
-  },
-
   browserify: {
 
     // Enable source maps
