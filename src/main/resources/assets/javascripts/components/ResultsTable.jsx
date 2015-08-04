@@ -5,6 +5,7 @@ import FQN from '../utils/fqn';
 import ResultsPreviewStore from '../stores/ResultsPreviewStore';
 import ResultsPreviewActions from '../actions/ResultsPreviewActions';
 import UpdateWidthMixin from '../mixins/UpdateWidthMixin';
+import QueryActions from '../actions/QueryActions';
 
 let isColumnResizing = false;
 
@@ -38,6 +39,11 @@ function getColumns(columns, widths) {
         />
     );
   });
+}
+
+function selectQuery(query, e) {
+  e.preventDefault();
+  QueryActions.selectQuery(query);
 }
 
 let ResultsTable = React.createClass({
@@ -77,7 +83,13 @@ let ResultsTable = React.createClass({
     return (
       <div className='flex flex-column airpal-table'>
         <div className='editor-menu'>
-          <strong>{this.state.query}</strong>
+          <div 
+            style={{width: this.props.tableWidth - 20}} 
+            className="text-overflow-ellipsis">
+            <a href="#" onClick={selectQuery.bind(null, this.state.query)}>
+              {this.state.query}
+            </a>
+          </div>
         </div>
         <Table
           headerHeight={25}

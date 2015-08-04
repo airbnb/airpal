@@ -44,7 +44,7 @@ public class S3FilePersistor
 
     private long getExpirationWindow()
     {
-        return (new Date()).getTime() + Duration.days(365).toMilliseconds();
+        return (new Date()).getTime() + Duration.days(30).toMilliseconds();
     }
 
     @Override

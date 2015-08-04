@@ -271,13 +271,13 @@ let CellRenderers = {
               Download CSV
               <i className='glyphicon glyphicon-download' />
             </a>
-            <a 
-              href="#" 
+            <a
+              href="#"
               onClick={previewQueryResult.bind(
-                null, 
-                output.location.split("/")[3], 
+                null,
+                output.location,
                 run.query
-              )} 
+              )}
               className='btn'>
               Preview Results
             </a>

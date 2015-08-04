@@ -99,7 +99,7 @@ class RunStore {
 
   onMessage(data) {
     if (data.state == 'FINISHED' && data.output.location) {
-      ResultsPreviewActions.loadResultsPreview(data.output.location.split("/")[3]);
+      ResultsPreviewActions.loadResultsPreview(data.output.location);
     }
     this.collection.update(data.uuid, data);
   }
