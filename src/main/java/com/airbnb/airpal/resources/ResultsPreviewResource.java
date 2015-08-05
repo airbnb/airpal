@@ -1,9 +1,10 @@
 package com.airbnb.airpal.resources;
 
-import au.com.bytecode.opencsv.CSVReader;
+import com.opencsv.CSVReader;
 import com.airbnb.airpal.core.store.files.ExpiringFileStore;
 import com.airbnb.airpal.modules.AirpalModule;
-import com.fasterxml.jackson.annotation.JsonProperty; import com.google.inject.Inject;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.inject.Inject;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import com.amazonaws.services.s3.AmazonS3URI;
@@ -28,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.lang.StringBuilder;
+import java.lang.Iterable;
 import java.lang.IllegalArgumentException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,7 +58,7 @@ public class ResultsPreviewResource
     public Response getFile(@QueryParam("fileURI") URI fileURI,
                             @DefaultValue("100") @QueryParam("lines") int numLines)
     {
-        if (fileURI.isAbsolute() || true) {
+        if (fileURI.isAbsolute()) {
             // assume s3
             return getAbsolutePreview(fileURI, numLines);
         } else {
@@ -66,25 +68,25 @@ public class ResultsPreviewResource
     }
 
     private Response getAbsolutePreview(URI fileURI, int numLines) {
-        final int lines = numLines;
         AmazonS3URI s3URI;
         try {
           s3URI = new AmazonS3URI(fileURI);
         } catch (IllegalArgumentException e) {
           return Response.status(Response.Status.NOT_FOUND).build();
         }
-        GetObjectRequest request =
-                new GetObjectRequest(s3URI.getBucket(), s3URI.getKey());
         // download ~100 kb (depending on your definition) of the file
-        request.withRange(0, 100000);
+        GetObjectRequest request =
+                new GetObjectRequest(s3URI.getBucket(), s3URI.getKey()).withRange(0, 100000);
         S3Object s3Object = this.s3Client.getObject(request);
-        CSVReader s3Reader =
-            new CSVReader(new BufferedReader(new InputStreamReader(s3Object.getObjectContent())));
-        return getPreviewFromCSV(s3Reader, lines);
-
+        try (CSVReader s3Reader =
+                new CSVReader(new BufferedReader(new InputStreamReader(s3Object.getObjectContent())))) {
+            return getPreviewFromCSV(s3Reader, numLines);
+        } catch (IOException e) {
+          return Response.status(Response.Status.NOT_FOUND).build();
+        }
     }
 
-    private Response getPreviewFromCSV(CSVReader reader, final int lines) {
+    private Response getPreviewFromCSV(CSVReader reader, final int numLines) {
         List<Map<String, String>> columns = new ArrayList<>();
         List<List<String>> rows = new ArrayList<>();
         try {
@@ -93,10 +95,13 @@ public class ResultsPreviewResource
                     put("name", columnName);
                 }});
             }
-            String[] currentLine = reader.readNext();
-            for (int line = 0; line < lines && currentLine != null; line++) {
-                rows.add(Arrays.asList(currentLine));
-                currentLine = reader.readNext();
+            int counter = 0;
+            for (String[] line : reader) {
+                counter++;
+                rows.add(Arrays.asList(line));
+                if (counter >= numLines) {
+                  break;
+                }
             }
         } catch (IOException e) {
             log.error(e.getMessage());
@@ -106,15 +111,18 @@ public class ResultsPreviewResource
     }
 
     private Response getRelativePreview(URI fileURI, int numLines) {
-        String fileName = fileURI.toString().split("/")[3];
+        String fileName = 
+          fileURI.getPath().substring(fileURI.getPath().lastIndexOf('/') + 1);
         final File file = fileStore.get(fileName);
-        final int lines = numLines;
         try {
             if (file == null) {
                 throw new FileNotFoundException(fileName + " could not be found");
             }
-            final CSVReader reader = new CSVReader(new FileReader(file));
-            return getPreviewFromCSV(reader, lines);
+            try (final CSVReader reader = new CSVReader(new FileReader(file))) {
+              return getPreviewFromCSV(reader, numLines);
+            } catch (IOException e) {
+              return Response.status(Response.Status.NOT_FOUND).build();
+            }
         } catch (FileNotFoundException e) {
             log.warn(e.getMessage());
             return Response.status(Response.Status.NOT_FOUND).build();
