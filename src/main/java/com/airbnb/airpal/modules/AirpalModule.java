@@ -29,6 +29,7 @@ import com.airbnb.airpal.resources.FilesResource;
 import com.airbnb.airpal.resources.HealthResource;
 import com.airbnb.airpal.resources.PingResource;
 import com.airbnb.airpal.resources.QueryResource;
+import com.airbnb.airpal.resources.ResultsPreviewResource;
 import com.airbnb.airpal.resources.SessionResource;
 import com.airbnb.airpal.resources.TablesResource;
 import com.airbnb.airpal.resources.sse.SSEEventSourceServlet;
@@ -62,7 +63,6 @@ import org.apache.shiro.web.env.EnvironmentLoaderListener;
 import org.skife.jdbi.v2.DBI;
 
 import javax.inject.Named;
-
 import java.net.URI;
 import java.util.Collections;
 import java.util.concurrent.ExecutorService;
@@ -95,6 +95,7 @@ public class AirpalModule extends AbstractModule
         bind(SessionResource.class).in(Scopes.SINGLETON);
         bind(SSEEventSourceServlet.class).in(Scopes.SINGLETON);
         bind(FilesResource.class).in(Scopes.SINGLETON);
+        bind(ResultsPreviewResource.class).in(Scopes.SINGLETON);
 
         bind(EnvironmentLoaderListener.class).in(Scopes.SINGLETON);
         bind(String.class).annotatedWith(Names.named("createTableDestinationSchema")).toInstance(config.getCreateTableDestinationSchema());

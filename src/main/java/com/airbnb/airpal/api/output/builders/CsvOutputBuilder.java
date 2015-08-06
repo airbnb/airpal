@@ -1,6 +1,6 @@
 package com.airbnb.airpal.api.output.builders;
 
-import au.com.bytecode.opencsv.CSVWriter;
+import com.opencsv.CSVWriter;
 import com.facebook.presto.client.Column;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Lists;
