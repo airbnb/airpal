@@ -1,6 +1,6 @@
 import xhr from './xhr';
 
-let ResultsPreviewApiUtils = {
+const ResultsPreviewApiUtils = {
   loadResultsPreview(file) {
     return xhr(`/api/preview?fileURI=${encodeURIComponent(file)}`, {
       method: 'get'

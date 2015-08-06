@@ -46,7 +46,7 @@ function selectQuery(query, e) {
   QueryActions.selectQuery(query);
 }
 
-let ResultsTable = React.createClass({
+const ResultsTable = React.createClass({
   displayName: 'ResultsTable',
   mixins: [UpdateWidthMixin],
 

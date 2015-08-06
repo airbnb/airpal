@@ -3,6 +3,7 @@ import FluxCollection from '../utils/FluxCollection';
 import RunActions from '../actions/RunActions';
 import TabActions from '../actions/TabActions';
 import ResultsPreviewActions from '../actions/ResultsPreviewActions';
+import RunStateConstants from '../constants/RunStateConstants';
 
 // Yeah baby. We're ready to rambo! The SSEConnection has made a connection
 // to the API endpoint and now we should start getting updates (if any runs
@@ -98,7 +99,7 @@ class RunStore {
   }
 
   onMessage(data) {
-    if (data.state == 'FINISHED' && data.output.location) {
+    if (data.state == RunStateConstants.FINISHED && data.output.location) {
       ResultsPreviewActions.loadResultsPreview(data.output.location);
     }
     this.collection.update(data.uuid, data);

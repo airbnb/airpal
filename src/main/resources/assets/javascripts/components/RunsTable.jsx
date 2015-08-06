@@ -7,6 +7,7 @@ import RunActions from '../actions/RunActions';
 import TabActions from '../actions/TabActions';
 import TableActions from '../actions/TableActions';
 import TabConstants from '../constants/TabConstants';
+import RunStateConstants from '../constants/RunStateConstants';
 import RunStore from '../stores/RunStore';
 import { Table, Column } from 'fixed-data-table';
 import { Modal, ModalTrigger, ProgressBar } from 'react-bootstrap';
@@ -247,11 +248,11 @@ let CellRenderers = {
 
   status(cellData, cellDataKey, rowData, rowIndex, columnData, width) {
     let run = rowData._run;
-    if (run.state === 'FAILED') {
+    if (run.state === RunStateConstants.FAILED) {
       return (<span className="label label-danger">FAILED</span>);
-    } else if (run.state === 'FINISHED') {
+    } else if (run.state === RunStateConstants.FINISHED) {
       return (<span className="label label-success">{run.state}</span>);
-    } else if (run.state === 'QUEUED') {
+    } else if (run.state === RunStateConstants.QUEUED) {
       return (<span className="label label-default">{run.state}</span>);
     } else {
       return (<span className="label label-info">{run.state}</span>);
@@ -263,7 +264,7 @@ let CellRenderers = {
     let currentUser = rowData._currentUser;
     let killable = currentUser && currentUser === run.user;
     let output = cellData;
-    if (output && output.location && (run.state !== 'FAILED')) {
+    if (output && output.location && (run.state !== RunStateConstants.FAILED)) {
       if (output.location[0] === '/' || output.location.indexOf('http') != -1) {
         return (
           <div>
@@ -306,7 +307,7 @@ let CellRenderers = {
         );
 
     // XXX this needs to be a modal...we can use a custom modal here or something experimental
-    } else if (run.state === 'FAILED') {
+    } else if (run.state === RunStateConstants.FAILED) {
       return (
         <ModalTrigger modal={<ErrorModal message={run.error.message} />}>
           <span title={run.error.message}>{run.error.message}</span>
