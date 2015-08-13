@@ -30,6 +30,7 @@ import com.airbnb.airpal.resources.HealthResource;
 import com.airbnb.airpal.resources.PingResource;
 import com.airbnb.airpal.resources.QueryResource;
 import com.airbnb.airpal.resources.ResultsPreviewResource;
+import com.airbnb.airpal.resources.S3FilesResource;
 import com.airbnb.airpal.resources.SessionResource;
 import com.airbnb.airpal.resources.TablesResource;
 import com.airbnb.airpal.resources.sse.SSEEventSourceServlet;
@@ -96,6 +97,7 @@ public class AirpalModule extends AbstractModule
         bind(SSEEventSourceServlet.class).in(Scopes.SINGLETON);
         bind(FilesResource.class).in(Scopes.SINGLETON);
         bind(ResultsPreviewResource.class).in(Scopes.SINGLETON);
+        bind(S3FilesResource.class).in(Scopes.SINGLETON);
 
         bind(EnvironmentLoaderListener.class).in(Scopes.SINGLETON);
         bind(String.class).annotatedWith(Names.named("createTableDestinationSchema")).toInstance(config.getCreateTableDestinationSchema());
