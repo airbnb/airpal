@@ -43,20 +43,19 @@ public class S3FilePersistor
     {
         File file = checkNotNull(outputBuilder.build(), "output builder resulting file was null");
 
-        val outputKey = getOutputKey(file.getName());
         val objectMetaData = new ObjectMetadata();
         objectMetaData.setContentLength(file.length());
         objectMetaData.setContentType(MediaType.CSV_UTF_8.toString());
 
         val putRequest = new PutObjectRequest(
                 outputBucket,
-                outputKey,
+                getOutputKey(file.getName()),
                 file
         ).withMetadata(objectMetaData);
 
         try {
             s3Client.putObject(putRequest);
-            return UriBuilder.fromPath("/api/s3/{filename}").build(outputKey);
+            return UriBuilder.fromPath("/api/s3/{filename}").build(file.getName());
         }
         catch (AmazonClientException e) {
             throw new ExecutionClient.ExecutionFailureException(job, "Could not upload CSV to S3", e);

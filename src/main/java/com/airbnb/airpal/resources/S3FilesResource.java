@@ -4,7 +4,6 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
-import io.dropwizard.util.Duration;
 import lombok.val;
 
 import javax.inject.Named;
@@ -19,7 +18,6 @@ import javax.ws.rs.core.StreamingOutput;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Date;
 
 @Path("/api/s3")
 public class S3FilesResource
@@ -37,14 +35,19 @@ public class S3FilesResource
         this.outputBucket = outputBucket;
     }
 
+    private String getOutputKey(String fileBaseName)
+    {
+        return "airpal/" + fileBaseName;
+    }
 
     @GET
-    @Path("/{outputKey}")
+    @Path("/{filename}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response getFile(@PathParam("outputKey") String outputKey)
+    public Response getFile(@PathParam("filename") String filename)
     {
+        val outputKey = getOutputKey(filename);
         val getRequest = new GetObjectRequest(outputBucket, outputKey);
-        val object = s3Client.getObject(getRequest);
+        final val object = s3Client.getObject(getRequest);
 
         if (object == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
