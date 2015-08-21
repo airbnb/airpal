@@ -3,4 +3,6 @@
 set -x
 set -e
 
+export TEMP=/tmp
+
 ./gradlew clean shadowJar -Dairpal.useLocalNode
