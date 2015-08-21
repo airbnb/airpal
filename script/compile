@@ -3,4 +3,4 @@
 set -x
 set -e
 
-./gradlew clean shadowJar
+./gradlew clean shadowJar -Dairpal.useLocalNode
