@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+set -x
+set -e
+
+./gradlew clean shadowJar

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -x
+set -e
+
+# This is a redirect to the native script for starting Airpal
+# but needed to Shopify package api
+./scripts/airpal
