@@ -3,4 +3,7 @@
 set -x
 set -e
 
-./gradlew clean shadowJar 
+# NOTE: hack for packserv because the home dir is always changing
+HOME="$PWD"
+
+./gradlew clean shadowJar
