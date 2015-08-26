@@ -224,33 +224,6 @@ public class Execution implements Callable<Job>
         return getJob();
     }
 
-    /*
-    private Set<Table> getTablesWithoutPartitions(Set<Table> tables)
-    {
-        ImmutableSet.Builder<Table> tablesWithoutPartitions = ImmutableSet.builder();
-
-        if (tables == null || tables.isEmpty()) {
-            return Collections.emptySet();
-        }
-
-        for (Table table : tables) {
-            try {
-                List<HiveColumn> allColumns = columnCache.getColumns(table.getSchema(), table.getTable());
-                for (HiveColumn column : allColumns) {
-                    if (column.isPartition() && !table.getColumns().contains(column.getName())) {
-                        tablesWithoutPartitions.add(table);
-                    }
-                }
-            }
-            catch (ExecutionException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return tablesWithoutPartitions.build();
-    }
-    */
-
     private static final Splitter QUERY_SPLITTER = Splitter.on(";").omitEmptyStrings().trimResults();
 
     /**

@@ -36,7 +36,6 @@ public class FeaturedQuery extends UserSavedQuery
     @AllArgsConstructor
     public static class Position
     {
-        /* TODO: hate pierre and finalize */
         @JsonProperty
         private int row;
         @JsonProperty
