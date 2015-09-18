@@ -70,7 +70,7 @@ let ColumnsPreview = React.createClass({
 
     // Render the template
     return (
-      <div className="flex flex-column columns-container panel-body">
+      <div className="flex flex-column columns-container panel-body content">
         <div className='columns-label'>
           Columns
         </div>
