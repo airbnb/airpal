@@ -23,14 +23,17 @@ import com.google.inject.Injector;
 import com.google.inject.Stage;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
+import io.dropwizard.Bundle;
+import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.flyway.FlywayBundle;
 import io.dropwizard.flyway.FlywayFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
-import org.secnod.dropwizard.shiro.ShiroBundle;
-import org.secnod.dropwizard.shiro.ShiroConfiguration;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 import javax.servlet.ServletRegistration;
 
@@ -38,43 +41,50 @@ import static com.sun.jersey.core.util.ReaderWriter.BUFFER_SIZE_SYSTEM_PROPERTY;
 
 public abstract class AirpalApplicationBase<T extends AirpalConfiguration> extends Application<T>
 {
+    protected Injector injector;
+
     @Override
-    public void initialize(Bootstrap<T> bootstrap) {
-        final AssetsBundle assetBundle = new AssetsBundle("/assets", "/app", "index.html");
-        final ViewBundle viewBundle = new ViewBundle();
-        final FlywayBundle<T> flywayBundle = new FlywayBundle<T>() {
-            @Override
-            public DataSourceFactory getDataSourceFactory(T configuration)
-            {
-                return configuration.getDataSourceFactory();
-            }
-
-            @Override
-            public FlywayFactory getFlywayFactory(T configuration)
-            {
-                return super.getFlywayFactory(configuration);
-            }
-        };
-        final ShiroBundle<T> shiroBundle = new ShiroBundle<T>() {
-            @Override
-            protected ShiroConfiguration narrow(T configuration)
-            {
-                return configuration.getShiro();
-            }
-        };
-
-        bootstrap.addBundle(assetBundle);
-        bootstrap.addBundle(viewBundle);
-        bootstrap.addBundle(flywayBundle);
-        bootstrap.addBundle(shiroBundle);
+    public void initialize(Bootstrap<T> bootstrap)
+    {
+        for (ConfiguredBundle<T> configuredBundle : getConfiguredBundles()) {
+            bootstrap.addBundle(configuredBundle);
+        }
+        for (Bundle bundle : getBundles()) {
+            bootstrap.addBundle(bundle);
+        }
     }
 
     public abstract Iterable<AbstractModule> getModules(T config, Environment environment);
 
+    public Iterable<ConfiguredBundle<T>> getConfiguredBundles()
+    {
+        return Collections.emptyList();
+    }
+
+    public Iterable<Bundle> getBundles()
+    {
+        return Arrays.asList(
+                new AssetsBundle("/assets", "/app", "index.html"),
+                new ViewBundle(),
+                new FlywayBundle<T>() {
+                    @Override
+                    public DataSourceFactory getDataSourceFactory(T configuration)
+                    {
+                        return configuration.getDataSourceFactory();
+                    }
+
+                    @Override
+                    public FlywayFactory getFlywayFactory(T configuration)
+                    {
+                        return super.getFlywayFactory(configuration);
+                    }
+                });
+    }
+
     @Override
     public void run(T config, Environment environment) throws Exception
     {
-        Injector injector = Guice.createInjector(Stage.PRODUCTION, getModules(config, environment));
+        this.injector = Guice.createInjector(Stage.PRODUCTION, getModules(config, environment));
 
         System.setProperty(BUFFER_SIZE_SYSTEM_PROPERTY, String.valueOf(config.getBufferSize().toBytes()));
 
