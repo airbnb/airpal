@@ -34,6 +34,7 @@ import com.airbnb.airpal.resources.S3FilesResource;
 import com.airbnb.airpal.resources.SessionResource;
 import com.airbnb.airpal.resources.TablesResource;
 import com.airbnb.airpal.resources.sse.SSEEventSourceServlet;
+import com.airbnb.airpal.sql.DbType;
 import com.airbnb.airpal.sql.beans.TableRow;
 import com.airbnb.airpal.sql.jdbi.QueryStoreMapper;
 import com.airbnb.airpal.sql.jdbi.URIArgumentFactory;
@@ -44,6 +45,7 @@ import com.amazonaws.auth.InstanceProfileCredentialsProvider;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.joda.JodaMapper;
 import com.google.common.base.Strings;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
@@ -113,11 +115,25 @@ public class AirpalModule extends AbstractModule
 
     @Singleton
     @Provides
+    public DbType provideDbType()
+    {
+        String driverClass = config.getDataSourceFactory().getDriverClass();
+        if (driverClass.equalsIgnoreCase("com.mysql.jdbc.Driver")) {
+            return DbType.MySQL;
+        } else if (driverClass.equalsIgnoreCase("org.h2.Driver")) {
+            return DbType.H2;
+        } else {
+            return DbType.Default;
+        }
+    }
+
+    @Singleton
+    @Provides
     public DBI provideDBI(ObjectMapper objectMapper)
             throws ClassNotFoundException
     {
         final DBIFactory factory = new DBIFactory();
-        final DBI dbi =  factory.build(environment, config.getDataSourceFactory(), "mysql");
+        final DBI dbi =  factory.build(environment, config.getDataSourceFactory(), provideDbType().name());
         dbi.registerMapper(new TableRow.TableRowMapper(objectMapper));
         dbi.registerMapper(new QueryStoreMapper(objectMapper));
         dbi.registerArgumentFactory(new UUIDArgumentFactory());
@@ -282,7 +298,7 @@ public class AirpalModule extends AbstractModule
     @Provides
     public UsageStore provideUsageCache(DBI dbi)
     {
-        UsageStore delegate = new SQLUsageStore(config.getUsageWindow(), dbi);
+        UsageStore delegate = new SQLUsageStore(config.getUsageWindow(), dbi, provideDbType());
 
         return new CachingUsageStore(delegate, io.dropwizard.util.Duration.minutes(6));
     }

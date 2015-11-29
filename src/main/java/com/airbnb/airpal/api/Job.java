@@ -5,10 +5,7 @@ import com.airbnb.airpal.presto.Table;
 import com.facebook.presto.client.Column;
 import com.facebook.presto.client.QueryError;
 import com.facebook.presto.execution.QueryStats;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.*;
 import com.google.common.collect.Sets;
 import com.hubspot.rosetta.StoredAsJson;
 import lombok.Data;
@@ -57,6 +54,7 @@ public class Job
     private Set<Table> tablesUsed;
 
     @JsonProperty
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @Wither
     private DateTime queryStarted = new DateTime();
 
@@ -65,6 +63,7 @@ public class Job
     private QueryError error;
 
     @JsonProperty
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @Wither
     private DateTime queryFinished;
 

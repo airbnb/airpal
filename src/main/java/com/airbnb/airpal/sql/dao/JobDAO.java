@@ -16,8 +16,8 @@ public interface JobDAO
                     ":queryStats, " +
                     ":state, " +
                     ":columns, " +
-                    "FROM_UNIXTIME(ROUND(:queryFinished / 1000)), " +
-                    "FROM_UNIXTIME(ROUND(:queryStarted / 1000)), " +
+                    ":queryFinished, " +
+                    ":queryStarted, " +
                     ":error)")
     @GetGeneratedKeys
     long createJob(

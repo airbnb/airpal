@@ -1,6 +1,7 @@
 package com.airbnb.airpal.core.store.usage;
 
 import com.airbnb.airpal.presto.Table;
+import com.airbnb.airpal.sql.DbType;
 import com.airbnb.airpal.sql.Util;
 import com.airbnb.airpal.sql.beans.JobUsageCountRow;
 import com.google.common.collect.ImmutableList;
@@ -21,11 +22,13 @@ public class SQLUsageStore implements UsageStore
 {
     private final Duration duration;
     private final DBI dbi;
+    private final DbType dbType;
 
-    public SQLUsageStore(Duration duration, DBI dbi)
+    public SQLUsageStore(Duration duration, DBI dbi, DbType dbType)
     {
         this.duration = duration;
         this.dbi = dbi;
+        this.dbType = dbType;
     }
 
     @Override
@@ -48,7 +51,7 @@ public class SQLUsageStore implements UsageStore
                             "FROM jobs j " +
                             "LEFT OUTER JOIN job_tables jt ON j.id = jt.job_id " +
                             "LEFT OUTER JOIN tables t ON jt.table_id = t.id " +
-                            "WHERE query_finished > DATE_SUB(UTC_TIMESTAMP(), INTERVAL :day_interval day) " +
+                            "WHERE " + Util.getQueryFinishedCondition(dbType) + " " +
                             "AND (" + Util.getTableCondition(Lists.newArrayList(tables)) + ") " +
                             "GROUP BY connector_id, schema_, table_ " +
                             "ORDER BY query_finished DESC")
