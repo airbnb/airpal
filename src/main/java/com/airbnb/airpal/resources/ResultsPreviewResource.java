@@ -1,5 +1,6 @@
 package com.airbnb.airpal.resources;
 
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.opencsv.CSVReader;
 import com.airbnb.airpal.core.store.files.ExpiringFileStore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -30,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.net.URI;
+import java.util.zip.GZIPInputStream;
 
 @Slf4j
 @Path("/api/preview")
@@ -82,7 +84,9 @@ public class ResultsPreviewResource
                 outputKey
         ).withRange(0, 100 * 1024);
         val object = s3Client.getObject(request);
-        try (val s3Reader = new CSVReader(new BufferedReader(new InputStreamReader(object.getObjectContent())))) {
+        ObjectMetadata objectMetadata = object.getObjectMetadata();
+        boolean gzip = "gzip".equalsIgnoreCase(objectMetadata.getContentEncoding());
+        try (val s3Reader = new CSVReader(new BufferedReader(new InputStreamReader(gzip ? new GZIPInputStream(object.getObjectContent()) : object.getObjectContent())))) {
             return getPreviewFromCSV(s3Reader, numLines);
         } catch (IOException e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();

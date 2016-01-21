@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.List;
 import java.util.UUID;
+import java.util.zip.GZIPOutputStream;
 
 @Slf4j
 public class CsvOutputBuilder implements JobOutputBuilder
@@ -34,13 +35,13 @@ public class CsvOutputBuilder implements JobOutputBuilder
     @JsonIgnore
     private final UUID jobUUID;
 
-    public CsvOutputBuilder(boolean includeHeader, UUID jobUUID, long maxFileSizeBytes) throws IOException {
+    public CsvOutputBuilder(boolean includeHeader, UUID jobUUID, long maxFileSizeBytes, boolean compressedOutput) throws IOException {
         this.includeHeader = includeHeader;
         this.jobUUID = jobUUID;
         this.outputFile = File.createTempFile(jobUUID.toString(), FILE_SUFFIX);
         this.maxFileSizeBytes = maxFileSizeBytes;
         this.countingOutputStream = new CountingOutputStream(new FileOutputStream(this.outputFile));
-        this.csvWriter = new CSVWriter(new OutputStreamWriter(this.countingOutputStream));
+        this.csvWriter = new CSVWriter(new OutputStreamWriter(compressedOutput ? new GZIPOutputStream(this.countingOutputStream) : this.countingOutputStream));
     }
 
     @Override

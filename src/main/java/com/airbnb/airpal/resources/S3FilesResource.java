@@ -2,6 +2,7 @@ package com.airbnb.airpal.resources;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.google.common.io.ByteStreams;
 import com.google.inject.Inject;
 import lombok.val;
@@ -52,7 +53,12 @@ public class S3FilesResource
         if (object == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         } else {
-            return Response.ok(new StreamingOutput() {
+            ObjectMetadata objectMetadata = object.getObjectMetadata();
+            Response.ResponseBuilder builder = Response.ok().type(objectMetadata.getContentType());
+            if (objectMetadata.getContentEncoding() != null) {
+                builder = builder.encoding(objectMetadata.getContentEncoding()); // gzip
+            }
+            return builder.entity(new StreamingOutput() {
                 @Override
                 public void write(OutputStream output)
                         throws IOException, WebApplicationException
