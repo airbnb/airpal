@@ -76,7 +76,7 @@ public abstract class AirpalApplicationBase<T extends AirpalConfiguration> exten
                     @Override
                     public FlywayFactory getFlywayFactory(T configuration)
                     {
-                        return super.getFlywayFactory(configuration);
+                        return configuration.getFlywayFactory();
                     }
                 });
     }

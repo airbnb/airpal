@@ -78,6 +78,7 @@ dependencies {
     compile group: 'org.apache.shiro', name: 'shiro-guice', version:'1.2.3'
     compile group: 'org.secnod.dropwizard', name: 'dropwizard-shiro', version:'0.1.0'
     compile group: 'mysql', name: 'mysql-connector-java', version:'5.1.34'
+    compile group: 'com.h2database', name: 'h2', version:'1.4.190'
 
     provided group: 'org.projectlombok', name: 'lombok', version:'1.12.2'
 

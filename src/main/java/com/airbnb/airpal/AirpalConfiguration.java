@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.airlift.units.DataSize;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
+import io.dropwizard.flyway.FlywayFactory;
 import io.dropwizard.util.Duration;
 import lombok.Getter;
 import lombok.Setter;
@@ -93,6 +94,13 @@ public class AirpalConfiguration extends Configuration
     @JsonProperty
     @NotNull
     private DataSourceFactory dataSourceFactory = new DataSourceFactory();
+
+    @Getter
+    @Setter
+    @Valid
+    @JsonProperty
+    @NotNull
+    private FlywayFactory flywayFactory = new FlywayFactory();
 
     @Getter
     @Setter
