@@ -64,6 +64,7 @@ import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.setup.Environment;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.web.env.EnvironmentLoaderListener;
+import org.jetbrains.annotations.Nullable;
 import org.skife.jdbi.v2.DBI;
 
 import javax.inject.Named;
@@ -270,17 +271,36 @@ public class AirpalModule extends AbstractModule
 
     @Singleton
     @Provides
-    public AmazonS3 provideAmazonS3Client(AWSCredentials awsCredentials)
+    public AmazonS3 provideAmazonS3Client(AWSCredentials awsCredentials, EncryptionMaterialsProvider encryptionMaterialsProvider)
     {
-        // build an encryption materials provider object to handle encryption key management if needed
-        EncryptionMaterialsProvider emp = null;
+        if (awsCredentials == null) {
+            if (encryptionMaterialsProvider == null) {
+                return new AmazonS3Client(new InstanceProfileCredentialsProvider());
+            }
+            else {
+                return new AmazonS3EncryptionClient(new InstanceProfileCredentialsProvider(), encryptionMaterialsProvider);
+            }
+        }
+
+        if (encryptionMaterialsProvider == null) {
+            return new AmazonS3Client(awsCredentials);
+        }
+        else {
+            return new AmazonS3EncryptionClient(awsCredentials, encryptionMaterialsProvider);
+        }
+    }
+
+    @Nullable
+    @Singleton
+    @Provides
+    private EncryptionMaterialsProvider provideEncryptionMaterialsProvider() {
         String empClassName = config.getS3EncryptionMaterialsProvider();
         if (empClassName != null) {
             try {
                 Class<?> empClass = Class.forName(empClassName);
                 Object instance = empClass.newInstance();
                 if (instance instanceof EncryptionMaterialsProvider) {
-                    emp = (EncryptionMaterialsProvider)instance;
+                    return (EncryptionMaterialsProvider)instance;
                 }
                 else {
                     throw new IllegalArgumentException("Class " + empClassName + " must implement EncryptionMaterialsProvider");
@@ -291,21 +311,7 @@ public class AirpalModule extends AbstractModule
             }
         }
 
-        if (awsCredentials == null) {
-            if (emp == null) {
-                return new AmazonS3Client(new InstanceProfileCredentialsProvider());
-            }
-            else {
-                return new AmazonS3EncryptionClient(new InstanceProfileCredentialsProvider(), emp);
-            }
-        }
-
-        if (emp == null) {
-            return new AmazonS3Client(awsCredentials);
-        }
-        else {
-            return new AmazonS3EncryptionClient(awsCredentials, emp);
-        }
+        return null;
     }
 
     @Singleton

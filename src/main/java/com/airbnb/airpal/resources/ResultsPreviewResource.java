@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -86,9 +87,17 @@ public class ResultsPreviewResource
         val object = s3Client.getObject(request);
         ObjectMetadata objectMetadata = object.getObjectMetadata();
         boolean gzip = "gzip".equalsIgnoreCase(objectMetadata.getContentEncoding());
-        try (val s3Reader = new CSVReader(new BufferedReader(new InputStreamReader(gzip ? new GZIPInputStream(object.getObjectContent()) : object.getObjectContent())))) {
-            return getPreviewFromCSV(s3Reader, numLines);
-        } catch (IOException e) {
+        try (InputStream input = object.getObjectContent()) {
+            InputStreamReader reader;
+            if (gzip) {
+                reader = new InputStreamReader(new GZIPInputStream(input));
+            }
+            else {
+                reader = new InputStreamReader(input);
+            }
+            return getPreviewFromCSV(new CSVReader(reader), numLines);
+        }
+        catch (IOException e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }

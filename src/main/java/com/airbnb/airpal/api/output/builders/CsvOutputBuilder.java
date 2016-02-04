@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.List;
 import java.util.UUID;
@@ -41,7 +42,14 @@ public class CsvOutputBuilder implements JobOutputBuilder
         this.outputFile = File.createTempFile(jobUUID.toString(), FILE_SUFFIX);
         this.maxFileSizeBytes = maxFileSizeBytes;
         this.countingOutputStream = new CountingOutputStream(new FileOutputStream(this.outputFile));
-        this.csvWriter = new CSVWriter(new OutputStreamWriter(compressedOutput ? new GZIPOutputStream(this.countingOutputStream) : this.countingOutputStream));
+        OutputStreamWriter writer;
+        if (compressedOutput) {
+            writer = new OutputStreamWriter(new GZIPOutputStream(this.countingOutputStream));
+        }
+        else {
+            writer = new OutputStreamWriter(this.countingOutputStream);
+        }
+        this.csvWriter = new CSVWriter(writer);
     }
 
     @Override
