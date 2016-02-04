@@ -151,7 +151,7 @@ public class TablesResource
 
         if (isAuthorizedRead(user, defaultCatalog, schema, tableName)) {
             return Response.ok(previewTableCache.getPreview(
-                    Optional.fromNullable(connectorId).or("hive"),
+                    Optional.fromNullable(connectorId).or(defaultCatalog),
                     schema,
                     tableName,
                     partition,
