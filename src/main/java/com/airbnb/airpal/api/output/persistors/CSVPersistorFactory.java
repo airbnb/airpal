@@ -13,12 +13,13 @@ public class CSVPersistorFactory
     private AmazonS3 s3Client;
     private String s3Bucket;
     private ExpiringFileStore expiringFileStore;
+    private boolean compressedOutput;
 
     public Persistor getPersistor(Job job, PersistentJobOutput jobOutput)
     {
         // TODO: Support variable CSV persistor.
         if (useS3Persistor) {
-            return new S3FilePersistor(s3Client, s3Bucket, 0L);
+            return new S3FilePersistor(s3Client, s3Bucket, 0L, compressedOutput);
         } else {
             return new FlatFilePersistor(expiringFileStore);
         }

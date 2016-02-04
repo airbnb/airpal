@@ -44,6 +44,8 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.InstanceProfileCredentialsProvider;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3EncryptionClient;
+import com.amazonaws.services.s3.model.EncryptionMaterialsProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaMapper;
 import com.google.common.base.Strings;
@@ -64,6 +66,7 @@ import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.setup.Environment;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.web.env.EnvironmentLoaderListener;
+import org.jetbrains.annotations.Nullable;
 import org.skife.jdbi.v2.DBI;
 
 import javax.inject.Named;
@@ -284,14 +287,47 @@ public class AirpalModule extends AbstractModule
 
     @Singleton
     @Provides
-    public AmazonS3 provideAmazonS3Client(AWSCredentials awsCredentials)
+    public AmazonS3 provideAmazonS3Client(AWSCredentials awsCredentials, EncryptionMaterialsProvider encryptionMaterialsProvider)
     {
         if (awsCredentials == null) {
-            InstanceProfileCredentialsProvider iamCredentials = new InstanceProfileCredentialsProvider();
-            return new AmazonS3Client(iamCredentials);
+            if (encryptionMaterialsProvider == null) {
+                return new AmazonS3Client(new InstanceProfileCredentialsProvider());
+            }
+            else {
+                return new AmazonS3EncryptionClient(new InstanceProfileCredentialsProvider(), encryptionMaterialsProvider);
+            }
         }
 
-        return new AmazonS3Client(awsCredentials);
+        if (encryptionMaterialsProvider == null) {
+            return new AmazonS3Client(awsCredentials);
+        }
+        else {
+            return new AmazonS3EncryptionClient(awsCredentials, encryptionMaterialsProvider);
+        }
+    }
+
+    @Nullable
+    @Singleton
+    @Provides
+    private EncryptionMaterialsProvider provideEncryptionMaterialsProvider() {
+        String empClassName = config.getS3EncryptionMaterialsProvider();
+        if (empClassName != null) {
+            try {
+                Class<?> empClass = Class.forName(empClassName);
+                Object instance = empClass.newInstance();
+                if (instance instanceof EncryptionMaterialsProvider) {
+                    return (EncryptionMaterialsProvider)instance;
+                }
+                else {
+                    throw new IllegalArgumentException("Class " + empClassName + " must implement EncryptionMaterialsProvider");
+                }
+            }
+            catch (Exception x) {
+                throw new RuntimeException("Unable to initialize EncryptionMaterialsProvider class " + empClassName + ": " + x, x);
+            }
+        }
+
+        return null;
     }
 
     @Singleton
@@ -334,7 +370,7 @@ public class AirpalModule extends AbstractModule
     @Singleton
     public CSVPersistorFactory provideCSVPersistorFactory(ExpiringFileStore fileStore, AmazonS3 s3Client, @Named("s3Bucket") String s3Bucket)
     {
-        return new CSVPersistorFactory(config.isUseS3(), s3Client, s3Bucket, fileStore);
+        return new CSVPersistorFactory(config.isUseS3(), s3Client, s3Bucket, fileStore, config.isCompressedOutput());
     }
 
     @Provides
@@ -349,6 +385,6 @@ public class AirpalModule extends AbstractModule
     public OutputBuilderFactory provideOutputBuilderFactory()
     {
         long maxFileSizeInBytes = Math.round(Math.floor(config.getMaxOutputSize().getValue(DataSize.Unit.BYTE)));
-        return new OutputBuilderFactory(maxFileSizeInBytes);
+        return new OutputBuilderFactory(maxFileSizeInBytes, config.isCompressedOutput());
     }
 }

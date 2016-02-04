@@ -25,6 +25,7 @@ public class S3FilePersistor
     private final AmazonS3 s3Client;
     private final String outputBucket;
     private final long maxSizeForTextView;
+    private final boolean compressedOutput;
 
     @Override
     public boolean canPersist(QueryExecutionAuthorizer authorizer)
@@ -46,6 +47,9 @@ public class S3FilePersistor
         val objectMetaData = new ObjectMetadata();
         objectMetaData.setContentLength(file.length());
         objectMetaData.setContentType(MediaType.CSV_UTF_8.toString());
+        if (compressedOutput) {
+            objectMetaData.setContentEncoding("gzip");
+        }
 
         val putRequest = new PutObjectRequest(
                 outputBucket,

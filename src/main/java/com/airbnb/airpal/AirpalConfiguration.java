@@ -76,6 +76,11 @@ public class AirpalConfiguration extends Configuration
     @Getter
     @Setter
     @JsonProperty
+    private String s3EncryptionMaterialsProvider;
+
+    @Getter
+    @Setter
+    @JsonProperty
     private String createTableDestinationSchema = "airpal";
 
     @Getter
@@ -115,4 +120,11 @@ public class AirpalConfiguration extends Configuration
     @JsonProperty
     @NotNull
     private boolean useS3 = false;
+
+    @Getter
+    @Setter
+    @Valid
+    @JsonProperty
+    @NotNull
+    private boolean compressedOutput = false;
 }
