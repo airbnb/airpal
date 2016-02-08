@@ -23,6 +23,7 @@ let columnWidths = {
   duration: 80,
   output: 230,
 };
+let progressBarMinPercent = 3;
 
 // State actions
 function getRuns(user) {
@@ -291,19 +292,42 @@ let CellRenderers = {
           </a>
         );
       }
-    } else if (run.state === 'RUNNING') {
-      return (
-        <div className={cx({
-          'runs-table-progress': true,
-          'runs-table-progress-killable': killable
-        })}>
-          <ProgressBar now={getProgressFromStats(run.queryStats)} />
-          {killable ?
-            <span className="glyphicon glyphicon-remove text-danger"
-              title="Kill query"
-              onClick={killRun.bind(null, run.uuid)}></span>
-          : null}
+    } else if (run.state === RunStateConstants.RUNNING) {
+      let stageProgressBars = [];
+      if (run.stageStats) {
+	for (let i = 0; i < run.stageStats.length; i++) {
+	  stageProgressBars.push(
+	    <dt>{run.stageStats.stageId}</dt>);
+	  stageProgressBars.push(
+	    <dd>
+	      <ProgressBar 
+		  bsStyle={getBsStyleForState(run.stageStats[i].state)} 
+		  label="%(percent)s"
+		  now={getProgressForStage(run.stageStats[i])}/>
+	    </dd>);
+	}
+      }
+      let statusModal = (<Modal {...this.props} title="Stage Progress" animation={false}>
+        <div className="modal-body">
+	  <dl>
+	    {stageProgressBars}
+	  </dl>
         </div>
+      </Modal>);
+      return (
+	<ModalTrigger modal={statusModal}>
+	  <div className={cx({
+	    'runs-table-progress': true,
+	    'runs-table-progress-killable': killable
+	  })}>
+	  <ProgressBar now={getProgressFromStats(run.queryStats)} />
+	  {killable ?
+	    <span className="glyphicon glyphicon-remove text-danger"
+	      title="Kill query"
+	      onClick={killRun.bind(null, run.uuid)}></span>
+	  : null}
+	  </div>
+	</ModalTrigger>
         );
 
     // XXX this needs to be a modal...we can use a custom modal here or something experimental
@@ -328,7 +352,31 @@ function getProgressFromStats(stats) {
   if (!stats || !stats.totalTasks || stats.totalTasks == 0) {
     return 0.0;
   } else {
-    return Math.max(stats.completedTasks / stats.totalTasks * 100, 3);
+    return Math.max(stats.completedTasks / stats.totalTasks * 100, progressBarMinPercent);
+  }
+}
+
+function getProgressForStage(stageStats) {
+  if (!stageStats) {
+    return 0.0;
+  } else {
+    return Math.max(
+      stageStats.completedSplits / stageStats.totalSplits * 100, 
+      progressBarMinPercent);
+  }
+}
+
+function getBsStyleForState(state) {
+  if (state === RunStateConstants.RUNNING) {
+    return "info";
+  } else if (state === RunStateConstants.FAILED) {
+    return "danger";
+  } else if ((state === RunStateConstants.QUEUED) || (state === RunStateConstants.SCHEDULING)) {
+    return "warning";
+  } else if (state === RunStateConstants.FINISHED) {
+    return "success";
+  } else {
+    return "info";
   }
 }
 

@@ -78,6 +78,7 @@ public class QueriesResource
                             job.getUuid(),
                             job.getOutput(),
                             job.getQueryStats(),
+                            job.getStageStats(),
                             job.getState(),
                             Collections.<Column>emptyList(),
                             Collections.<Table>emptySet(),

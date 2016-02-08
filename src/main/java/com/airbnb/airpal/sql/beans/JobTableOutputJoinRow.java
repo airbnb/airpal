@@ -7,6 +7,7 @@ import com.airbnb.airpal.api.output.PersistentJobOutputFactory;
 import com.airbnb.airpal.presto.Table;
 import com.facebook.presto.client.Column;
 import com.facebook.presto.client.QueryError;
+import com.facebook.presto.client.StageStats;
 import com.facebook.presto.execution.QueryStats;
 import com.hubspot.rosetta.StoredAsJson;
 import lombok.Data;
@@ -33,6 +34,8 @@ public class JobTableOutputJoinRow
     private UUID uuid;
     @StoredAsJson
     private QueryStats queryStats;
+    @StoredAsJson
+    private List<StageStats> stageStats;
     private JobState state;
     @StoredAsJson
     private List<Column> columns;
@@ -71,6 +74,7 @@ public class JobTableOutputJoinRow
                                 rs.getUuid(),
                                 rs.getJobOutput(),
                                 rs.getQueryStats(),
+                                rs.getStageStats(),
                                 rs.getState(),
                                 rs.getColumns(),
                                 new HashSet<Table>(),

@@ -282,6 +282,10 @@ public class Execution implements Callable<Job>
             job.setQueryStats(queryStats);
         }
 
+        if (stageStats != null) {
+            job.setStageStats(stageStats);
+        }
+
         if ((state != null) && (job.getState() != JobState.FINISHED) && (job.getState() != JobState.FAILED)) {
             job.setState(state);
         }
