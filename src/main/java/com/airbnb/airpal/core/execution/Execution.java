@@ -14,17 +14,13 @@ import com.airbnb.airpal.presto.QueryInfoClient;
 import com.airbnb.airpal.presto.QueryRunner;
 import com.airbnb.airpal.presto.Table;
 import com.airbnb.airpal.presto.metadata.ColumnCache;
-import com.facebook.presto.client.Column;
-import com.facebook.presto.client.ErrorLocation;
-import com.facebook.presto.client.FailureInfo;
-import com.facebook.presto.client.QueryError;
-import com.facebook.presto.client.QueryResults;
-import com.facebook.presto.client.StatementClient;
+import com.facebook.presto.client.*;
 import com.facebook.presto.execution.QueryStats;
 import com.facebook.presto.sql.parser.ParsingException;
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.google.common.eventbus.EventBus;
 import com.google.common.util.concurrent.RateLimiter;
 import io.airlift.units.DataSize;
@@ -82,6 +78,13 @@ public class Execution implements Callable<Job>
     public Job call() throws Exception
     {
         return doExecute();
+    }
+
+    private void addStagesToList(StageStats stageStats, List<StageStats> list) {
+        list.add(stageStats);
+        for (StageStats stats : stageStats.getSubStages()) {
+            addStagesToList(stats, list);
+        }
     }
 
     private Job doExecute()
@@ -142,6 +145,7 @@ public class Execution implements Callable<Job>
                     JobState jobState = null;
                     QueryError queryError = null;
                     QueryStats queryStats = null;
+                    List<StageStats> stageStats = null;
 
                     if (isCancelled) {
                         throw new ExecutionFailureException(job,
@@ -160,6 +164,11 @@ public class Execution implements Callable<Job>
                         if (queryInfo != null) {
                             queryStats = queryInfo.getQueryStats();
                         }
+                    }
+
+                    if (results.getStats().getRootStage() != null) {
+                        stageStats = Lists.newArrayList();
+                        addStagesToList(results.getStats().getRootStage(), stageStats);
                     }
 
                     if (results.getStats() != null) {
@@ -185,7 +194,7 @@ public class Execution implements Callable<Job>
                                 e);
                     }
 
-                    rlUpdateJobInfo(tables, resultColumns, queryStats, jobState, queryError, outputPreview);
+                    rlUpdateJobInfo(tables, resultColumns, queryStats, stageStats, jobState, queryError, outputPreview);
 
                     return null;
                 }
@@ -200,11 +209,17 @@ public class Execution implements Callable<Job>
         if (finalResults != null && finalResults.getInfoUri() != null) {
             BasicQueryInfo queryInfo = queryInfoClient.from(finalResults.getInfoUri());
 
+            List<StageStats> stageStats = Lists.newArrayList();
+            if (finalResults.getStats().getRootStage() != null) {
+                addStagesToList(finalResults.getStats().getRootStage(), stageStats);
+            }
+
             if (queryInfo != null) {
                 updateJobInfo(
                         null,
                         null,
                         queryInfo.getQueryStats(),
+                        stageStats,
                         JobState.fromStatementState(finalResults.getStats().getState()),
                         finalResults.getError(),
                         outputPreview,
@@ -233,14 +248,15 @@ public class Execution implements Callable<Job>
             Set<Table> usedTables,
             List<Column> columns,
             QueryStats queryStats,
+            List<StageStats> stageStats,
             JobState state,
             QueryError error,
             List<List<Object>> outputPreview)
     {
         if (updateLimiter.tryAcquire(1)) {
-            updateJobInfo(usedTables, columns, queryStats, state, error, outputPreview, true);
+            updateJobInfo(usedTables, columns, queryStats, stageStats, state, error, outputPreview, true);
         } else {
-            updateJobInfo(usedTables, columns, queryStats, state, error, outputPreview, false);
+            updateJobInfo(usedTables, columns, queryStats, stageStats, state, error, outputPreview, false);
         }
     }
 
@@ -248,6 +264,7 @@ public class Execution implements Callable<Job>
             Set<Table> usedTables,
             List<Column> columns,
             QueryStats queryStats,
+            List<StageStats> stageStats,
             JobState state,
             QueryError error,
             List<List<Object>> outputPreview,

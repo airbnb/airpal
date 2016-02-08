@@ -4,6 +4,7 @@ import com.airbnb.airpal.api.output.PersistentJobOutput;
 import com.airbnb.airpal.presto.Table;
 import com.facebook.presto.client.Column;
 import com.facebook.presto.client.QueryError;
+import com.facebook.presto.client.StageStats;
 import com.facebook.presto.execution.QueryStats;
 import com.fasterxml.jackson.annotation.*;
 import com.google.common.collect.Sets;
@@ -43,6 +44,11 @@ public class Job
 
     @JsonProperty
     @Wither
+    @StoredAsJson
+    private List<StageStats> stageStats;
+
+    @JsonProperty
+    @Wither
     private JobState state;
 
     @JsonProperty
@@ -73,6 +79,7 @@ public class Job
             @JsonProperty("uuid") final UUID uuid,
             @JsonProperty("output") final PersistentJobOutput output,
             @JsonProperty("queryStats") final QueryStats queryStats,
+            @JsonProperty("stageStats") final List<StageStats> stageStats,
             @JsonProperty("state") final JobState state,
             @JsonProperty("columns") final List<Column> columns,
             @JsonProperty("tablesUsed") final Set<Table> tablesUsed,
@@ -85,6 +92,7 @@ public class Job
         this.uuid = uuid;
         this.output = output;
         this.queryStats = queryStats;
+        this.stageStats = stageStats;
         this.state = state;
         this.columns = columns;
         this.tablesUsed = tablesUsed;
@@ -98,6 +106,7 @@ public class Job
             final UUID uuid,
             final PersistentJobOutput output,
             final QueryStats stats,
+            final List<StageStats> stageStats,
             final JobState state,
             final List<Column> columns,
             final QueryError error,
@@ -108,6 +117,7 @@ public class Job
              uuid,
              output,
              stats,
+             stageStats,
              state,
              columns,
              Sets.<Table>newConcurrentHashSet(),
