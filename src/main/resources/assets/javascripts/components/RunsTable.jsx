@@ -234,22 +234,23 @@ function killRun(uuid) {
   RunActions.kill(uuid);
 }
 
-function getNestedProgressBars(stage, arr) {
-  arr.push(<ul className="stage-progress">);
-  arr.push(<li>);
-  arr.push(
-    <span className="pull-left">{stage.stageId}</span>);
-  arr.push(
-    <ProgressBar 
-      bsStyle={getBsStyleForState(stage.state)} 
-      now={getProgressForStage(stage)}/>);
-  arr.push(</li>);
+function getNestedProgressBars(stage) {
+  let arr = [];
   if (stage.subStages && stage.subStages.length > 0) {
     for (let i = 0; i < stage.length; i++) {
-      getNestedProgressBars(stage.subStages[i], arr);
+      arr.push(getNestedProgressBars(stage.subStages[i]));
     }
   }
-  arr.push(</ul>);
+  return (
+    <ul className="stage-progress">
+      <li>
+	<span className="pull-left">{stage.stageId}</span>
+	<ProgressBar 
+	  bsStyle={getBsStyleForState(stage.state)} 
+	  now={getProgressForStage(stage)}/>
+      </li>
+      {arr}
+    </ul>);
 }
 
 let CellRenderers = {

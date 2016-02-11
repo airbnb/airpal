@@ -35,7 +35,7 @@ public class JobTableOutputJoinRow
     @StoredAsJson
     private QueryStats queryStats;
     @StoredAsJson
-    private List<StageStats> stageStats;
+    private StageStats stageStats;
     private JobState state;
     @StoredAsJson
     private List<Column> columns;

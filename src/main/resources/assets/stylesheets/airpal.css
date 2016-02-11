@@ -456,3 +456,7 @@ body {
     position: absolute;
   }
 }
+
+ul.stage-progress {
+    list-style-type: none;
+}
