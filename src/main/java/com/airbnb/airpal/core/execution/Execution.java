@@ -80,13 +80,6 @@ public class Execution implements Callable<Job>
         return doExecute();
     }
 
-    private void addStagesToList(StageStats stageStats, List<StageStats> list) {
-        list.add(stageStats);
-        for (StageStats stats : stageStats.getSubStages()) {
-            addStagesToList(stats, list);
-        }
-    }
-
     private Job doExecute()
             throws ExecutionFailureException
     {
@@ -145,7 +138,7 @@ public class Execution implements Callable<Job>
                     JobState jobState = null;
                     QueryError queryError = null;
                     QueryStats queryStats = null;
-                    List<StageStats> stageStats = null;
+                    StageStats stageStats = null;
 
                     if (isCancelled) {
                         throw new ExecutionFailureException(job,
@@ -166,13 +159,12 @@ public class Execution implements Callable<Job>
                         }
                     }
 
-                    if (results.getStats().getRootStage() != null) {
-                        stageStats = Lists.newArrayList();
-                        addStagesToList(results.getStats().getRootStage(), stageStats);
-                    }
-
                     if (results.getStats() != null) {
                         jobState = JobState.fromStatementState(results.getStats().getState());
+                    }
+
+                    if (results.getStats().getRootStage() != null) {
+                        stageStats = results.getStats().getRootStage();
                     }
 
                     try {
@@ -209,9 +201,9 @@ public class Execution implements Callable<Job>
         if (finalResults != null && finalResults.getInfoUri() != null) {
             BasicQueryInfo queryInfo = queryInfoClient.from(finalResults.getInfoUri());
 
-            List<StageStats> stageStats = Lists.newArrayList();
+            StageStats stageStats = null;
             if (finalResults.getStats().getRootStage() != null) {
-                addStagesToList(finalResults.getStats().getRootStage(), stageStats);
+                stageStats = finalResults.getStats().getRootStage();
             }
 
             if (queryInfo != null) {
@@ -248,7 +240,7 @@ public class Execution implements Callable<Job>
             Set<Table> usedTables,
             List<Column> columns,
             QueryStats queryStats,
-            List<StageStats> stageStats,
+            StageStats stageStats,
             JobState state,
             QueryError error,
             List<List<Object>> outputPreview)
@@ -264,7 +256,7 @@ public class Execution implements Callable<Job>
             Set<Table> usedTables,
             List<Column> columns,
             QueryStats queryStats,
-            List<StageStats> stageStats,
+            StageStats stageStats,
             JobState state,
             QueryError error,
             List<List<Object>> outputPreview,

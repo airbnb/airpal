@@ -234,6 +234,24 @@ function killRun(uuid) {
   RunActions.kill(uuid);
 }
 
+function getNestedProgressBars(stage, arr) {
+  arr.push(<ul className="stage-progress">);
+  arr.push(<li>);
+  arr.push(
+    <span className="pull-left">{stage.stageId}</span>);
+  arr.push(
+    <ProgressBar 
+      bsStyle={getBsStyleForState(stage.state)} 
+      now={getProgressForStage(stage)}/>);
+  arr.push(</li>);
+  if (stage.subStages && stage.subStages.length > 0) {
+    for (let i = 0; i < stage.length; i++) {
+      getNestedProgressBars(stage.subStages[i], arr);
+    }
+  }
+  arr.push(</ul>);
+}
+
 let CellRenderers = {
   user(cellData) {
     return <span title={cellData}>{cellData}</span>;
@@ -295,23 +313,11 @@ let CellRenderers = {
     } else if (run.state === RunStateConstants.RUNNING) {
       let stageProgressBars = [];
       if (run.stageStats) {
-	for (let i = 0; i < run.stageStats.length; i++) {
-	  stageProgressBars.push(
-	    <dt>{run.stageStats.stageId}</dt>);
-	  stageProgressBars.push(
-	    <dd>
-	      <ProgressBar 
-		  bsStyle={getBsStyleForState(run.stageStats[i].state)} 
-		  label="%(percent)s"
-		  now={getProgressForStage(run.stageStats[i])}/>
-	    </dd>);
-	}
+	getNestedProgressBars(run.stageStats, stageProgressBars);
       }
       let statusModal = (<Modal {...this.props} title="Stage Progress" animation={false}>
         <div className="modal-body">
-	  <dl>
-	    {stageProgressBars}
-	  </dl>
+	  {stageProgressBars}
         </div>
       </Modal>);
       return (
@@ -360,9 +366,7 @@ function getProgressForStage(stageStats) {
   if (!stageStats) {
     return 0.0;
   } else {
-    return Math.max(
-      stageStats.completedSplits / stageStats.totalSplits * 100, 
-      progressBarMinPercent);
+    return stageStats.completedSplits / stageStats.totalSplits * 100;
   }
 }
 
