@@ -121,6 +121,9 @@ Airpal Version | Presto Versions Tested
 ---------------|-----------------------
 0.1            | 0.77, 0.87
 
+## In the Wild
+Organizations and projects using `airpal` can list themselves [here](inthewild.md).
+
 ## Contributors
 
 - Andy Kramolisch [@andykram](https://github.com/andykram)
