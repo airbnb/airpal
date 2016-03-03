@@ -458,5 +458,22 @@ body {
 }
 
 ul.stage-progress {
-    list-style-type: none;
+  list-style-type: none;
+}
+
+li.stage-progress-child {
+  position: relative;
+}
+
+li.stage-progress-child::before {
+  content: "┖";
+  position: absolute;
+  color: black;
+  left: -1.15em;
+  font-family: "Times New Roman", Times, serif;
+  height: 1em;
+  top: -.13em;
+  width: 0.5em;
+  transform: scale(1,3.8);
+  font-size: x-large;
 }

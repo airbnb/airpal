@@ -294,17 +294,8 @@ let CellRenderers = {
         );
       }
     } else if (run.state === RunStateConstants.RUNNING) {
-      var stageProgress;
-      if (run.stageStats) {
-	stageProgress = getStageProgress(run.stageStats);
-      }
-      let statusModal = (<Modal {...this.props} title="Stage Progress" animation={false}>
-        <div className="modal-body">
-	    {stageProgress}
-        </div>
-      </Modal>);
       return (
-	<ModalTrigger modal={statusModal}>
+	<ModalTrigger modal={getStageProgress(run.stageStats)}>
 	  <div className={cx({
 	    'runs-table-progress': true,
 	    'runs-table-progress-killable': killable
@@ -342,28 +333,6 @@ function getProgressFromStats(stats) {
     return 0.0;
   } else {
     return Math.max(stats.completedTasks / stats.totalTasks * 100, progressBarMinPercent);
-  }
-}
-
-function getProgressForStage(stageStats) {
-  if (!stageStats) {
-    return 0.0;
-  } else {
-    return stageStats.completedSplits / stageStats.totalSplits * 100;
-  }
-}
-
-function getBsStyleForState(state) {
-  if (state === StageStateConstants.RUNNING) {
-    return "info";
-  } else if (state === StageStateConstants.FAILED) {
-    return "danger";
-  } else if ((state === StageStateConstants.QUEUED) || (state === StageStateConstants.SCHEDULING)) {
-    return "warning";
-  } else if (state === StageStateConstants.FINISHED) {
-    return "success";
-  } else {
-    return "info";
   }
 }
 
