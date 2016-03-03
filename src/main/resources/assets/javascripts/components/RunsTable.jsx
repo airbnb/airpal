@@ -242,15 +242,13 @@ function getNestedProgressBars(stage) {
     }
   }
   return (
-    <ul className="stage-progress">
       <li>
 	<span className="pull-left">{stage.stageId}</span>
 	<ProgressBar 
 	  bsStyle={getBsStyleForState(stage.state)} 
 	  now={getProgressForStage(stage)}/>
       </li>
-      {arr}
-    </ul>);
+      <ul>{arr}</ul>);
 }
 
 let CellRenderers = {
@@ -312,13 +310,13 @@ let CellRenderers = {
         );
       }
     } else if (run.state === RunStateConstants.RUNNING) {
-      let stageProgressBars = [];
+      var stageProgress;
       if (run.stageStats) {
-	getNestedProgressBars(run.stageStats, stageProgressBars);
+	stageProgress = getNestedProgressBars(run.stageStats);
       }
       let statusModal = (<Modal {...this.props} title="Stage Progress" animation={false}>
         <div className="modal-body">
-	  {stageProgressBars}
+	  <ul>{stageProgress}</ul>
         </div>
       </Modal>);
       return (
