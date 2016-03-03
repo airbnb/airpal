@@ -11,6 +11,7 @@ import RunStateConstants from '../constants/RunStateConstants';
 import RunStore from '../stores/RunStore';
 import { Table, Column } from 'fixed-data-table';
 import { Modal, ModalTrigger, ProgressBar } from 'react-bootstrap';
+import getStageProgress from 'StageStats';
 import UpdateWidthMixin from '../mixins/UpdateWidthMixin';
 
 let cx = React.addons.classSet;
@@ -234,23 +235,6 @@ function killRun(uuid) {
   RunActions.kill(uuid);
 }
 
-function getNestedProgressBars(stage) {
-  let arr = [];
-  if (stage.subStages && stage.subStages.length > 0) {
-    for (let i = 0; i < stage.length; i++) {
-      arr.push(getNestedProgressBars(stage.subStages[i]));
-    }
-  }
-  return (
-      <li>
-	<span className="pull-left">{stage.stageId}</span>
-	<ProgressBar 
-	  bsStyle={getBsStyleForState(stage.state)} 
-	  now={getProgressForStage(stage)}/>
-      </li>
-      <ul>{arr}</ul>);
-}
-
 let CellRenderers = {
   user(cellData) {
     return <span title={cellData}>{cellData}</span>;
@@ -312,11 +296,11 @@ let CellRenderers = {
     } else if (run.state === RunStateConstants.RUNNING) {
       var stageProgress;
       if (run.stageStats) {
-	stageProgress = getNestedProgressBars(run.stageStats);
+	stageProgress = getStageProgress(run.stageStats);
       }
       let statusModal = (<Modal {...this.props} title="Stage Progress" animation={false}>
         <div className="modal-body">
-	  <ul>{stageProgress}</ul>
+	    {stageProgress}
         </div>
       </Modal>);
       return (
@@ -370,13 +354,13 @@ function getProgressForStage(stageStats) {
 }
 
 function getBsStyleForState(state) {
-  if (state === RunStateConstants.RUNNING) {
+  if (state === StageStateConstants.RUNNING) {
     return "info";
-  } else if (state === RunStateConstants.FAILED) {
+  } else if (state === StageStateConstants.FAILED) {
     return "danger";
-  } else if ((state === RunStateConstants.QUEUED) || (state === RunStateConstants.SCHEDULING)) {
+  } else if ((state === StageStateConstants.QUEUED) || (state === StageStateConstants.SCHEDULING)) {
     return "warning";
-  } else if (state === RunStateConstants.FINISHED) {
+  } else if (state === StageStateConstants.FINISHED) {
     return "success";
   } else {
     return "info";
