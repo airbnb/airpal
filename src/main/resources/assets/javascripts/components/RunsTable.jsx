@@ -295,7 +295,7 @@ let CellRenderers = {
       }
     } else if (run.state === RunStateConstants.RUNNING) {
       return (
-	<ModalTrigger modal={getStageProgress(run.stageStats)}>
+	<ModalTrigger modal={getStageProgress(run)}>
 	  <div className={cx({
 	    'runs-table-progress': true,
 	    'runs-table-progress-killable': killable

@@ -31,15 +31,17 @@ function getNestedProgressBars(stage, isRoot) {
       arr.push(getNestedProgressBars(stage.subStages[i], false));
     }
   }
-  return [React.createElement('li', {className: isRoot ? 'stage-progress-root' : 'stage-progress-child'},
+  return [
+    React.createElement('li', 
+	{className: isRoot ? 'stage-progress-root' : 'stage-progress-child'},
 	[React.createElement('span', null, "Stage: " + stage.stageId),
-	 React.createElement(ProgressBar, 
-	   {bsStyle: getBsStyleForState(stage.state), 
-	    now: getProgressForStage(stage),
-	    label: stage.completedSplits + "/" + stage.totalSplits
-	    }, 
-           null)]),
-      React.createElement('ul', {className: "stage-progress"}, arr)];
+	 React.createElement(
+	    ProgressBar, 
+	    {bsStyle: getBsStyleForState(stage.state), 
+	     now: getProgressForStage(stage),
+	     label: stage.completedSplits + "/" + stage.totalSplits}, 
+	    null)]),
+    React.createElement('ul', {className: "stage-progress"}, arr)];
 }
 
 function getStageProgress(run) {
