@@ -463,17 +463,68 @@ ul.stage-progress {
 
 li.stage-progress-child {
   position: relative;
+  border-left-color: black;
+  border-left-style: solid;
+  border-left-width: 1px;
+  padding-left: 0.5em;
 }
 
-li.stage-progress-child::before {
-  content: "┖";
+li.stage-progress-child-0::before {
   position: absolute;
-  color: black;
-  left: -1.15em;
-  font-family: "Times New Roman", Times, serif;
-  height: 1em;
-  top: -.13em;
-  width: 0.5em;
-  transform: scale(1,3.8);
-  font-size: x-large;
+  left: -1.5em;
+  width: 1.5em;
+  border-left-color: black;
+  border-left-style: solid;
+  border-left-width: 1px;
+  border-bottom-color: black !important;
+  border-bottom-style: solid !important;
+  border-bottom-width: 1px !important;
+  content: "";
+  top: -1.5em;
+  height: 3em;
+}
+
+li.stage-progress-child-1::before {
+  position: absolute;
+  left: -1.5em;
+  width: 1.5em;
+  border-left-color: black;
+  border-left-style: solid;
+  border-left-width: 1px;
+  border-bottom-color: black;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  content: "";
+  top: -3em;
+  height: 4.5em;
+}
+
+li.stage-progress-child-2::before {
+  position: absolute;
+  left: -1.5em;
+  width: 1.5em;
+  border-left-color: black;
+  border-left-style: solid;
+  border-left-width: 1px;
+  border-bottom-color: black;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  content: "";
+  top: -7.5em;
+  height: 9em;
+}
+
+li.stage-progress-child-3::before {
+  position: absolute;
+  left: -1.5em;
+  width: 1.5em;
+  border-left-color: black;
+  border-left-style: solid;
+  border-left-width: 1px;
+  border-bottom-color: black;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  content: "";
+  top: -12em;
+  height: 13.5em;
 }

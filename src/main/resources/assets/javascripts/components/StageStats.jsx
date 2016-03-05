@@ -24,16 +24,43 @@ function getBsStyleForState(state) {
   }
 }
 
-function getNestedProgressBars(stage, isRoot) {
+/**
+ * Get the total number of substages that appear in a given
+ * subtree of the stage tree, rooted at the given stage.
+ */
+function getTreeSize(stage) {
+  let total = 1;
+  if (stage.subStages && stage.subStages.length > 0) {
+    for (let i = 0; i < stage.subStages.length; i++) {
+	total += getTreeSize(stage.subStages[i]);
+    }
+  }
+  return total;
+}
+
+
+function getClassName(nStagesAbove) {
+  return 'stage-progress-child-' + nStagesAbove;
+}
+
+function getNestedProgressBars(stage, isRoot, nStagesAbove) {
   let arr = [];
   if (stage.subStages && stage.subStages.length > 0) {
     for (let i = 0; i < stage.subStages.length; i++) {
-      arr.push(getNestedProgressBars(stage.subStages[i], false));
+      if (i > 0) {
+	arr.push(getNestedProgressBars(stage.subStages[i], false, getTreeSize(stage.subStages[i-1])));
+      } else {
+	arr.push(getNestedProgressBars(stage.subStages[i], false, 0));
+      }
     }
+  }
+  let classes = (isRoot ? 'stage-progress-root' : 'stage-progress-child');
+  if (!isRoot) {
+    classes += (" " + getClassName(nStagesAbove));
   }
   return [
     React.createElement('li', 
-	{className: isRoot ? 'stage-progress-root' : 'stage-progress-child'},
+	{className: classes},
 	[React.createElement('span', null, "Stage: " + stage.stageId),
 	 React.createElement(
 	    ProgressBar, 
@@ -44,18 +71,18 @@ function getNestedProgressBars(stage, isRoot) {
     React.createElement('ul', {className: "stage-progress"}, arr)];
 }
 
-function getStageProgress(run) {
-      var stageProgress;
-      if (run.stageStats) {
-	stageProgress = getNestedProgressBars(run.stageStats, true);
-      }
-      return (<Modal title="Stage Progress" animation={false}>
-        <div className="modal-body">
-	    <ul className="stage-progress">
-		{stageProgress}
-	    </ul>
-        </div>
-      </Modal>);
-}
+let StageStats = React.createClass({
+  propTypes: {
+    run: React.PropTypes.object.isRequired
+  },
+  render: function() {
+    console.log(this);
+    var stageProgress;
+    if (this.props.run.stageStats) {
+      stageProgress = getNestedProgressBars(this.props.run.stageStats, true);
+    }
+    return (<ul className="stage-progress">{stageProgress}</ul>);
+  }
+});
 
-export default getStageProgress;
+export default StageStats;

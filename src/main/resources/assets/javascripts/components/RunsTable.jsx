@@ -11,7 +11,7 @@ import RunStateConstants from '../constants/RunStateConstants';
 import RunStore from '../stores/RunStore';
 import { Table, Column } from 'fixed-data-table';
 import { Modal, ModalTrigger, ProgressBar } from 'react-bootstrap';
-import getStageProgress from 'StageStats';
+import StageStats from './StageStats';
 import UpdateWidthMixin from '../mixins/UpdateWidthMixin';
 
 let cx = React.addons.classSet;
@@ -294,8 +294,14 @@ let CellRenderers = {
         );
       }
     } else if (run.state === RunStateConstants.RUNNING) {
+      let modal = (
+	<Modal title="Stage Progress" animation={false}>
+	  <div className="modal-body">
+	    <StageStats run={run} \>
+	  </div>
+      </Modal>);
       return (
-	<ModalTrigger modal={getStageProgress(run)}>
+	<ModalTrigger modal={modal}>
 	  <div className={cx({
 	    'runs-table-progress': true,
 	    'runs-table-progress-killable': killable
