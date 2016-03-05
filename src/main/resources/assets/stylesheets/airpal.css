@@ -469,62 +469,79 @@ li.stage-progress-child {
   padding-left: 0.5em;
 }
 
+/** 
+ * These classes represent the different pseudo elements
+ * forming the lattice for the hierarchical list of
+ * stage progress bars. 
+ *
+ * Theoretically these could be dynamically generated
+ * by javascript but this approach seems simpler, plus
+ * it is unlikely any job will be complex enough to 
+ * need more than the child-5 pseudo element.
+ */
+
 li.stage-progress-child-0::before {
   position: absolute;
+  content: "";
+  border-left-color: 1px solid black;
+  border-bottom-color: 1px solid black;
   left: -1.5em;
   width: 1.5em;
-  border-left-color: black;
-  border-left-style: solid;
-  border-left-width: 1px;
-  border-bottom-color: black !important;
-  border-bottom-style: solid !important;
-  border-bottom-width: 1px !important;
-  content: "";
   top: -1.5em;
   height: 3em;
 }
 
 li.stage-progress-child-1::before {
   position: absolute;
+  content: "";
+  border-left-color: 1px solid black;
+  border-bottom-color: 1px solid black;
   left: -1.5em;
   width: 1.5em;
-  border-left-color: black;
-  border-left-style: solid;
-  border-left-width: 1px;
-  border-bottom-color: black;
-  border-bottom-style: solid;
-  border-bottom-width: 1px;
-  content: "";
   top: -3em;
   height: 4.5em;
 }
 
 li.stage-progress-child-2::before {
   position: absolute;
+  content: "";
+  border-left-color: 1px solid black;
+  border-bottom-color: 1px solid black;
   left: -1.5em;
   width: 1.5em;
-  border-left-color: black;
-  border-left-style: solid;
-  border-left-width: 1px;
-  border-bottom-color: black;
-  border-bottom-style: solid;
-  border-bottom-width: 1px;
-  content: "";
   top: -7.5em;
   height: 9em;
 }
 
 li.stage-progress-child-3::before {
   position: absolute;
+  content: "";
+  border-left-color: 1px solid black;
+  border-bottom-color: 1px solid black;
   left: -1.5em;
   width: 1.5em;
-  border-left-color: black;
-  border-left-style: solid;
-  border-left-width: 1px;
-  border-bottom-color: black;
-  border-bottom-style: solid;
-  border-bottom-width: 1px;
-  content: "";
   top: -12em;
   height: 13.5em;
+}
+
+li.stage-progress-child-4::before {
+  position: absolute;
+  content: "";
+  border-left-color: 1px solid black;
+  border-bottom-color: 1px solid black;
+  left: -1.5em;
+  width: 1.5em;
+  top: -16.5em;
+  height: 18em;
+}
+
+li.stage-progress-child-5::before {
+  position: absolute;
+  content: "";
+  border-left-color: 1px solid black;
+  border-bottom-color: 1px solid black;
+  left: -1.5em;
+  width: 1.5em;
+  top: -21em;
+  height: 22.5em;
 }

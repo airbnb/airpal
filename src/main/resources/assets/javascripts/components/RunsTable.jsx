@@ -297,7 +297,7 @@ let CellRenderers = {
       let modal = (
 	<Modal title="Stage Progress" animation={false}>
 	  <div className="modal-body">
-	    <StageStats run={run} \>
+	    <StageStats run={run} />
 	  </div>
       </Modal>);
       return (

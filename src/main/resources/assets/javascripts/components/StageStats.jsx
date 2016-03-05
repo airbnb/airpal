@@ -1,6 +1,6 @@
 import React from 'react/addons';
 import StageStateConstants from '../constants/StageStateConstants';
-import { Modal, ModalTrigger, ProgressBar } from 'react-bootstrap';
+import ProgressBar from 'react-bootstrap';
 
 function getProgressForStage(stageStats) {
   if (!stageStats) {
@@ -38,23 +38,28 @@ function getTreeSize(stage) {
   return total;
 }
 
-
 function getClassName(nStagesAbove) {
   return 'stage-progress-child-' + nStagesAbove;
 }
 
+/**
+ * Recursively iterate through the stage tree and create an appropriate
+ * progress bar element for each stage.
+ */
 function getNestedProgressBars(stage, isRoot, nStagesAbove) {
   let arr = [];
   if (stage.subStages && stage.subStages.length > 0) {
     for (let i = 0; i < stage.subStages.length; i++) {
+      let childNStagesAbove = 0;
       if (i > 0) {
-	arr.push(getNestedProgressBars(stage.subStages[i], false, getTreeSize(stage.subStages[i-1])));
-      } else {
-	arr.push(getNestedProgressBars(stage.subStages[i], false, 0));
+	childNStagesAbove = getTreeSize(stage.subStages[i-1]);
       }
+      arr.push(getNestedProgressBars(stage.subStages[i], false, childNStagesAbove));
     }
   }
   let classes = (isRoot ? 'stage-progress-root' : 'stage-progress-child');
+  // This class will add the appropriate before:: pseudo-element for the given position
+  // in the hierarchical list.
   if (!isRoot) {
     classes += (" " + getClassName(nStagesAbove));
   }
@@ -76,7 +81,6 @@ let StageStats = React.createClass({
     run: React.PropTypes.object.isRequired
   },
   render: function() {
-    console.log(this);
     var stageProgress;
     if (this.props.run.stageStats) {
       stageProgress = getNestedProgressBars(this.props.run.stageStats, true);
