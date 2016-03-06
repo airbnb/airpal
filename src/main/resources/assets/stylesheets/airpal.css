@@ -483,8 +483,8 @@ li.stage-progress-child {
 li.stage-progress-child-0::before {
   position: absolute;
   content: "";
-  border-left-color: 1px solid black;
-  border-bottom-color: 1px solid black;
+  border-left: 1px solid black;
+  border-bottom: 1px solid black;
   left: -1.5em;
   width: 1.5em;
   top: -1.5em;
@@ -494,8 +494,8 @@ li.stage-progress-child-0::before {
 li.stage-progress-child-1::before {
   position: absolute;
   content: "";
-  border-left-color: 1px solid black;
-  border-bottom-color: 1px solid black;
+  border-left: 1px solid black;
+  border-bottom: 1px solid black;
   left: -1.5em;
   width: 1.5em;
   top: -3em;
@@ -505,8 +505,8 @@ li.stage-progress-child-1::before {
 li.stage-progress-child-2::before {
   position: absolute;
   content: "";
-  border-left-color: 1px solid black;
-  border-bottom-color: 1px solid black;
+  border-left: 1px solid black;
+  border-bottom: 1px solid black;
   left: -1.5em;
   width: 1.5em;
   top: -7.5em;
@@ -516,8 +516,8 @@ li.stage-progress-child-2::before {
 li.stage-progress-child-3::before {
   position: absolute;
   content: "";
-  border-left-color: 1px solid black;
-  border-bottom-color: 1px solid black;
+  border-left: 1px solid black;
+  border-bottom: 1px solid black;
   left: -1.5em;
   width: 1.5em;
   top: -12em;
@@ -527,8 +527,8 @@ li.stage-progress-child-3::before {
 li.stage-progress-child-4::before {
   position: absolute;
   content: "";
-  border-left-color: 1px solid black;
-  border-bottom-color: 1px solid black;
+  border-left: 1px solid black;
+  border-bottom: 1px solid black;
   left: -1.5em;
   width: 1.5em;
   top: -16.5em;
@@ -538,8 +538,8 @@ li.stage-progress-child-4::before {
 li.stage-progress-child-5::before {
   position: absolute;
   content: "";
-  border-left-color: 1px solid black;
-  border-bottom-color: 1px solid black;
+  border-left: 1px solid black;
+  border-bottom: 1px solid black;
   left: -1.5em;
   width: 1.5em;
   top: -21em;

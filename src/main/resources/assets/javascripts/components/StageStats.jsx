@@ -1,6 +1,6 @@
 import React from 'react/addons';
 import StageStateConstants from '../constants/StageStateConstants';
-import ProgressBar from 'react-bootstrap';
+import { Modal, ModalTrigger, ProgressBar } from 'react-bootstrap'
 
 function getProgressForStage(stageStats) {
   if (!stageStats) {
@@ -66,12 +66,15 @@ function getNestedProgressBars(stage, isRoot, nStagesAbove) {
   return [
     React.createElement('li', 
 	{className: classes},
-	[React.createElement('span', null, "Stage: " + stage.stageId),
+	[React.createElement('span', null, 
+	    [React.createElement('b', null, "Stage: "), stage.stageId]),
+	 React.createElement('span', {className: 'pull-right'}, 
+	    [React.createElement('b', null, "Status: "), stage.state]),
 	 React.createElement(
 	    ProgressBar, 
 	    {bsStyle: getBsStyleForState(stage.state), 
 	     now: getProgressForStage(stage),
-	     label: stage.completedSplits + "/" + stage.totalSplits}, 
+	     label: '%(percent)s%'}, 
 	    null)]),
     React.createElement('ul', {className: "stage-progress"}, arr)];
 }
