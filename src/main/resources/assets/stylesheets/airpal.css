@@ -457,6 +457,29 @@ body {
   }
 }
 
+/**
+ * Progress bars with centered text
+ */
+.progress {
+  position: relative;
+}
+
+.bar {
+  z-index: 1;
+  position: absolute;
+}
+
+.progress span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  text-align: center;
+  width: 100%;
+  color: black;
+  text-shadow: -1px 0 rgba(255, 255, 255, 0.9), 0 1px rgba(255, 255, 255, 0.9), 1px 0 rgba(255, 255, 255, 0.9), 0 -1px rgba(255, 255, 255, 0.9);
+}
+
 ul.stage-progress {
   list-style-type: none;
 }

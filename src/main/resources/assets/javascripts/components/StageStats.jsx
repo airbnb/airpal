@@ -1,26 +1,27 @@
 import React from 'react/addons';
 import StageStateConstants from '../constants/StageStateConstants';
-import { Modal, ModalTrigger, ProgressBar } from 'react-bootstrap'
+import { Modal, ModalTrigger, ProgressBar } from 'react-bootstrap';
 
 function getProgressForStage(stageStats) {
   if (!stageStats) {
     return 0.0;
   } else {
-    return stageStats.completedSplits / stageStats.totalSplits * 100;
+    let pct = stageStats.completedSplits / stageStats.totalSplits * 100;
+    return pct.toFixed(0);
   }
 }
 
 function getBsStyleForState(state) {
   if (state === StageStateConstants.RUNNING) {
-    return "info";
+    return 'info';
   } else if (state === StageStateConstants.FAILED) {
-    return "danger";
+    return 'danger';
   } else if ((state === StageStateConstants.QUEUED) || (state === StageStateConstants.SCHEDULING)) {
-    return "warning";
+    return 'warning';
   } else if (state === StageStateConstants.FINISHED) {
-    return "success";
+    return 'success';
   } else {
-    return "info";
+    return 'info';
   }
 }
 
@@ -61,22 +62,22 @@ function getNestedProgressBars(stage, isRoot, nStagesAbove) {
   // This class will add the appropriate before:: pseudo-element for the given position
   // in the hierarchical list.
   if (!isRoot) {
-    classes += (" " + getClassName(nStagesAbove));
+    classes += (' ' + getClassName(nStagesAbove));
   }
   return [
     React.createElement('li', 
 	{className: classes},
 	[React.createElement('span', null, 
-	    [React.createElement('b', null, "Stage: "), stage.stageId]),
+	    [React.createElement('b', null, 'Stage: '), stage.stageId]),
 	 React.createElement('span', {className: 'pull-right'}, 
-	    [React.createElement('b', null, "Status: "), stage.state]),
+	    [React.createElement('b', null, 'Status: '), stage.state]),
 	 React.createElement(
 	    ProgressBar, 
 	    {bsStyle: getBsStyleForState(stage.state), 
 	     now: getProgressForStage(stage),
-	     label: '%(percent)s%'}, 
+	     label: React.createElement('span', null, getProgressForStage(stage) + '%')}, 
 	    null)]),
-    React.createElement('ul', {className: "stage-progress"}, arr)];
+    React.createElement('ul', {className: 'stage-progress'}, arr)];
 }
 
 let StageStats = React.createClass({
