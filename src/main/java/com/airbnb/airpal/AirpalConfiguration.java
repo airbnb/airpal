@@ -26,7 +26,7 @@ public class AirpalConfiguration extends Configuration
     @Setter
     @JsonProperty
     @NotNull
-    private String prestoUser = "andykram";
+    private String prestoUser = "changeme";
 
     @Getter
     @Setter
