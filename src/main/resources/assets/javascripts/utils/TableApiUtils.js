@@ -1,6 +1,6 @@
 import xhr from './xhr';
 
-const fetchColumData = (table) => xhr(`${table.url}/columns`);
+const fetchColumnData = (table) => xhr(`${table.url}/columns`);
 
 const fetchPreviewData = (table, partition = {}) => {
   let url = `${table.url}/preview`;
@@ -18,7 +18,7 @@ const fetchPartitionData = (table) => xhr(`${table.url}/partitions`);
 export default {
   fetchTableData(table) {
     return Promise.all([
-      fetchColumData(table),
+      fetchColumnData(table),
       fetchPreviewData(table),
       fetchPartitionData(table)
     ]).then(([columns, data, partitions]) => {
