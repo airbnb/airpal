@@ -47,14 +47,14 @@ public class SQLUsageStore implements UsageStore
     {
         try (Handle handle = dbi.open()) {
             Query<Map<String, Object>> query = handle.createQuery(
-                    "SELECT COUNT(*) AS count, connector_id AS connectorId, schema_ AS \"schema\", table_ AS \"table\" " +
+                    "SELECT connector_id AS connectorId, schema_ AS \"schema\", table_ AS \"table\", COUNT(*) AS count " +
                             "FROM jobs j " +
                             "LEFT OUTER JOIN job_tables jt ON j.id = jt.job_id " +
                             "LEFT OUTER JOIN tables t ON jt.table_id = t.id " +
                             "WHERE " + Util.getQueryFinishedCondition(dbType) + " " +
                             "AND (" + Util.getTableCondition(Lists.newArrayList(tables)) + ") " +
                             "GROUP BY connector_id, schema_, table_ " +
-                            "ORDER BY query_finished DESC")
+                            "ORDER BY count DESC")
                     .bind("day_interval", 1);
 
             return query.
