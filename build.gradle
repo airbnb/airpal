@@ -11,7 +11,7 @@ plugins {
 }
 
 ext {
-    prestoVersion = "0.77"
+    prestoVersion = "0.145"
     if (System.properties['airpal.prestoVersion'] != null) {
         prestoVersion = System.properties['airpal.prestoVersion']
     }
@@ -26,8 +26,8 @@ group = 'com.airbnb.airpal'
 
 description = """airpal"""
 
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 
 repositories {
