@@ -6,9 +6,11 @@ import com.airbnb.airpal.presto.QueryRunner;
 import com.airbnb.airpal.presto.Util;
 import com.airbnb.airpal.presto.hive.HiveColumn;
 import com.airbnb.airpal.presto.hive.HivePartition;
+import com.facebook.presto.client.ClientTypeSignature;
 import com.facebook.presto.client.Column;
 import com.facebook.presto.client.QueryResults;
 import com.facebook.presto.client.StatementClient;
+import com.facebook.presto.spi.type.TypeSignature;
 import com.google.common.base.Function;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.LoadingCache;
@@ -137,7 +139,7 @@ public class ColumnCache
                     QueryResults results = client.current();
                     if (results.getData() != null) {
                         for (List<Object> row : results.getData()) {
-                            Column column = new Column((String) row.get(0), (String) row.get(1));
+                            Column column = new Column((String) row.get(0), (String) row.get(1), new ClientTypeSignature(TypeSignature.parseTypeSignature((String)row.get(1))));
                             boolean isNullable = (Boolean) row.get(2);
                             boolean isPartition = (Boolean) row.get(3);
 
