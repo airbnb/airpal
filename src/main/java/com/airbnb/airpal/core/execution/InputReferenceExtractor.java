@@ -11,7 +11,7 @@ import com.facebook.presto.sql.tree.JoinOn;
 import com.facebook.presto.sql.tree.Node;
 import com.facebook.presto.sql.tree.QualifiedName;
 import com.facebook.presto.sql.tree.RenameTable;
-import com.facebook.presto.sql.tree.UseCollection;
+import com.facebook.presto.sql.tree.Use;
 import com.facebook.presto.sql.tree.WithQuery;
 import com.google.common.collect.Sets;
 import lombok.EqualsAndHashCode;
@@ -110,15 +110,9 @@ public class InputReferenceExtractor
     }
 
     @Override
-    protected CatalogSchemaContext visitUseCollection(UseCollection node, CatalogSchemaContext context)
+    protected CatalogSchemaContext visitUse(Use node, CatalogSchemaContext context)
     {
-        if (node.getType() == UseCollection.CollectionType.CATALOG) {
-            return new CatalogSchemaContext(node.getCollection(), context.getSchema());
-        } else if (node.getType() == UseCollection.CollectionType.SCHEMA) {
-            return new CatalogSchemaContext(context.getCatalog(), node.getCollection());
-        }
-
-        return context;
+        return new CatalogSchemaContext(node.getCatalog().orElse(context.getCatalog()), node.getSchema());
     }
 
     @Override
