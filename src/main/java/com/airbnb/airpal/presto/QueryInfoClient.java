@@ -5,7 +5,7 @@ import com.facebook.presto.execution.QueryStats;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.net.MediaType;
 import io.airlift.http.client.FullJsonResponseHandler;
 import io.airlift.http.client.HttpClient;
@@ -23,14 +23,13 @@ import static com.google.common.net.HttpHeaders.ACCEPT;
 import static com.google.common.net.HttpHeaders.USER_AGENT;
 import static io.airlift.http.client.FullJsonResponseHandler.createFullJsonResponseHandler;
 import static io.airlift.http.client.Request.Builder.prepareGet;
-import static io.airlift.json.JsonCodec.jsonCodec;
 
 @Slf4j
 public class QueryInfoClient
 {
     private static final String USER_AGENT_VALUE = QueryInfoClient.class.getSimpleName() +
             "/" +
-            Objects.firstNonNull(QueryInfoClient.class.getPackage().getImplementationVersion(), "unknown");
+            MoreObjects.firstNonNull(QueryInfoClient.class.getPackage().getImplementationVersion(), "unknown");
 
     private final HttpClient httpClient;
     private final FullJsonResponseHandler<BasicQueryInfo> queryInfoHandler;

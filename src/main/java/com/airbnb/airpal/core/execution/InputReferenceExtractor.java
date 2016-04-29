@@ -69,7 +69,7 @@ public class InputReferenceExtractor
     protected CatalogSchemaContext visitCreateTable(CreateTable node, CatalogSchemaContext context)
     {
         references.add(qualifiedNameToTable(node.getName(), context));
-        visitQuery(node.getQuery(), context);
+        visitCreateTable(node, context);
 
         return context;
     }

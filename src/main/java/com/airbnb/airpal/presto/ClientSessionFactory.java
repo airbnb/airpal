@@ -1,6 +1,7 @@
 package com.airbnb.airpal.presto;
 
 import com.facebook.presto.client.ClientSession;
+import com.google.common.collect.ImmutableMap;
 
 import javax.inject.Provider;
 
@@ -40,7 +41,11 @@ public class ClientSessionFactory
                 schema,
                 timeZoneId,
                 locale,
-                debug);
+                ImmutableMap.<String, String>of(),
+                null,
+                debug,
+                null
+        );
     }
 
     public ClientSession create(String schema)
@@ -52,7 +57,11 @@ public class ClientSessionFactory
                 schema,
                 timeZoneId,
                 locale,
-                debug);
+                ImmutableMap.<String, String>of(),
+                null,
+                debug,
+                null
+        );
     }
 
     public ClientSession create()
@@ -64,6 +73,10 @@ public class ClientSessionFactory
                 defaultSchema,
                 timeZoneId,
                 locale,
-                debug);
+                ImmutableMap.<String, String>of(),
+                null,
+                debug,
+                null
+        );
     }
 }

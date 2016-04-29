@@ -70,7 +70,7 @@ public class CsvOutputBuilder implements JobOutputBuilder
             throws FileTooLargeException
     {
         if (!headerWritten && includeHeader) {
-            List<String> columnNames = Lists.transform(columns, Column.nameGetter());
+            List<String> columnNames = Lists.transform(columns, Column::getName);
             writeCsvRow(columnNames.toArray(new String[columnNames.size()]));
             headerWritten = true;
         }

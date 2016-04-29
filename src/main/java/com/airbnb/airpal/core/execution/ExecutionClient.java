@@ -147,7 +147,7 @@ public class ExecutionClient
                     Job j = e.getJob();
                     j.setState(JobState.FAILED);
                     if (j.getError() == null) {
-                        j.setError(new QueryError(e.getMessage(), null, -1, null, null));
+                        j.setError(new QueryError(e.getMessage(), null, -1, null, null, null, null));
                     }
 
                     jobFinished(j);
