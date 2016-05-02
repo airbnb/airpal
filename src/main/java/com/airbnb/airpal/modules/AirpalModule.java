@@ -72,6 +72,7 @@ import org.skife.jdbi.v2.DBI;
 
 import javax.annotation.Nullable;
 import javax.inject.Named;
+import javax.validation.constraints.Null;
 import java.net.URI;
 import java.util.Collections;
 import java.util.concurrent.ExecutorService;
@@ -280,6 +281,7 @@ public class AirpalModule extends AbstractModule
     }
 
     @Provides
+    @Nullable
     public AWSCredentials provideAWSCredentials()
     {
         if ((config.getS3AccessKey() == null) || (config.getS3SecretKey() == null)) {
@@ -293,7 +295,8 @@ public class AirpalModule extends AbstractModule
 
     @Singleton
     @Provides
-    public AmazonS3 provideAmazonS3Client(AWSCredentials awsCredentials, EncryptionMaterialsProvider encryptionMaterialsProvider)
+    @Nullable
+    public AmazonS3 provideAmazonS3Client(@Nullable AWSCredentials awsCredentials, @Nullable EncryptionMaterialsProvider encryptionMaterialsProvider)
     {
         if (awsCredentials == null) {
             if (encryptionMaterialsProvider == null) {
