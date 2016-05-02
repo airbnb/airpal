@@ -192,7 +192,8 @@ public class AirpalModule extends AbstractModule
                 config.getPrestoSource(),
                 config.getPrestoCatalog(),
                 config.getPrestoSchema(),
-                config.isPrestoDebug());
+                config.isPrestoDebug(),
+                null);
     }
 
     @Provides
