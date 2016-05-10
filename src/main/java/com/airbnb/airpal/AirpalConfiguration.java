@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.airlift.units.DataSize;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
+import io.dropwizard.flyway.FlywayFactory;
 import io.dropwizard.util.Duration;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +26,7 @@ public class AirpalConfiguration extends Configuration
     @Setter
     @JsonProperty
     @NotNull
-    private String prestoUser = "andykram";
+    private String prestoUser = "airpalChangeMe";
 
     @Getter
     @Setter
@@ -75,6 +76,11 @@ public class AirpalConfiguration extends Configuration
     @Getter
     @Setter
     @JsonProperty
+    private String s3EncryptionMaterialsProvider;
+
+    @Getter
+    @Setter
+    @JsonProperty
     private String createTableDestinationSchema = "airpal";
 
     @Getter
@@ -99,6 +105,13 @@ public class AirpalConfiguration extends Configuration
     @Valid
     @JsonProperty
     @NotNull
+    private FlywayFactory flywayFactory = new FlywayFactory();
+
+    @Getter
+    @Setter
+    @Valid
+    @JsonProperty
+    @NotNull
     private ShiroConfiguration shiro;
 
     @Getter
@@ -107,4 +120,11 @@ public class AirpalConfiguration extends Configuration
     @JsonProperty
     @NotNull
     private boolean useS3 = false;
+
+    @Getter
+    @Setter
+    @Valid
+    @JsonProperty
+    @NotNull
+    private boolean compressedOutput = false;
 }

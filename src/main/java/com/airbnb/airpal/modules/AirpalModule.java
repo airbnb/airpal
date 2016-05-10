@@ -30,18 +30,24 @@ import com.airbnb.airpal.resources.HealthResource;
 import com.airbnb.airpal.resources.PingResource;
 import com.airbnb.airpal.resources.QueryResource;
 import com.airbnb.airpal.resources.ResultsPreviewResource;
+import com.airbnb.airpal.resources.S3FilesResource;
 import com.airbnb.airpal.resources.SessionResource;
 import com.airbnb.airpal.resources.TablesResource;
 import com.airbnb.airpal.resources.sse.SSEEventSourceServlet;
+import com.airbnb.airpal.sql.DbType;
 import com.airbnb.airpal.sql.beans.TableRow;
 import com.airbnb.airpal.sql.jdbi.QueryStoreMapper;
 import com.airbnb.airpal.sql.jdbi.URIArgumentFactory;
 import com.airbnb.airpal.sql.jdbi.UUIDArgumentFactory;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.InstanceProfileCredentialsProvider;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3EncryptionClient;
+import com.amazonaws.services.s3.model.EncryptionMaterialsProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.joda.JodaMapper;
 import com.google.common.base.Strings;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
@@ -60,6 +66,7 @@ import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.setup.Environment;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.web.env.EnvironmentLoaderListener;
+import org.jetbrains.annotations.Nullable;
 import org.skife.jdbi.v2.DBI;
 
 import javax.inject.Named;
@@ -96,6 +103,7 @@ public class AirpalModule extends AbstractModule
         bind(SSEEventSourceServlet.class).in(Scopes.SINGLETON);
         bind(FilesResource.class).in(Scopes.SINGLETON);
         bind(ResultsPreviewResource.class).in(Scopes.SINGLETON);
+        bind(S3FilesResource.class).in(Scopes.SINGLETON);
 
         bind(EnvironmentLoaderListener.class).in(Scopes.SINGLETON);
         bind(String.class).annotatedWith(Names.named("createTableDestinationSchema")).toInstance(config.getCreateTableDestinationSchema());
@@ -110,11 +118,25 @@ public class AirpalModule extends AbstractModule
 
     @Singleton
     @Provides
+    public DbType provideDbType()
+    {
+        String driverClass = config.getDataSourceFactory().getDriverClass();
+        if (driverClass.equalsIgnoreCase("com.mysql.jdbc.Driver")) {
+            return DbType.MySQL;
+        } else if (driverClass.equalsIgnoreCase("org.h2.Driver")) {
+            return DbType.H2;
+        } else {
+            return DbType.Default;
+        }
+    }
+
+    @Singleton
+    @Provides
     public DBI provideDBI(ObjectMapper objectMapper)
             throws ClassNotFoundException
     {
         final DBIFactory factory = new DBIFactory();
-        final DBI dbi =  factory.build(environment, config.getDataSourceFactory(), "mysql");
+        final DBI dbi =  factory.build(environment, config.getDataSourceFactory(), provideDbType().name());
         dbi.registerMapper(new TableRow.TableRowMapper(objectMapper));
         dbi.registerMapper(new QueryStoreMapper(objectMapper));
         dbi.registerArgumentFactory(new UUIDArgumentFactory());
@@ -265,20 +287,54 @@ public class AirpalModule extends AbstractModule
 
     @Singleton
     @Provides
-    public AmazonS3 provideAmazonS3Client(AWSCredentials awsCredentials)
+    public AmazonS3 provideAmazonS3Client(AWSCredentials awsCredentials, EncryptionMaterialsProvider encryptionMaterialsProvider)
     {
         if (awsCredentials == null) {
-            return new AmazonS3Client();
+            if (encryptionMaterialsProvider == null) {
+                return new AmazonS3Client(new InstanceProfileCredentialsProvider());
+            }
+            else {
+                return new AmazonS3EncryptionClient(new InstanceProfileCredentialsProvider(), encryptionMaterialsProvider);
+            }
         }
 
-        return new AmazonS3Client(awsCredentials);
+        if (encryptionMaterialsProvider == null) {
+            return new AmazonS3Client(awsCredentials);
+        }
+        else {
+            return new AmazonS3EncryptionClient(awsCredentials, encryptionMaterialsProvider);
+        }
+    }
+
+    @Nullable
+    @Singleton
+    @Provides
+    private EncryptionMaterialsProvider provideEncryptionMaterialsProvider() {
+        String empClassName = config.getS3EncryptionMaterialsProvider();
+        if (empClassName != null) {
+            try {
+                Class<?> empClass = Class.forName(empClassName);
+                Object instance = empClass.newInstance();
+                if (instance instanceof EncryptionMaterialsProvider) {
+                    return (EncryptionMaterialsProvider)instance;
+                }
+                else {
+                    throw new IllegalArgumentException("Class " + empClassName + " must implement EncryptionMaterialsProvider");
+                }
+            }
+            catch (Exception x) {
+                throw new RuntimeException("Unable to initialize EncryptionMaterialsProvider class " + empClassName + ": " + x, x);
+            }
+        }
+
+        return null;
     }
 
     @Singleton
     @Provides
     public UsageStore provideUsageCache(DBI dbi)
     {
-        UsageStore delegate = new SQLUsageStore(config.getUsageWindow(), dbi);
+        UsageStore delegate = new SQLUsageStore(config.getUsageWindow(), dbi, provideDbType());
 
         return new CachingUsageStore(delegate, io.dropwizard.util.Duration.minutes(6));
     }
@@ -314,7 +370,7 @@ public class AirpalModule extends AbstractModule
     @Singleton
     public CSVPersistorFactory provideCSVPersistorFactory(ExpiringFileStore fileStore, AmazonS3 s3Client, @Named("s3Bucket") String s3Bucket)
     {
-        return new CSVPersistorFactory(config.isUseS3(), s3Client, s3Bucket, fileStore);
+        return new CSVPersistorFactory(config.isUseS3(), s3Client, s3Bucket, fileStore, config.isCompressedOutput());
     }
 
     @Provides
@@ -329,6 +385,6 @@ public class AirpalModule extends AbstractModule
     public OutputBuilderFactory provideOutputBuilderFactory()
     {
         long maxFileSizeInBytes = Math.round(Math.floor(config.getMaxOutputSize().getValue(DataSize.Unit.BYTE)));
-        return new OutputBuilderFactory(maxFileSizeInBytes);
+        return new OutputBuilderFactory(maxFileSizeInBytes, config.isCompressedOutput());
     }
 }

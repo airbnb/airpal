@@ -1,22 +1,20 @@
 package com.airbnb.airpal.resources;
 
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.opencsv.CSVReader;
 import com.airbnb.airpal.core.store.files.ExpiringFileStore;
-import com.airbnb.airpal.modules.AirpalModule;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.inject.Inject;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import com.amazonaws.services.s3.AmazonS3URI;
+import lombok.val;
 import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
 
+import javax.inject.Named;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -26,17 +24,15 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.BufferedReader;
-import java.lang.StringBuilder;
-import java.lang.Iterable;
-import java.lang.IllegalArgumentException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.net.URI;
+import java.util.zip.GZIPInputStream;
 
 @Slf4j
 @Path("/api/preview")
@@ -44,12 +40,17 @@ public class ResultsPreviewResource
 {
     private final ExpiringFileStore fileStore;
     private final AmazonS3 s3Client;
+    private final String outputBucket;
 
     @Inject
-    public ResultsPreviewResource(ExpiringFileStore fileStore, AmazonS3 s3Client)
+    public ResultsPreviewResource(
+            ExpiringFileStore fileStore,
+            AmazonS3 s3Client,
+            @Named("s3Bucket") String outputBucket)
     {
         this.fileStore = fileStore;
         this.s3Client = s3Client;
+        this.outputBucket = outputBucket;
     }
 
     @GET
@@ -58,31 +59,46 @@ public class ResultsPreviewResource
     public Response getFile(@QueryParam("fileURI") URI fileURI,
                             @DefaultValue("100") @QueryParam("lines") int numLines)
     {
-        if (fileURI.isAbsolute()) {
-            // assume s3
-            return getAbsolutePreview(fileURI, numLines);
+        if (fileURI.getPath().startsWith("/api/s3")) {
+            return getS3Preview(fileURI, numLines);
         } else {
-            // assume local fs
-            return getRelativePreview(fileURI, numLines);
+            return getFilePreview(fileURI, numLines);
         }
     }
 
-    private Response getAbsolutePreview(URI fileURI, int numLines) {
-        AmazonS3URI s3URI;
-        try {
-          s3URI = new AmazonS3URI(fileURI);
-        } catch (IllegalArgumentException e) {
-          return Response.status(Response.Status.NOT_FOUND).build();
-        }
+    private String getOutputKey(String fileBaseName)
+    {
+        return "airpal/" + fileBaseName;
+    }
+
+    private String getFilename(URI fileURI)
+    {
+        return fileURI.getPath().substring(fileURI.getPath().lastIndexOf('/') + 1);
+    }
+
+    private Response getS3Preview(URI fileURI, int numLines) {
+        val filename = getFilename(fileURI);
+        val outputKey = getOutputKey(filename);
         // download ~100 kb (depending on your definition) of the file
-        GetObjectRequest request =
-                new GetObjectRequest(s3URI.getBucket(), s3URI.getKey()).withRange(0, 100000);
-        S3Object s3Object = this.s3Client.getObject(request);
-        try (CSVReader s3Reader =
-                new CSVReader(new BufferedReader(new InputStreamReader(s3Object.getObjectContent())))) {
-            return getPreviewFromCSV(s3Reader, numLines);
-        } catch (IOException e) {
-          return Response.status(Response.Status.NOT_FOUND).build();
+        val request = new GetObjectRequest(
+                outputBucket,
+                outputKey
+        ).withRange(0, 100 * 1024);
+        val object = s3Client.getObject(request);
+        ObjectMetadata objectMetadata = object.getObjectMetadata();
+        boolean gzip = "gzip".equalsIgnoreCase(objectMetadata.getContentEncoding());
+        try (InputStream input = object.getObjectContent()) {
+            InputStreamReader reader;
+            if (gzip) {
+                reader = new InputStreamReader(new GZIPInputStream(input));
+            }
+            else {
+                reader = new InputStreamReader(input);
+            }
+            return getPreviewFromCSV(new CSVReader(reader), numLines);
+        }
+        catch (IOException e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -110,9 +126,8 @@ public class ResultsPreviewResource
         return Response.ok(new PreviewResponse(columns, rows)).build();
     }
 
-    private Response getRelativePreview(URI fileURI, int numLines) {
-        String fileName = 
-          fileURI.getPath().substring(fileURI.getPath().lastIndexOf('/') + 1);
+    private Response getFilePreview(URI fileURI, int numLines) {
+        String fileName = getFilename(fileURI);
         final File file = fileStore.get(fileName);
         try {
             if (file == null) {
@@ -121,7 +136,7 @@ public class ResultsPreviewResource
             try (final CSVReader reader = new CSVReader(new FileReader(file))) {
               return getPreviewFromCSV(reader, numLines);
             } catch (IOException e) {
-              return Response.status(Response.Status.NOT_FOUND).build();
+              return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
             }
         } catch (FileNotFoundException e) {
             log.warn(e.getMessage());

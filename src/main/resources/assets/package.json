@@ -41,8 +41,8 @@
   "devDependencies": {
     "babel-jest": "^4.0.0",
     "babelify": "^5.0.3",
-    "browserify": "~5.10.1",
-    "browserify-shim": "~3.7.0",
+    "browserify": "~13.0.0",
+    "browserify-shim": "~3.8.12",
     "gulp": "^3.8.7",
     "gulp-changed": "^0.4.1",
     "gulp-notify": "^1.4.2",
@@ -53,11 +53,12 @@
     "react-tools": "~0.12",
     "require-dir": "^0.1.0",
     "vinyl-source-stream": "~0.1.1",
-    "watchify": "~1.0.2"
+    "watchify": "~3.7.0"
   },
   "dependencies": {
     "alt": "^0.14.3",
     "brace": "^0.4.0",
+    "browser-sync": "^2.7.13",
     "es6-shim": "^0.25.3",
     "fixed-data-table": "^0.1.0",
     "jquery": "~1.9.0",

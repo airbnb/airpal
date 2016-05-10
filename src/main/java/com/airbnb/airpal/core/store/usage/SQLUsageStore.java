@@ -1,6 +1,7 @@
 package com.airbnb.airpal.core.store.usage;
 
 import com.airbnb.airpal.presto.Table;
+import com.airbnb.airpal.sql.DbType;
 import com.airbnb.airpal.sql.Util;
 import com.airbnb.airpal.sql.beans.JobUsageCountRow;
 import com.google.common.collect.ImmutableList;
@@ -21,11 +22,13 @@ public class SQLUsageStore implements UsageStore
 {
     private final Duration duration;
     private final DBI dbi;
+    private final DbType dbType;
 
-    public SQLUsageStore(Duration duration, DBI dbi)
+    public SQLUsageStore(Duration duration, DBI dbi, DbType dbType)
     {
         this.duration = duration;
         this.dbi = dbi;
+        this.dbType = dbType;
     }
 
     @Override
@@ -44,14 +47,14 @@ public class SQLUsageStore implements UsageStore
     {
         try (Handle handle = dbi.open()) {
             Query<Map<String, Object>> query = handle.createQuery(
-                    "SELECT COUNT(*) AS count, connector_id AS connectorId, schema_ AS \"schema\", table_ AS \"table\" " +
+                    "SELECT connector_id AS connectorId, schema_ AS \"schema\", table_ AS \"table\", COUNT(*) AS count " +
                             "FROM jobs j " +
                             "LEFT OUTER JOIN job_tables jt ON j.id = jt.job_id " +
                             "LEFT OUTER JOIN tables t ON jt.table_id = t.id " +
-                            "WHERE query_finished > DATE_SUB(UTC_TIMESTAMP(), INTERVAL :day_interval day) " +
+                            "WHERE " + Util.getQueryFinishedCondition(dbType) + " " +
                             "AND (" + Util.getTableCondition(Lists.newArrayList(tables)) + ") " +
                             "GROUP BY connector_id, schema_, table_ " +
-                            "ORDER BY query_finished DESC")
+                            "ORDER BY count DESC")
                     .bind("day_interval", 1);
 
             return query.

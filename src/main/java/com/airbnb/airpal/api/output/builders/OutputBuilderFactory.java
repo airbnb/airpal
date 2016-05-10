@@ -15,6 +15,7 @@ import static java.lang.String.format;
 public class OutputBuilderFactory
 {
     private final long maxFileSizeBytes;
+    private final boolean isCompressedOutput;
 
     public JobOutputBuilder forJob(Job job)
             throws IOException, InvalidQueryException
@@ -22,7 +23,7 @@ public class OutputBuilderFactory
         PersistentJobOutput output = job.getOutput();
         switch (output.getType()) {
             case "csv":
-                return new CsvOutputBuilder(true, job.getUuid(), maxFileSizeBytes);
+                return new CsvOutputBuilder(true, job.getUuid(), maxFileSizeBytes, isCompressedOutput);
             case "hive":
                 HiveTablePersistentOutput hiveOutput = (HiveTablePersistentOutput) output;
                 URI location = output.getLocation();

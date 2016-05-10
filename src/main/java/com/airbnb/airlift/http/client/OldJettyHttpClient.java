@@ -692,7 +692,6 @@ public class OldJettyHttpClient
                     return;
                 }
 
-                // newCapacity = min(log2ceiling(requiredCapacity), maxLength);
                 int newCapacity = min(Integer.highestOneBit(requiredCapacity) << 1, maxLength);
 
                 buffer = Arrays.copyOf(buffer, newCapacity);
