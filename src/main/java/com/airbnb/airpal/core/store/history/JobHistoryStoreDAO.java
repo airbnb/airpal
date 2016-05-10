@@ -2,6 +2,7 @@ package com.airbnb.airpal.core.store.history;
 
 import com.airbnb.airpal.api.Job;
 import com.airbnb.airpal.presto.Table;
+import com.airbnb.airpal.sql.DbType;
 import com.airbnb.airpal.sql.Util;
 import com.airbnb.airpal.sql.beans.JobTableOutputJoinRow;
 import com.airbnb.airpal.sql.beans.JobTableRow;
@@ -36,11 +37,13 @@ public class JobHistoryStoreDAO
         implements JobHistoryStore
 {
     private final DBI dbi;
+    private final DbType dbType;
 
     @Inject
-    public JobHistoryStoreDAO(DBI dbi)
+    public JobHistoryStoreDAO(DBI dbi, DbType dbType)
     {
         this.dbi = dbi;
+        this.dbType = dbType;
     }
 
     private List<Job> getJobs(long limit, int dayInterval, String outerWhereClauseArg, String innerWhereClauseArg)
@@ -68,7 +71,7 @@ public class JobHistoryStoreDAO
                             "jo.description, " +
                             "jo.location " +
                             "FROM (SELECT * FROM jobs " +
-                                "WHERE query_finished > DATE_SUB(UTC_TIMESTAMP(), INTERVAL :day_interval day) " +
+                                "WHERE " + Util.getQueryFinishedCondition(dbType) + " " +
                                 "AND " + innerWhereClause + " " +
                                 "ORDER BY query_finished DESC LIMIT :limit) j " +
                             "LEFT OUTER JOIN job_tables jt ON j.id = jt.job_id " +

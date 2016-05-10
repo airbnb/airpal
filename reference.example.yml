@@ -27,5 +27,8 @@ dataSourceFactory:
   password: MYSQl_PASSWORD
   url: jdbc:mysql://127.0.0.1:3306/MYSQL_DB_NAME
 
+flywayFactory:
+  locations: ["classpath:db.migration.common", "classpath:db.migration.mysql"]
+
 # The URL to the Presto coordinator.
 prestoCoordinator: http://presto-coordinator-url.com

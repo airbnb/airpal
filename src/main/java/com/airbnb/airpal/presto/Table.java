@@ -92,7 +92,6 @@ public class Table
         int result = getConnectorId().hashCode();
         result = 31 * result + getSchema().hashCode();
         result = 31 * result + getTable().hashCode();
-//        result = 31 * result + columns.hashCode();
         return result;
     }
 
