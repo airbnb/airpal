@@ -3,6 +3,7 @@ Please use [pull requests](https://github.com/airbnb/airpal/pull/new/master) to 
 Organizations
 ----------
  - [Airbnb](https://github.com/airbnb)
+ - [Nasdaq](https://github.com/nasdaq)
  - [PubNative](https://github.com/pubnative)
 
 Projects
