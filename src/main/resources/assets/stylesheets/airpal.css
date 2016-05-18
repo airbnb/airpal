@@ -456,3 +456,115 @@ body {
     position: absolute;
   }
 }
+
+/**
+ * Progress bars with centered text
+ */
+.progress {
+  position: relative;
+}
+
+.bar {
+  z-index: 1;
+  position: absolute;
+}
+
+.progress span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  text-align: center;
+  width: 100%;
+  color: black;
+  text-shadow: -1px 0 rgba(255, 255, 255, 0.9), 0 1px rgba(255, 255, 255, 0.9), 1px 0 rgba(255, 255, 255, 0.9), 0 -1px rgba(255, 255, 255, 0.9);
+}
+
+ul.stage-progress {
+  list-style-type: none;
+}
+
+li.stage-progress-child {
+  position: relative;
+  border-left-color: black;
+  border-left-style: solid;
+  border-left-width: 1px;
+  padding-left: 0.5em;
+}
+
+/** 
+ * These classes represent the different pseudo elements
+ * forming the lattice for the hierarchical list of
+ * stage progress bars. 
+ *
+ * Theoretically these could be dynamically generated
+ * by javascript but this approach seems simpler, plus
+ * it is unlikely any job will be complex enough to 
+ * need more than the child-5 pseudo element.
+ */
+
+li.stage-progress-child-0::before {
+  position: absolute;
+  content: "";
+  border-left: 1px solid black;
+  border-bottom: 1px solid black;
+  left: -1.5em;
+  width: 1.5em;
+  top: -1.5em;
+  height: 3em;
+}
+
+li.stage-progress-child-1::before {
+  position: absolute;
+  content: "";
+  border-left: 1px solid black;
+  border-bottom: 1px solid black;
+  left: -1.5em;
+  width: 1.5em;
+  top: -3em;
+  height: 4.5em;
+}
+
+li.stage-progress-child-2::before {
+  position: absolute;
+  content: "";
+  border-left: 1px solid black;
+  border-bottom: 1px solid black;
+  left: -1.5em;
+  width: 1.5em;
+  top: -7.5em;
+  height: 9em;
+}
+
+li.stage-progress-child-3::before {
+  position: absolute;
+  content: "";
+  border-left: 1px solid black;
+  border-bottom: 1px solid black;
+  left: -1.5em;
+  width: 1.5em;
+  top: -12em;
+  height: 13.5em;
+}
+
+li.stage-progress-child-4::before {
+  position: absolute;
+  content: "";
+  border-left: 1px solid black;
+  border-bottom: 1px solid black;
+  left: -1.5em;
+  width: 1.5em;
+  top: -16.5em;
+  height: 18em;
+}
+
+li.stage-progress-child-5::before {
+  position: absolute;
+  content: "";
+  border-left: 1px solid black;
+  border-bottom: 1px solid black;
+  left: -1.5em;
+  width: 1.5em;
+  top: -21em;
+  height: 22.5em;
+}

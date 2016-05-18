@@ -109,6 +109,7 @@ public class ExecutionClient
                                 uuid,
                                 persistentJobOutputFactory.create(tmpTable, uuid),
                                 null,
+                                null,
                                 JobState.QUEUED,
                                 Collections.<Column>emptyList(),
                                 null,

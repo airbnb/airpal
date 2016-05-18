@@ -11,6 +11,7 @@ import RunStateConstants from '../constants/RunStateConstants';
 import RunStore from '../stores/RunStore';
 import { Table, Column } from 'fixed-data-table';
 import { Modal, ModalTrigger, ProgressBar } from 'react-bootstrap';
+import StageStats from './StageStats';
 import UpdateWidthMixin from '../mixins/UpdateWidthMixin';
 
 let cx = React.addons.classSet;
@@ -23,6 +24,7 @@ let columnWidths = {
   duration: 80,
   output: 230,
 };
+let progressBarMinPercent = 3;
 
 // State actions
 function getRuns(user) {
@@ -291,19 +293,27 @@ let CellRenderers = {
           </a>
         );
       }
-    } else if (run.state === 'RUNNING') {
+    } else if (run.state === RunStateConstants.RUNNING) {
+      let modal = (
+	<Modal title="Stage Progress" animation={false}>
+	  <div className="modal-body">
+	    <StageStats run={run} />
+	  </div>
+      </Modal>);
       return (
-        <div className={cx({
-          'runs-table-progress': true,
-          'runs-table-progress-killable': killable
-        })}>
-          <ProgressBar now={getProgressFromStats(run.queryStats)} />
-          {killable ?
-            <span className="glyphicon glyphicon-remove text-danger"
-              title="Kill query"
-              onClick={killRun.bind(null, run.uuid)}></span>
-          : null}
-        </div>
+	<ModalTrigger modal={modal}>
+	  <div className={cx({
+	    'runs-table-progress': true,
+	    'runs-table-progress-killable': killable
+	  })}>
+	  <ProgressBar now={getProgressFromStats(run.queryStats)} />
+	  {killable ?
+	    <span className="glyphicon glyphicon-remove text-danger"
+	      title="Kill query"
+	      onClick={killRun.bind(null, run.uuid)}></span>
+	  : null}
+	  </div>
+	</ModalTrigger>
         );
 
     // XXX this needs to be a modal...we can use a custom modal here or something experimental
@@ -328,7 +338,7 @@ function getProgressFromStats(stats) {
   if (!stats || !stats.totalTasks || stats.totalTasks == 0) {
     return 0.0;
   } else {
-    return Math.max(stats.completedTasks / stats.totalTasks * 100, 3);
+    return Math.max(stats.completedTasks / stats.totalTasks * 100, progressBarMinPercent);
   }
 }
 
