@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+set -x
+set -e
+
+# NOTE: hack for packserv because the home dir is always changing
+HOME="$PWD"
+
+./gradlew clean shadowJar

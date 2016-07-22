@@ -1,0 +1,14 @@
+dependencies:
+    - bundle install --without development
+  override:
+    - echo "All dependencies are vendored"
+
+test:
+  override:
+    - echo "No test found"
+
+deployment:
+  production:
+    branch: [master, build-deb]
+    commands:
+      - script/compile
