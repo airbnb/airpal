@@ -9,6 +9,12 @@ logging:
 
 # HTTP-specific options.
 server:
+  # Must disable gzip as Jersey/gzip will buffer SSE events rather than send them to clients immediately
+  # Future: Integrate changes via enabling 'syncFlush' fix
+  # from https://github.com/dropwizard/dropwizard/issues/1673
+  gzip:
+    enabled: false
+
   applicationConnectors:
     - type: http
       port: 8081
