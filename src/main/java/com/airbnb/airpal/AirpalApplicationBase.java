@@ -2,8 +2,6 @@ package com.airbnb.airpal;
 
 import com.airbnb.airpal.core.AirpalUserFactory;
 import com.airbnb.airpal.core.health.PrestoHealthCheck;
-import com.airbnb.airpal.modules.AirpalModule;
-import com.airbnb.airpal.modules.DropwizardModule;
 import com.airbnb.airpal.resources.ExecuteResource;
 import com.airbnb.airpal.resources.FilesResource;
 import com.airbnb.airpal.resources.HealthResource;
@@ -22,25 +20,29 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Stage;
 import io.dropwizard.Application;
-import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.Bundle;
 import io.dropwizard.ConfiguredBundle;
+import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.flyway.FlywayBundle;
 import io.dropwizard.flyway.FlywayFactory;
+import io.dropwizard.jetty.BiDiGzipHandler;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
-
-import java.util.Arrays;
-import java.util.Collections;
+import org.eclipse.jetty.server.Handler;
 
 import javax.servlet.ServletRegistration;
 
-import static com.sun.jersey.core.util.ReaderWriter.BUFFER_SIZE_SYSTEM_PROPERTY;
+import java.util.Arrays;
 
-public abstract class AirpalApplicationBase<T extends AirpalConfiguration> extends Application<T>
+import static org.glassfish.jersey.message.MessageProperties.IO_BUFFER_SIZE;
+
+public abstract class AirpalApplicationBase<T extends AirpalConfiguration>
+        extends Application<T>
 {
+    private static final String SERVER_SENT_EVENTS = "text/event-stream";
+
     protected Injector injector;
 
     @Override
@@ -58,15 +60,15 @@ public abstract class AirpalApplicationBase<T extends AirpalConfiguration> exten
 
     public Iterable<ConfiguredBundle<T>> getConfiguredBundles()
     {
-        return Collections.emptyList();
+        return Arrays.asList(new ViewBundle());
     }
 
     public Iterable<Bundle> getBundles()
     {
         return Arrays.asList(
                 new AssetsBundle("/assets", "/app", "index.html"),
-                new ViewBundle(),
-                new FlywayBundle<T>() {
+                new FlywayBundle<T>()
+                {
                     @Override
                     public DataSourceFactory getDataSourceFactory(T configuration)
                     {
@@ -82,11 +84,12 @@ public abstract class AirpalApplicationBase<T extends AirpalConfiguration> exten
     }
 
     @Override
-    public void run(T config, Environment environment) throws Exception
+    public void run(T config, Environment environment)
+            throws Exception
     {
         this.injector = Guice.createInjector(Stage.PRODUCTION, getModules(config, environment));
 
-        System.setProperty(BUFFER_SIZE_SYSTEM_PROPERTY, String.valueOf(config.getBufferSize().toBytes()));
+        System.setProperty(IO_BUFFER_SIZE, String.valueOf(config.getBufferSize().toBytes()));
 
         environment.healthChecks().register("presto", injector.getInstance(PrestoHealthCheck.class));
 
@@ -103,12 +106,19 @@ public abstract class AirpalApplicationBase<T extends AirpalConfiguration> exten
         environment.jersey().register(injector.getInstance(ResultsPreviewResource.class));
         environment.jersey().register(injector.getInstance(S3FilesResource.class));
 
-        environment.jersey().register(new UserInjectableProvider(injector.getInstance(AirpalUserFactory.class)));
+        environment.jersey().register(injector.getInstance(AirpalUserFactory.class));
 
         // Setup SSE (Server Sent Events)
         ServletRegistration.Dynamic sseServlet = environment.servlets()
                 .addServlet("updates", injector.getInstance(SSEEventSourceServlet.class));
         sseServlet.setAsyncSupported(true);
         sseServlet.addMapping("/api/updates/subscribe");
+
+        // Disable GZIP content encoding for SSE endpoints
+        environment.lifecycle().addServerLifecycleListener(server -> {
+            for (Handler handler : server.getChildHandlersByClass(BiDiGzipHandler.class)) {
+                ((BiDiGzipHandler) handler).addExcludedMimeTypes(SERVER_SENT_EVENTS);
+            }
+        });
     }
 }

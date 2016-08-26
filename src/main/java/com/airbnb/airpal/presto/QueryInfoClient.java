@@ -1,45 +1,40 @@
 package com.airbnb.airpal.presto;
 
-import com.airbnb.airlift.http.client.OldJettyHttpClient;
 import com.facebook.presto.execution.Input;
 import com.facebook.presto.execution.QueryStats;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.net.MediaType;
-import io.airlift.http.client.AsyncHttpClient;
 import io.airlift.http.client.FullJsonResponseHandler;
-import io.airlift.http.client.HttpClientConfig;
+import io.airlift.http.client.HttpClient;
 import io.airlift.http.client.HttpStatus;
 import io.airlift.http.client.Request;
 import io.airlift.json.JsonCodec;
-import io.airlift.units.Duration;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.net.HttpHeaders.ACCEPT;
 import static com.google.common.net.HttpHeaders.USER_AGENT;
 import static io.airlift.http.client.FullJsonResponseHandler.createFullJsonResponseHandler;
 import static io.airlift.http.client.Request.Builder.prepareGet;
-import static io.airlift.json.JsonCodec.jsonCodec;
 
 @Slf4j
 public class QueryInfoClient
 {
     private static final String USER_AGENT_VALUE = QueryInfoClient.class.getSimpleName() +
             "/" +
-            Objects.firstNonNull(QueryInfoClient.class.getPackage().getImplementationVersion(), "unknown");
+            MoreObjects.firstNonNull(QueryInfoClient.class.getPackage().getImplementationVersion(), "unknown");
 
-    private final AsyncHttpClient httpClient;
+    private final HttpClient httpClient;
     private final FullJsonResponseHandler<BasicQueryInfo> queryInfoHandler;
 
-    public QueryInfoClient(AsyncHttpClient httpClient, JsonCodec<BasicQueryInfo> queryInfoCodec)
+    public QueryInfoClient(HttpClient httpClient, JsonCodec<BasicQueryInfo> queryInfoCodec)
     {
         this.httpClient = httpClient;
         this.queryInfoHandler = createFullJsonResponseHandler(queryInfoCodec);
@@ -71,14 +66,6 @@ public class QueryInfoClient
         }
 
         return null;
-    }
-
-    public static QueryInfoClient create()
-    {
-        AsyncHttpClient httpClient = new OldJettyHttpClient(
-                new HttpClientConfig().setConnectTimeout(new Duration(10, TimeUnit.SECONDS)));
-
-        return new QueryInfoClient(httpClient, jsonCodec(BasicQueryInfo.class));
     }
 
     @Data

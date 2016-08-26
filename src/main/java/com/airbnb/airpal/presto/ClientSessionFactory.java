@@ -1,12 +1,19 @@
 package com.airbnb.airpal.presto;
 
 import com.facebook.presto.client.ClientSession;
+import com.google.common.collect.ImmutableMap;
+import io.airlift.units.Duration;
 
 import javax.inject.Provider;
 
 import java.net.URI;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
+
+import static com.google.common.base.MoreObjects.firstNonNull;
+import static io.airlift.units.Duration.succinctDuration;
+import static java.util.concurrent.TimeUnit.MINUTES;
 
 public class ClientSessionFactory
 {
@@ -18,8 +25,9 @@ public class ClientSessionFactory
     private final Provider<URI> server;
     private final String timeZoneId;
     private final Locale locale;
+    private final Duration clientSessionTimeout;
 
-    public ClientSessionFactory(Provider<URI> server, String user, String source, String catalog, String defaultSchema, boolean debug)
+    public ClientSessionFactory(Provider<URI> server, String user, String source, String catalog, String defaultSchema, boolean debug, Duration clientSessionTimeout)
     {
         this.server = server;
         this.user = user;
@@ -29,6 +37,7 @@ public class ClientSessionFactory
         this.debug = debug;
         this.timeZoneId = TimeZone.getTimeZone("UTC").getID();
         this.locale = Locale.getDefault();
+        this.clientSessionTimeout = firstNonNull(clientSessionTimeout, succinctDuration(1, MINUTES));
     }
 
     public ClientSession create(String user, String schema)
@@ -40,7 +49,11 @@ public class ClientSessionFactory
                 schema,
                 timeZoneId,
                 locale,
-                debug);
+                ImmutableMap.<String, String>of(),
+                null,
+                debug,
+                clientSessionTimeout
+        );
     }
 
     public ClientSession create(String schema)
@@ -52,7 +65,11 @@ public class ClientSessionFactory
                 schema,
                 timeZoneId,
                 locale,
-                debug);
+                ImmutableMap.<String, String>of(),
+                null,
+                debug,
+                clientSessionTimeout
+        );
     }
 
     public ClientSession create()
@@ -64,6 +81,10 @@ public class ClientSessionFactory
                 defaultSchema,
                 timeZoneId,
                 locale,
-                debug);
+                ImmutableMap.<String, String>of(),
+                null,
+                debug,
+                clientSessionTimeout
+        );
     }
 }

@@ -19,8 +19,6 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 import org.eclipse.jetty.servlets.EventSource;
 import org.eclipse.jetty.servlets.EventSourceServlet;
 
@@ -57,8 +55,7 @@ public class SSEEventSourceServlet extends EventSourceServlet
     protected EventSource newEventSource(HttpServletRequest request)
     {
         SSEEventSource eventSource = new SSEEventSource(jobUpdateToSSERelay);
-        Subject subject = SecurityUtils.getSubject();
-        jobUpdateToSSERelay.addListener(eventSource, userFactory.getUser(subject));
+        jobUpdateToSSERelay.addListener(eventSource, userFactory.provide());
         return eventSource;
     }
 

@@ -1,6 +1,6 @@
 package com.airbnb.airpal.modules;
 
-import com.airbnb.airlift.http.client.OldJettyHttpClient;
+import com.airbnb.airlift.http.client.ForQueryInfoClient;
 import com.airbnb.airpal.AirpalConfiguration;
 import com.airbnb.airpal.api.output.PersistentJobOutputFactory;
 import com.airbnb.airpal.api.output.builders.OutputBuilderFactory;
@@ -20,7 +20,9 @@ import com.airbnb.airpal.core.store.usage.CachingUsageStore;
 import com.airbnb.airpal.core.store.usage.SQLUsageStore;
 import com.airbnb.airpal.core.store.usage.UsageStore;
 import com.airbnb.airpal.presto.ClientSessionFactory;
+import com.airbnb.airpal.presto.ForQueryRunner;
 import com.airbnb.airpal.presto.QueryInfoClient;
+import com.airbnb.airpal.presto.QueryInfoClient.BasicQueryInfo;
 import com.airbnb.airpal.presto.metadata.ColumnCache;
 import com.airbnb.airpal.presto.metadata.PreviewTableCache;
 import com.airbnb.airpal.presto.metadata.SchemaCache;
@@ -47,7 +49,6 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3EncryptionClient;
 import com.amazonaws.services.s3.model.EncryptionMaterialsProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.joda.JodaMapper;
 import com.google.common.base.Strings;
 import com.google.common.eventbus.AsyncEventBus;
 import com.google.common.eventbus.EventBus;
@@ -57,8 +58,9 @@ import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.Singleton;
 import com.google.inject.name.Names;
+import io.airlift.configuration.ConfigDefaults;
 import io.airlift.configuration.ConfigurationFactory;
-import io.airlift.http.client.AsyncHttpClient;
+import io.airlift.http.client.HttpClient;
 import io.airlift.http.client.HttpClientConfig;
 import io.airlift.units.DataSize;
 import io.airlift.units.Duration;
@@ -66,10 +68,11 @@ import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.setup.Environment;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.web.env.EnvironmentLoaderListener;
-import org.jetbrains.annotations.Nullable;
 import org.skife.jdbi.v2.DBI;
 
+import javax.annotation.Nullable;
 import javax.inject.Named;
+import javax.validation.constraints.Null;
 import java.net.URI;
 import java.util.Collections;
 import java.util.concurrent.ExecutorService;
@@ -78,10 +81,15 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static com.airbnb.airpal.presto.QueryRunner.QueryRunnerFactory;
+import static io.airlift.http.client.HttpClientBinder.httpClientBinder;
+import static io.airlift.json.JsonCodec.jsonCodec;
 
 @Slf4j
 public class AirpalModule extends AbstractModule
 {
+    private static final ConfigDefaults<HttpClientConfig> HTTP_CLIENT_CONFIG_DEFAULTS = d -> new HttpClientConfig()
+            .setConnectTimeout(new Duration(10, TimeUnit.SECONDS));
+
     private final AirpalConfiguration config;
     private final Environment environment;
 
@@ -105,6 +113,12 @@ public class AirpalModule extends AbstractModule
         bind(ResultsPreviewResource.class).in(Scopes.SINGLETON);
         bind(S3FilesResource.class).in(Scopes.SINGLETON);
 
+        httpClientBinder(binder()).bindHttpClient("query-info", ForQueryInfoClient.class)
+                .withConfigDefaults(HTTP_CLIENT_CONFIG_DEFAULTS);
+
+        httpClientBinder(binder()).bindHttpClient("query-runner", ForQueryRunner.class)
+                .withConfigDefaults(HTTP_CLIENT_CONFIG_DEFAULTS);
+
         bind(EnvironmentLoaderListener.class).in(Scopes.SINGLETON);
         bind(String.class).annotatedWith(Names.named("createTableDestinationSchema")).toInstance(config.getCreateTableDestinationSchema());
         bind(String.class).annotatedWith(Names.named("s3Bucket")).toInstance(Strings.nullToEmpty(config.getS3Bucket()));
@@ -123,9 +137,11 @@ public class AirpalModule extends AbstractModule
         String driverClass = config.getDataSourceFactory().getDriverClass();
         if (driverClass.equalsIgnoreCase("com.mysql.jdbc.Driver")) {
             return DbType.MySQL;
-        } else if (driverClass.equalsIgnoreCase("org.h2.Driver")) {
+        }
+        else if (driverClass.equalsIgnoreCase("org.h2.Driver")) {
             return DbType.H2;
-        } else {
+        }
+        else {
             return DbType.Default;
         }
     }
@@ -136,7 +152,7 @@ public class AirpalModule extends AbstractModule
             throws ClassNotFoundException
     {
         final DBIFactory factory = new DBIFactory();
-        final DBI dbi =  factory.build(environment, config.getDataSourceFactory(), provideDbType().name());
+        final DBI dbi = factory.build(environment, config.getDataSourceFactory(), provideDbType().name());
         dbi.registerMapper(new TableRow.TableRowMapper(objectMapper));
         dbi.registerMapper(new QueryStoreMapper(objectMapper));
         dbi.registerArgumentFactory(new UUIDArgumentFactory());
@@ -150,16 +166,6 @@ public class AirpalModule extends AbstractModule
     public ConfigurationFactory provideConfigurationFactory()
     {
         return new ConfigurationFactory(Collections.<String, String>emptyMap());
-    }
-
-    @Singleton
-    @Named("query-runner-http-client")
-    @Provides
-    public AsyncHttpClient provideQueryRunnerHttpClient()
-    {
-        final HttpClientConfig httpClientConfig = new HttpClientConfig().setConnectTimeout(new Duration(10, TimeUnit.SECONDS));
-
-        return new OldJettyHttpClient(httpClientConfig);
     }
 
     @Named("coordinator-uri")
@@ -186,26 +192,27 @@ public class AirpalModule extends AbstractModule
                 config.getPrestoSource(),
                 config.getPrestoCatalog(),
                 config.getPrestoSchema(),
-                config.isPrestoDebug());
+                config.isPrestoDebug(),
+                null);
     }
 
     @Provides
     public QueryRunnerFactory provideQueryRunner(ClientSessionFactory sessionFactory,
-            @Named("query-runner-http-client") AsyncHttpClient httpClient)
+            @ForQueryRunner HttpClient httpClient)
     {
         return new QueryRunnerFactory(sessionFactory, httpClient);
     }
 
     @Provides
-    public QueryInfoClient provideQueryInfoClient()
+    public QueryInfoClient provideQueryInfoClient(@ForQueryInfoClient HttpClient httpClient)
     {
-        return QueryInfoClient.create();
+        return new QueryInfoClient(httpClient, jsonCodec(BasicQueryInfo.class));
     }
 
     @Singleton
     @Provides
     public SchemaCache provideSchemaCache(QueryRunnerFactory queryRunnerFactory,
-                                          @Named("presto") ExecutorService executorService)
+            @Named("presto") ExecutorService executorService)
     {
         final SchemaCache cache = new SchemaCache(queryRunnerFactory, executorService);
         cache.populateCache(config.getPrestoCatalog());
@@ -216,23 +223,23 @@ public class AirpalModule extends AbstractModule
     @Singleton
     @Provides
     public ColumnCache provideColumnCache(QueryRunnerFactory queryRunnerFactory,
-                                          @Named("presto") ExecutorService executorService)
+            @Named("presto") ExecutorService executorService)
     {
         return new ColumnCache(queryRunnerFactory,
-                               new Duration(5, TimeUnit.MINUTES),
-                               new Duration(60, TimeUnit.MINUTES),
-                               executorService);
+                new Duration(5, TimeUnit.MINUTES),
+                new Duration(60, TimeUnit.MINUTES),
+                executorService);
     }
 
     @Singleton
     @Provides
     public PreviewTableCache providePreviewTableCache(QueryRunnerFactory queryRunnerFactory,
-                                                      @Named("presto") ExecutorService executorService)
+            @Named("presto") ExecutorService executorService)
     {
         return new PreviewTableCache(queryRunnerFactory,
-                                     new Duration(20, TimeUnit.MINUTES),
-                                     executorService,
-                                     100);
+                new Duration(20, TimeUnit.MINUTES),
+                executorService,
+                100);
     }
 
     @Singleton
@@ -275,11 +282,13 @@ public class AirpalModule extends AbstractModule
     }
 
     @Provides
+    @Nullable
     public AWSCredentials provideAWSCredentials()
     {
         if ((config.getS3AccessKey() == null) || (config.getS3SecretKey() == null)) {
             return null;
-        } else {
+        }
+        else {
             return new BasicAWSCredentials(config.getS3AccessKey(),
                     config.getS3SecretKey());
         }
@@ -287,7 +296,8 @@ public class AirpalModule extends AbstractModule
 
     @Singleton
     @Provides
-    public AmazonS3 provideAmazonS3Client(AWSCredentials awsCredentials, EncryptionMaterialsProvider encryptionMaterialsProvider)
+    @Nullable
+    public AmazonS3 provideAmazonS3Client(@Nullable AWSCredentials awsCredentials, @Nullable EncryptionMaterialsProvider encryptionMaterialsProvider)
     {
         if (awsCredentials == null) {
             if (encryptionMaterialsProvider == null) {
@@ -309,14 +319,15 @@ public class AirpalModule extends AbstractModule
     @Nullable
     @Singleton
     @Provides
-    private EncryptionMaterialsProvider provideEncryptionMaterialsProvider() {
+    private EncryptionMaterialsProvider provideEncryptionMaterialsProvider()
+    {
         String empClassName = config.getS3EncryptionMaterialsProvider();
         if (empClassName != null) {
             try {
                 Class<?> empClass = Class.forName(empClassName);
                 Object instance = empClass.newInstance();
                 if (instance instanceof EncryptionMaterialsProvider) {
-                    return (EncryptionMaterialsProvider)instance;
+                    return (EncryptionMaterialsProvider) instance;
                 }
                 else {
                     throw new IllegalArgumentException("Class " + empClassName + " must implement EncryptionMaterialsProvider");

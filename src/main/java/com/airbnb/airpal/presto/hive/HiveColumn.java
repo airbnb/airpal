@@ -1,6 +1,9 @@
 package com.airbnb.airpal.presto.hive;
 
+import com.facebook.presto.client.ClientTypeSignature;
+import com.facebook.presto.client.ClientTypeSignatureParameter;
 import com.facebook.presto.client.Column;
+import com.facebook.presto.spi.type.TypeSignature;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -17,7 +20,7 @@ public class HiveColumn extends Column {
                       @JsonProperty("type") String type,
                       @JsonProperty("isPartition") boolean isPartition,
                       @JsonProperty("isNullable") boolean isNullable) {
-        super(name, type);
+        super(name, type, new ClientTypeSignature(TypeSignature.parseTypeSignature(type)));
         this.isPartition = isPartition;
         this.isNullable = isNullable;
     }
@@ -33,6 +36,6 @@ public class HiveColumn extends Column {
     }
 
     public static HiveColumn fromColumn(Column column, boolean isNullable, boolean isPartition) {
-        return new HiveColumn(column.getName(), column.getType(), isPartition, isNullable);
+        return new HiveColumn(column.getName(), column.getType(),isPartition, isNullable);
     }
 }

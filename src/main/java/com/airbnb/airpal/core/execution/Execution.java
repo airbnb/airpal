@@ -25,6 +25,7 @@ import com.facebook.presto.sql.parser.ParsingException;
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.eventbus.EventBus;
 import com.google.common.util.concurrent.RateLimiter;
 import io.airlift.units.DataSize;
@@ -114,7 +115,7 @@ public class Execution implements Callable<Job>
         try {
             tables.addAll(authorizer.tablesUsedByQuery(query));
         } catch (ParsingException e) {
-            job.setError(new QueryError(e.getMessage(), null, -1, new ErrorLocation(e.getLineNumber(), e.getColumnNumber()), null));
+            job.setError(new QueryError(e.getMessage(), null, -1, null, null, new ErrorLocation(e.getLineNumber(), e.getColumnNumber()), null));
 
             throw new ExecutionFailureException(job, "Invalid query, could not parse", e);
         }
@@ -282,6 +283,8 @@ public class Execution implements Callable<Job>
                     error.getMessage(),
                     error.getSqlState(),
                     error.getErrorCode(),
+                    error.getErrorName(),
+                    error.getErrorType(),
                     error.getErrorLocation(),
                     failureInfo);
 
@@ -309,6 +312,7 @@ public class Execution implements Callable<Job>
                 zeroDuration,
                 zeroDuration,
                 zeroDuration,
+                zeroDuration,
                 0,
                 0,
                 0,
@@ -316,11 +320,15 @@ public class Execution implements Callable<Job>
                 0,
                 0,
                 0,
+                0.0,
+                zeroData,
                 zeroData,
                 zeroDuration,
                 zeroDuration,
                 zeroDuration,
                 zeroDuration,
+                false,
+                ImmutableSet.of(),
                 zeroData,
                 0,
                 zeroData,
@@ -328,5 +336,6 @@ public class Execution implements Callable<Job>
                 zeroData,
                 0
         );
+
     }
 }
