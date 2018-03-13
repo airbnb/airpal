@@ -1,4 +1,8 @@
-import _ from 'lodash';
+// Lodash functions
+import map from 'lodash/map';
+import join from 'lodash/join';
+import objectKeys from 'lodash/keys';
+
 import checkResults from './checkResults';
 import xhr from './xhr';
 
@@ -8,12 +12,8 @@ let QueryApiUtils = {
   },
 
   createQuery(data) {
-    let formData = Object.keys(data).reduce((encoded, key) => {
-      const encKey = encodeURIComponent(key);
-      const encData = encodeURIComponent(data[key]);
-      return `${encoded}&${encKey}=${encData}`
-    }, '');
-
+    let formData = join(map(objectKeys(data), key => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`), "&");
+    
     return xhr('/api/query/saved', {
       method: 'post',
       headers: {
