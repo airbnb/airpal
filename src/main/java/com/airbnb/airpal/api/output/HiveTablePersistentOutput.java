@@ -22,12 +22,15 @@ public class HiveTablePersistentOutput implements PersistentJobOutput
 
     private final UUID jobUUID;
     @Getter
+    @JsonProperty
     private final String tmpTableName;
     @Getter
+    @JsonProperty
     private final String destinationSchema;
 
     @Getter
     @Setter
+    @JsonProperty
     private URI location;
 
     public HiveTablePersistentOutput(UUID jobUUID,

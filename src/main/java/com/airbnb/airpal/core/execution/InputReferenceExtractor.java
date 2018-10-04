@@ -1,18 +1,7 @@
 package com.airbnb.airpal.core.execution;
 
 import com.airbnb.airpal.presto.Table;
-import com.facebook.presto.sql.tree.CreateTable;
-import com.facebook.presto.sql.tree.CreateView;
-import com.facebook.presto.sql.tree.DefaultTraversalVisitor;
-import com.facebook.presto.sql.tree.DropTable;
-import com.facebook.presto.sql.tree.DropView;
-import com.facebook.presto.sql.tree.Join;
-import com.facebook.presto.sql.tree.JoinOn;
-import com.facebook.presto.sql.tree.Node;
-import com.facebook.presto.sql.tree.QualifiedName;
-import com.facebook.presto.sql.tree.RenameTable;
-import com.facebook.presto.sql.tree.Use;
-import com.facebook.presto.sql.tree.WithQuery;
+import com.facebook.presto.sql.tree.*;
 import com.google.common.collect.Sets;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
@@ -105,14 +94,14 @@ public class InputReferenceExtractor
     @Override
     protected CatalogSchemaContext visitWithQuery(WithQuery node, CatalogSchemaContext context)
     {
-        aliases.add(new Table(context.getCatalog(), context.getSchema(), node.getName()));
+        aliases.add(new Table(context.getCatalog(), context.getSchema(), node.getName().getValue()));
         return super.visitWithQuery(node, context);
     }
 
     @Override
     protected CatalogSchemaContext visitUse(Use node, CatalogSchemaContext context)
     {
-        return new CatalogSchemaContext(node.getCatalog().orElse(context.getCatalog()), node.getSchema());
+        return new CatalogSchemaContext(node.getCatalog().orElse(new Identifier(context.getCatalog())).getValue(), node.getSchema().getValue());
     }
 
     @Override

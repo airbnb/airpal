@@ -3,6 +3,7 @@ package com.airbnb.airpal.presto.metadata;
 import com.airbnb.airpal.core.BackgroundCacheLoader;
 import com.airbnb.airpal.core.execution.QueryClient;
 import com.airbnb.airpal.presto.QueryRunner;
+import com.facebook.presto.client.QueryData;
 import com.facebook.presto.client.QueryResults;
 import com.facebook.presto.client.StatementClient;
 import com.google.common.base.Function;
@@ -80,7 +81,7 @@ public class SchemaCache
                 @Override
                 public Void apply(StatementClient client)
                 {
-                    QueryResults results = client.current();
+                    QueryData results = client.currentData();
                     if (results.getData() != null) {
                         for (List<Object> row : results.getData()) {
                             String schema = (String) row.get(1);

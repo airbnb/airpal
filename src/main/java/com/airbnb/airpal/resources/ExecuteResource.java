@@ -85,9 +85,13 @@ public class ExecuteResource {
     @Data
     public static class ExecutionPermissions
     {
+        @JsonProperty
         private final boolean canCreateTable;
+        @JsonProperty
         private final boolean canCreateCsv;
+        @JsonProperty
         private final String userName;
+        @JsonProperty
         private final String accessLevel;
     }
 }

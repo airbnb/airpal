@@ -22,7 +22,6 @@ import com.airbnb.airpal.core.store.usage.UsageStore;
 import com.airbnb.airpal.presto.ClientSessionFactory;
 import com.airbnb.airpal.presto.ForQueryRunner;
 import com.airbnb.airpal.presto.QueryInfoClient;
-import com.airbnb.airpal.presto.QueryInfoClient.BasicQueryInfo;
 import com.airbnb.airpal.presto.metadata.ColumnCache;
 import com.airbnb.airpal.presto.metadata.PreviewTableCache;
 import com.airbnb.airpal.presto.metadata.SchemaCache;
@@ -58,21 +57,17 @@ import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.Singleton;
 import com.google.inject.name.Names;
-import io.airlift.configuration.ConfigDefaults;
-import io.airlift.configuration.ConfigurationFactory;
-import io.airlift.http.client.HttpClient;
-import io.airlift.http.client.HttpClientConfig;
 import io.airlift.units.DataSize;
 import io.airlift.units.Duration;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.setup.Environment;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.OkHttpClient;
 import org.apache.shiro.web.env.EnvironmentLoaderListener;
 import org.skife.jdbi.v2.DBI;
 
 import javax.annotation.Nullable;
 import javax.inject.Named;
-import javax.validation.constraints.Null;
 import java.net.URI;
 import java.util.Collections;
 import java.util.concurrent.ExecutorService;
@@ -87,9 +82,6 @@ import static io.airlift.json.JsonCodec.jsonCodec;
 @Slf4j
 public class AirpalModule extends AbstractModule
 {
-    private static final ConfigDefaults<HttpClientConfig> HTTP_CLIENT_CONFIG_DEFAULTS = d -> new HttpClientConfig()
-            .setConnectTimeout(new Duration(10, TimeUnit.SECONDS));
-
     private final AirpalConfiguration config;
     private final Environment environment;
 
@@ -113,11 +105,8 @@ public class AirpalModule extends AbstractModule
         bind(ResultsPreviewResource.class).in(Scopes.SINGLETON);
         bind(S3FilesResource.class).in(Scopes.SINGLETON);
 
-        httpClientBinder(binder()).bindHttpClient("query-info", ForQueryInfoClient.class)
-                .withConfigDefaults(HTTP_CLIENT_CONFIG_DEFAULTS);
-
-        httpClientBinder(binder()).bindHttpClient("query-runner", ForQueryRunner.class)
-                .withConfigDefaults(HTTP_CLIENT_CONFIG_DEFAULTS);
+        bind(OkHttpClient.class).annotatedWith(ForQueryInfoClient.class).toInstance(new OkHttpClient());
+        bind(OkHttpClient.class).annotatedWith(ForQueryRunner.class).toInstance(new OkHttpClient());
 
         bind(EnvironmentLoaderListener.class).in(Scopes.SINGLETON);
         bind(String.class).annotatedWith(Names.named("createTableDestinationSchema")).toInstance(config.getCreateTableDestinationSchema());
@@ -161,13 +150,6 @@ public class AirpalModule extends AbstractModule
         return dbi;
     }
 
-    @Singleton
-    @Provides
-    public ConfigurationFactory provideConfigurationFactory()
-    {
-        return new ConfigurationFactory(Collections.<String, String>emptyMap());
-    }
-
     @Named("coordinator-uri")
     @Provides
     public URI providePrestoCoordinatorURI()
@@ -198,15 +180,15 @@ public class AirpalModule extends AbstractModule
 
     @Provides
     public QueryRunnerFactory provideQueryRunner(ClientSessionFactory sessionFactory,
-            @ForQueryRunner HttpClient httpClient)
+            @ForQueryRunner OkHttpClient httpClient)
     {
         return new QueryRunnerFactory(sessionFactory, httpClient);
     }
 
     @Provides
-    public QueryInfoClient provideQueryInfoClient(@ForQueryInfoClient HttpClient httpClient)
+    public QueryInfoClient provideQueryInfoClient(@ForQueryInfoClient OkHttpClient httpClient)
     {
-        return new QueryInfoClient(httpClient, jsonCodec(BasicQueryInfo.class));
+        return new QueryInfoClient(httpClient);
     }
 
     @Singleton

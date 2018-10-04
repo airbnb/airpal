@@ -5,24 +5,26 @@ import com.facebook.presto.execution.QueryStats;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.DeserializationConfig;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.guava.GuavaModule;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.google.common.base.MoreObjects;
 import com.google.common.net.MediaType;
-import io.airlift.http.client.FullJsonResponseHandler;
-import io.airlift.http.client.HttpClient;
-import io.airlift.http.client.HttpStatus;
-import io.airlift.http.client.Request;
-import io.airlift.json.JsonCodec;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.net.HttpHeaders.ACCEPT;
 import static com.google.common.net.HttpHeaders.USER_AGENT;
-import static io.airlift.http.client.FullJsonResponseHandler.createFullJsonResponseHandler;
-import static io.airlift.http.client.Request.Builder.prepareGet;
 
 @Slf4j
 public class QueryInfoClient
@@ -31,37 +33,41 @@ public class QueryInfoClient
             "/" +
             MoreObjects.firstNonNull(QueryInfoClient.class.getPackage().getImplementationVersion(), "unknown");
 
-    private final HttpClient httpClient;
-    private final FullJsonResponseHandler<BasicQueryInfo> queryInfoHandler;
+    private final OkHttpClient httpClient;
+    private final ObjectMapper mapper = new ObjectMapper()
+            .registerModule(new GuavaModule())
+            .registerModule(new JodaModule())
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-    public QueryInfoClient(HttpClient httpClient, JsonCodec<BasicQueryInfo> queryInfoCodec)
+    public QueryInfoClient(OkHttpClient httpClient)
     {
         this.httpClient = httpClient;
-        this.queryInfoHandler = createFullJsonResponseHandler(queryInfoCodec);
     }
 
     public BasicQueryInfo from(URI infoUri)
     {
         infoUri = checkNotNull(infoUri, "infoUri is null");
 
-        Request request = prepareGet()
-                .setHeader(USER_AGENT, USER_AGENT_VALUE)
-                .setHeader(ACCEPT, MediaType.JSON_UTF_8.toString())
-                .setUri(infoUri)
+        log.info("Calling URL {}", infoUri.toString());
+
+        Request request = new Request.Builder()
+                .url(infoUri.toString())
+                .header(USER_AGENT, USER_AGENT_VALUE)
+                .header(ACCEPT, MediaType.JSON_UTF_8.toString())
                 .build();
 
         Exception cause = null;
         long start = System.nanoTime();
         long attempts = 0;
 
-        FullJsonResponseHandler.JsonResponse<BasicQueryInfo> response;
+        Response response;
         try {
-            response = httpClient.execute(request, queryInfoHandler);
-            if (response.getStatusCode() == HttpStatus.OK.code() && response.hasValue()) {
-                return response.getValue();
+            response = httpClient.newCall(request).execute();
+            if (response.isSuccessful()) {
+                return mapper.readValue(response.body().string(), BasicQueryInfo.class);
             }
         }
-        catch (RuntimeException e) {
+        catch (RuntimeException|IOException e) {
             log.error("Caught error in QueryInfoClient load", e);
         }
 
@@ -72,7 +78,9 @@ public class QueryInfoClient
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class BasicQueryInfo
     {
+        @JsonProperty
         private final QueryStats queryStats;
+        @JsonProperty
         private final Set<Input> inputs;
 
         @JsonCreator

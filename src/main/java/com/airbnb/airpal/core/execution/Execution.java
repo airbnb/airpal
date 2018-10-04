@@ -39,6 +39,7 @@ import javax.annotation.Nullable;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -138,7 +139,7 @@ public class Execution implements Callable<Job>
                         return null;
                     }
 
-                    QueryResults results = client.current();
+                    QueryResults results = ((QueryResults) client.currentStatusInfo());
                     List<Column> resultColumns = null;
                     JobState jobState = null;
                     QueryError queryError = null;
@@ -156,7 +157,8 @@ public class Execution implements Callable<Job>
                     }
 
                     if ((results.getInfoUri() != null) && (jobState != JobState.FAILED)) {
-                        BasicQueryInfo queryInfo = queryInfoClient.from(results.getInfoUri());
+                        log.info("Getting results for query {}", results.getId());
+                        BasicQueryInfo queryInfo = queryInfoClient.from(getQueryResultsUrl(results));
 
                         if (queryInfo != null) {
                             queryStats = queryInfo.getQueryStats();
@@ -199,7 +201,8 @@ public class Execution implements Callable<Job>
 
         QueryResults finalResults = queryClient.finalResults();
         if (finalResults != null && finalResults.getInfoUri() != null) {
-            BasicQueryInfo queryInfo = queryInfoClient.from(finalResults.getInfoUri());
+            log.info("Getting results for query {}", finalResults.getId());
+            BasicQueryInfo queryInfo = queryInfoClient.from(getQueryResultsUrl(finalResults));
 
             if (queryInfo != null) {
                 updateJobInfo(
@@ -223,6 +226,17 @@ public class Execution implements Callable<Job>
         }
 
         return getJob();
+    }
+
+    private URI getQueryResultsUrl(QueryResults finalResults) {
+        try {
+            URI baseUri = finalResults.getInfoUri();
+
+            return new URI(baseUri.getScheme() + "://" + baseUri.getHost() + ":" + baseUri.getPort() + "/v1/query/" + finalResults.getId());
+        } catch (URISyntaxException e) {
+            log.error("Invalid URI syntax: " + e.getMessage(), e);
+            return finalResults.getInfoUri();
+        }
     }
 
     private static final Splitter QUERY_SPLITTER = Splitter.on(";").omitEmptyStrings().trimResults();
@@ -307,34 +321,52 @@ public class Execution implements Callable<Job>
                 null,
                 now,
                 now,
+
                 zeroDuration,
                 zeroDuration,
                 zeroDuration,
                 zeroDuration,
                 zeroDuration,
                 zeroDuration,
+
+                0,
+                0,
+                0,
+
                 0,
                 0,
                 0,
                 0,
                 0,
-                0,
-                0,
+
                 0.0,
                 zeroData,
                 zeroData,
+                zeroData,
+                zeroData,
+                zeroData,
+
+                false,
                 zeroDuration,
                 zeroDuration,
                 zeroDuration,
                 zeroDuration,
                 false,
                 ImmutableSet.of(),
+
                 zeroData,
-                0,
+                0L,
+
                 zeroData,
-                0,
+                0L,
+
                 zeroData,
-                0
+                0L,
+
+                zeroData,
+
+                ImmutableList.of(),
+                ImmutableList.of()
         );
 
     }

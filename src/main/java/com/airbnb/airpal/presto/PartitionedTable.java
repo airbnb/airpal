@@ -16,6 +16,7 @@ public class PartitionedTable extends Table
     private static Splitter TABLE_PART_SPLITTER = Splitter.on(".").omitEmptyStrings().trimResults();
 
     @Getter
+    @JsonProperty
     private final String partitionName;
 
     protected PartitionedTable(@JsonProperty("connectorId") String connectorId,

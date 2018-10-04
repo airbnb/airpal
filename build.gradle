@@ -11,7 +11,7 @@ plugins {
 }
 
 ext {
-    prestoVersion = "0.145"
+    prestoVersion = "0.203"
     if (System.properties['airpal.prestoVersion'] != null) {
         prestoVersion = System.properties['airpal.prestoVersion']
     }
@@ -39,6 +39,17 @@ project.version = scmVersion.version
 
 configurations {
     provided
+}
+
+configurations.all {
+    resolutionStrategy {
+        force 'org.glassfish.jersey.core:jersey-server:2.11'
+        force 'org.glassfish.jersey.core:jersey-common:2.11'
+        force 'org.glassfish.jersey.containers:jersey-container-servlet:2.11'
+        force 'org.glassfish.jersey.containers:jersey-container-servlet-core:2.11'
+        force 'org.glassfish.jersey.ext:jersey-bean-validation:2.11'
+        force 'org.glassfish.jersey.ext:jersey-metainf-services:2.11'
+    }
 }
 
 idea.module.scopes.COMPILE.plus += [configurations.provided]
@@ -80,6 +91,7 @@ dependencies {
     compile group: 'com.hubspot.rosetta', name: 'RosettaJdbi', version:'2.1-SNAPSHOT'
     compile group: 'com.opencsv', name: 'opencsv', version:'3.2'
     compile group: 'com.amazonaws', name: 'aws-java-sdk', version:'1.10.6'
+    //compile group: 'org.glassfish.jersey.core', name: 'jersey-server', version: '2.11'
     compile group: 'org.apache.shiro', name: 'shiro-web', version:'1.2.4'
     compile group: 'org.apache.shiro', name: 'shiro-guice', version:'1.2.4'
     compile group: 'org.secnod.dropwizard', name: 'dropwizard-shiro', version:'0.2.0'
