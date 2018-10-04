@@ -37,7 +37,7 @@ public class QueryClient
         T t = null;
 
         try (StatementClient client = queryRunner.startInternalQuery(query)) {
-            while (client.isValid() && !Thread.currentThread().isInterrupted()) {
+            while (client.isRunning() && !Thread.currentThread().isInterrupted()) {
                 if (stopwatch.elapsed(TimeUnit.MILLISECONDS) > timeout.toMilliseconds()) {
                     throw new QueryTimeOutException(stopwatch.elapsed(TimeUnit.MILLISECONDS));
                 }
@@ -46,7 +46,7 @@ public class QueryClient
                 client.advance();
             }
 
-            finalResults.set(client.finalResults());
+            finalResults.set(((QueryResults) client.finalStatusInfo()));
         } catch (RuntimeException | QueryTimeOutException e) {
             stopwatch.stop();
             throw e;

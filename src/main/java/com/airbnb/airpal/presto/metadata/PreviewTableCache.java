@@ -6,6 +6,7 @@ import com.airbnb.airpal.presto.QueryRunner;
 import com.airbnb.airpal.presto.Table;
 import com.airbnb.airpal.presto.Util;
 import com.airbnb.airpal.presto.hive.HivePartition;
+import com.facebook.presto.client.QueryData;
 import com.facebook.presto.client.QueryResults;
 import com.facebook.presto.client.StatementClient;
 import com.google.common.base.Function;
@@ -94,7 +95,7 @@ public class PreviewTableCache
                 @Override
                 public Void apply(StatementClient client)
                 {
-                    QueryResults results = client.current();
+                    QueryData results = client.currentData();
                     if (results.getData() != null) {
                         cache.addAll(results.getData());
                     }

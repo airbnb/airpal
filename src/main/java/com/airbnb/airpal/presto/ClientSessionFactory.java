@@ -2,12 +2,14 @@ package com.airbnb.airpal.presto;
 
 import com.facebook.presto.client.ClientSession;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
 import io.airlift.units.Duration;
 
 import javax.inject.Provider;
 
 import java.net.URI;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
@@ -45,13 +47,17 @@ public class ClientSessionFactory
         return new ClientSession(server.get(),
                 user,
                 source,
+                Optional.empty(),
+                Sets.newHashSet(),
+                null,
                 catalog,
                 schema,
                 timeZoneId,
                 locale,
                 ImmutableMap.<String, String>of(),
+                ImmutableMap.<String, String>of(),
+                ImmutableMap.<String, String>of(),
                 null,
-                debug,
                 clientSessionTimeout
         );
     }
@@ -61,13 +67,17 @@ public class ClientSessionFactory
         return new ClientSession(server.get(),
                 user,
                 source,
+                Optional.empty(),
+                Sets.newHashSet(),
+                null,
                 catalog,
                 schema,
                 timeZoneId,
                 locale,
                 ImmutableMap.<String, String>of(),
+                ImmutableMap.<String, String>of(),
+                ImmutableMap.<String, String>of(),
                 null,
-                debug,
                 clientSessionTimeout
         );
     }
@@ -77,13 +87,17 @@ public class ClientSessionFactory
         return new ClientSession(server.get(),
                 user,
                 source,
+                Optional.empty(),
+                Sets.newHashSet(),
+                null,
                 catalog,
                 defaultSchema,
                 timeZoneId,
                 locale,
                 ImmutableMap.<String, String>of(),
+                ImmutableMap.<String, String>of(),
+                ImmutableMap.<String, String>of(),
                 null,
-                debug,
                 clientSessionTimeout
         );
     }

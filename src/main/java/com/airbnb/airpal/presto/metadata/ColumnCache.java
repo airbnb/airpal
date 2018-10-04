@@ -6,10 +6,8 @@ import com.airbnb.airpal.presto.QueryRunner;
 import com.airbnb.airpal.presto.Util;
 import com.airbnb.airpal.presto.hive.HiveColumn;
 import com.airbnb.airpal.presto.hive.HivePartition;
-import com.facebook.presto.client.ClientTypeSignature;
-import com.facebook.presto.client.Column;
-import com.facebook.presto.client.QueryResults;
-import com.facebook.presto.client.StatementClient;
+import com.airbnb.airpal.util.ConvertUtils;
+import com.facebook.presto.client.*;
 import com.facebook.presto.spi.type.TypeSignature;
 import com.google.common.base.Function;
 import com.google.common.cache.CacheBuilder;
@@ -93,9 +91,11 @@ public class ColumnCache
                 @Override
                 public Void apply(StatementClient client)
                 {
-                    QueryResults results = client.current();
-                    if (results.getData() != null && results.getColumns() != null) {
-                        final List<Column> columns = results.getColumns();
+                    QueryData results = client.currentData();
+                    QueryStatusInfo info = client.currentStatusInfo();
+
+                    if (results.getData() != null && info.getColumns() != null) {
+                        final List<Column> columns = info.getColumns();
 
                         for (Column column : columns) {
                             objects.put(column, Lists.newArrayList());
@@ -136,12 +136,12 @@ public class ColumnCache
                 @Override
                 public Void apply(StatementClient client)
                 {
-                    QueryResults results = client.current();
+                    QueryResults results = (QueryResults) client.currentStatusInfo();
                     if (results.getData() != null) {
                         for (List<Object> row : results.getData()) {
                             Column column = new Column((String) row.get(0), (String) row.get(1), new ClientTypeSignature(TypeSignature.parseTypeSignature((String)row.get(1))));
-                            boolean isNullable = (Boolean) row.get(2);
-                            boolean isPartition = (Boolean) row.get(3);
+                            boolean isNullable  = ConvertUtils.toBoolean(row.get(2));
+                            boolean isPartition = ConvertUtils.toBoolean(row.get(3));
 
                             cache.add(HiveColumn.fromColumn(column, isNullable, isPartition));
                         }

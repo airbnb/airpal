@@ -2,6 +2,7 @@ package com.airbnb.airpal.resources;
 
 import com.airbnb.airpal.core.AirpalUser;
 import com.airbnb.airpal.core.AuthorizationUtil;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Value;
 import org.secnod.shiro.jaxrs.Auth;
 
@@ -35,15 +36,20 @@ public class UserResource
     @Value
     private static class UserInfo
     {
+        @JsonProperty
         private final String name;
+        @JsonProperty
         private final ExecutionPermissions executionPermissions;
     }
 
     @Value
     public static class ExecutionPermissions
     {
+        @JsonProperty
         private final boolean canCreateTable;
+        @JsonProperty
         private final boolean canCreateCsv;
+        @JsonProperty
         private final String accessLevel;
     }
 }

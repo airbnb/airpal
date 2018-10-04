@@ -68,9 +68,9 @@ public class TablesResource
     @Produces(MediaType.APPLICATION_JSON)
     public Response getTableUpdates(
             @Auth AirpalUser user,
-            @QueryParam("catalog") Optional<String> catalogOptional)
+            @QueryParam("catalog") String providedCatalog)
     {
-        final String catalog = catalogOptional.or(defaultCatalog);
+        final String catalog = (providedCatalog != null) ? providedCatalog : defaultCatalog;
         final Map<String, List<String>> schemaMap = schemaCache.getSchemaMap(catalog);
         final ImmutableList.Builder<Table> builder = ImmutableList.builder();
 

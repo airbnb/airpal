@@ -29,10 +29,14 @@ public class Table
     private static Splitter TABLE_PART_SPLITTER = Splitter.on(".").omitEmptyStrings().trimResults();
     private static Joiner TABLE_PART_JOINER = Joiner.on(".").skipNulls();
 
+    @JsonProperty
     private final String connectorId;
+    @JsonProperty
     private final String schema;
+    @JsonProperty
     private final String table;
     @StoredAsJson
+    @JsonProperty
     private final ImmutableList<String> columns;
 
     @JsonCreator
@@ -77,7 +81,7 @@ public class Table
             columns.add(c.getName());
         }
 
-        return new Table(input.getConnectorId(), input.getSchema(), input.getTable(), columns);
+        return new Table(input.getConnectorId().getCatalogName(), input.getSchema(), input.getTable(), columns);
     }
 
     @JsonProperty("fqn")

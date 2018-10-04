@@ -30,7 +30,10 @@ import io.dropwizard.jetty.BiDiGzipHandler;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
+import okhttp3.OkHttpClient;
 import org.eclipse.jetty.server.Handler;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.hubspot.rosetta.Rosetta;
 
 import javax.servlet.ServletRegistration;
 
@@ -105,6 +108,7 @@ public abstract class AirpalApplicationBase<T extends AirpalConfiguration>
         environment.jersey().register(injector.getInstance(FilesResource.class));
         environment.jersey().register(injector.getInstance(ResultsPreviewResource.class));
         environment.jersey().register(injector.getInstance(S3FilesResource.class));
+        environment.jersey().register(new OkHttpClient());
 
         environment.jersey().register(injector.getInstance(AirpalUserFactory.class));
 
@@ -120,5 +124,10 @@ public abstract class AirpalApplicationBase<T extends AirpalConfiguration>
                 ((BiDiGzipHandler) handler).addExcludedMimeTypes(SERVER_SENT_EVENTS);
             }
         });
+
+        environment.getObjectMapper().disable(
+                MapperFeature.AUTO_DETECT_GETTERS);
+        Rosetta.getMapper().disable(
+                MapperFeature.AUTO_DETECT_GETTERS);
     }
 }

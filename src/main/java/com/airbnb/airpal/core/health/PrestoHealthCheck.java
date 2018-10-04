@@ -47,8 +47,8 @@ public class PrestoHealthCheck extends HealthCheck
                         List<Object> result;
 
                         try (StatementClient client = queryRunnerFactory.create().startInternalQuery(HEALTH_CHECK_QUERY)) {
-                            while (client.isValid() && !Thread.currentThread().isInterrupted()) {
-                                Iterable<List<Object>> results = client.current().getData();
+                            while (client.isRunning() && !Thread.currentThread().isInterrupted()) {
+                                Iterable<List<Object>> results = client.currentData().getData();
                                 if (results != null) {
                                     result = Iterables.getFirst(results, invalidValue);
                                     assert(result != null);
