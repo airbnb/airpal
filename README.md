@@ -1,4 +1,8 @@
-# Airpal
+# DEPREACTED - Airpal
+
+Airpal is deprecated, and most functionality and feature work has been moved to SQL Lab within [Apache Superset](https://www.github.com/apache/superset).
+
+---
 
 Airpal is a web-based, query execution tool which leverages Facebook's [PrestoDB](http://prestodb.io)
 to make authoring queries and retrieving results simple for users.
