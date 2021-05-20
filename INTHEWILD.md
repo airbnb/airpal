@@ -8,3 +8,4 @@ Organizations
 
 Projects
 ----------
+ - [PyAirpal](https://github.com/ebob9/pyairpal) - Python client/SDK to allow user scripted queries via the Airpal managed access interface.
