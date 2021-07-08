@@ -7,15 +7,15 @@ import java.util.List;
 
 public interface JobOutputBuilder
 {
-    public void addRow(List<Object> row)
+    void addRow(List<Object> row)
             throws FileTooLargeException;
 
-    public void addColumns(List<Column> columns)
+    void addColumns(List<Column> columns)
             throws FileTooLargeException;
 
-    public String processQuery(String query);
+    String processQuery(String query);
 
-    public File build();
+    File build();
 
-    public void delete();
+    void delete();
 }

@@ -4,5 +4,5 @@ import org.apache.shiro.subject.Subject;
 
 public interface ToAirpalUser
 {
-    public AirpalUser toAirpalUser(Subject subject);
+    AirpalUser toAirpalUser(Subject subject);
 }

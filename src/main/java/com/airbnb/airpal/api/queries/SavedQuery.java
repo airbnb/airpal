@@ -4,13 +4,13 @@ import java.util.UUID;
 
 public interface SavedQuery
 {
-    public String getUser();
+    String getUser();
 
-    public String getName();
+    String getName();
 
-    public String getDescription();
+    String getDescription();
 
-    public UUID getUuid();
+    UUID getUuid();
 
-    public FeaturedQuery.QueryWithPlaceholders getQueryWithPlaceholders();
+    FeaturedQuery.QueryWithPlaceholders getQueryWithPlaceholders();
 }

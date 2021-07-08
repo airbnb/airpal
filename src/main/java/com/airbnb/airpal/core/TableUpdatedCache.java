@@ -9,7 +9,7 @@ import java.util.Map;
 
 public interface TableUpdatedCache
 {
-    public DateTime get(Table table);
-    public Map<PartitionedTable, DateTime> getAllPresent(List<? extends Table> tables);
-    public Map<PartitionedTable, DateTime> getAll(List<Table> tables);
+    DateTime get(Table table);
+    Map<PartitionedTable, DateTime> getAllPresent(List<? extends Table> tables);
+    Map<PartitionedTable, DateTime> getAll(List<Table> tables);
 }

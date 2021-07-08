@@ -7,12 +7,12 @@ import java.net.URI;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 public interface PersistentJobOutput
 {
-    public String getType();
+    String getType();
 
-    public String getDescription();
+    String getDescription();
 
-    public URI getLocation();
-    public void setLocation(URI location);
+    URI getLocation();
+    void setLocation(URI location);
 
-    public String processQuery(String query);
+    String processQuery(String query);
 }
